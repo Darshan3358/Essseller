@@ -1,0 +1,51 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Environment files - sensitive files only
+.env
+.env.local
+**/.env
+**/.env.local
+# backend .env is sensitive (has DB password, JWT secret)
+backend/.env
+# NOTE: frontend/.env.production is safe to commit (only NEXT_PUBLIC_ vars)
+
+# Build outputs
+.next/
+/out/
+/dist/
+/build/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+
+# Uploads (uploaded files should not be in git)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Debug/temporary scripts
+backend/debug*.js
+backend/fix_*.js
+backend/verify_*.js
+backend/check-*.js
+backend/inspect*.js
+backend/list*.js
+backend/deep_search.js
+backend/diagnostic.js
+backend/product_diagnostic.js
+backend/revenue_diagnostic.js
+backend/dev_log.txt
+backend/verify_log.txt
