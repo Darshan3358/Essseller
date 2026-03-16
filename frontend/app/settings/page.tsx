@@ -15,7 +15,8 @@ import {
     Smartphone,
     Languages,
     CreditCard,
-    CheckCircle2
+    CheckCircle2,
+    Zap
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslate } from '@/hooks/useTranslate';
@@ -63,9 +64,15 @@ export default function SettingsPage() {
                 {/* Modern Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                            <Settings className="w-3 h-3" />
-                            Configuration Center
+                        <div className="flex flex-col gap-2">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-[10px] font-bold uppercase tracking-widest w-fit">
+                                <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
+                                Live Store Intelligence
+                            </div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-[10px] font-bold uppercase tracking-widest w-fit">
+                                <Settings className="w-3 h-3" />
+                                Configuration Center
+                            </div>
                         </div>
                         <h2 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-slate-100 tracking-tight">{t('Settings')}</h2>
                         <p className="text-gray-500 dark:text-slate-400 font-medium tracking-tight">Fine-tune your store presence, preferences, and core system behavior.</p>
@@ -228,7 +235,15 @@ function ProfileSettings() {
                     <div className="relative group/avatar cursor-pointer" onClick={() => document.getElementById('logo-upload')?.click()}>
                         <div className="w-28 h-28 bg-gradient-to-br from-gray-50 to-gray-200 dark:from-slate-800 dark:to-slate-700 rounded-[2rem] flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-slate-600 overflow-hidden group-hover/avatar:border-blue-400 transition-all duration-500 shadow-inner">
                             {logoPreview ? (
-                                <img src={logoPreview} alt="Shop Logo" className="w-full h-full object-cover" />
+                                <img 
+                                    src={logoPreview} 
+                                    alt="Shop Logo" 
+                                    className="w-full h-full object-cover" 
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = ''; // Clear src
+                                        setLogoPreview(''); // Fallback to icon
+                                    }}
+                                />
                             ) : (
                                 <Store className="w-12 h-12 text-gray-400 dark:text-slate-500 group-hover/avatar:text-blue-500 transition-all duration-500 group-hover/avatar:scale-110" />
                             )}

@@ -114,3 +114,8 @@
  ✓ Compiled in 190ms
  GET /settings 200 in 146ms
  GET /settings 200 in 115ms
+ ✓ Compiled in 220ms
+ ✓ Compiled in 55ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 94ms
+ GET /settings 200 in 191ms

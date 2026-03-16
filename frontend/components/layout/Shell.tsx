@@ -12,6 +12,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [stats, setStats] = useState<any>(null);
+    const [imageError, setImageError] = useState(false);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -79,11 +80,12 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                             <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <div className="w-12 h-12 bg-gradient-to-tr from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg group-hover:rotate-3 transition-transform overflow-hidden">
-                                        {(user?.shop_logo || stats?.shopLogo) ? (
+                                        {(user?.shop_logo || stats?.shopLogo) && !imageError ? (
                                             <img 
                                                 src={getFullImageUrl(user?.shop_logo || stats?.shopLogo)} 
                                                 alt="Shop Logo" 
                                                 className="w-full h-full object-cover"
+                                                onError={() => setImageError(true)}
                                             />
                                         ) : (
                                             user?.name?.slice(0, 2).toUpperCase() || 'GS'
