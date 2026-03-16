@@ -2,16 +2,14 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
     async rewrites() {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
-        const backendUrl = apiUrl.replace(/\/api$/, '');
         return [
             {
                 source: '/backend/:path*',
-                destination: `${apiUrl}/:path*`,
+                destination: 'http://localhost:5001/api/:path*',
             },
             {
                 source: '/uploads/:path*',
-                destination: `${backendUrl}/uploads/:path*`,
+                destination: 'http://localhost:5001/uploads/:path*',
             },
         ];
     },

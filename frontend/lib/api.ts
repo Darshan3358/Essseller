@@ -3,7 +3,7 @@ const API_URL = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
 
 // Compute the base server URL (without /api)
 export const SERVER_URL = (() => {
-    if (typeof window === 'undefined') return API_URL.replace(/\/api$/, '');
+    if (typeof window === 'undefined') return API_URL.replace(/\/api$/, '') || '/';
     
     // If API_URL is relative (starts with /), prepend the current origin
     if (API_URL.startsWith('/')) {
@@ -13,7 +13,7 @@ export const SERVER_URL = (() => {
         return origin.includes('localhost') ? 'http://localhost:5001' : origin;
     }
     
-    return API_URL.replace(/\/api$/, '');
+    return API_URL.replace(/\/api$/, '') || '/';
 })();
 
 /**
