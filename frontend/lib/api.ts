@@ -1,4 +1,4 @@
-const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 const API_URL = rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl;
 
 // Compute the base server URL (without /api)
@@ -8,9 +8,9 @@ export const SERVER_URL = (() => {
     // If API_URL is relative (starts with /), prepend the current origin
     if (API_URL.startsWith('/')) {
         const origin = window.location.origin;
-        // In dev, usually the backend is on a different port (e.g. 5000)
-        // If we're on 3000, we might need to point to 5000 for static files
-        return origin.includes('localhost') ? 'http://localhost:5000' : origin;
+        // In dev, usually the backend is on a different port (e.g. 5001)
+        // If we're on 3000, we might need to point to 5001 for static files
+        return origin.includes('localhost') ? 'http://localhost:5001' : origin;
     }
     
     return API_URL.replace(/\/api$/, '');
