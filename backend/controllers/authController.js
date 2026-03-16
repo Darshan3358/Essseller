@@ -46,58 +46,73 @@ const generateToken = (id) => {
 const authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const seller = await Seller.findOne({ email });
+    // Basic validation to avoid bcrypt crashes
+    if (!email || !password) {
+        res.status(400);
+        throw new Error('Please provide email and password');
+    }
 
-    if (seller) {
-        // Support both hashed and plain text passwords (for seeded data)
-        const isMatch = await seller.matchPassword(password) || seller.password === password;
+    try {
+        const seller = await Seller.findOne({ email });
 
-        if (isMatch) {
-            // Check if 2FA is enabled
-            if (seller.settings && seller.settings.twoFactor) {
-                // Generate 6-digit OTP
-                const otp = Math.floor(100000 + Math.random() * 900000).toString();
-                seller.otp = otp;
-                seller.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
-                await seller.save();
+        if (seller) {
+            // Support both hashed and plain text passwords (for seeded data)
+            const isMatch = await seller.matchPassword(password) || seller.password === password;
 
-                // Log for "real-time" testing convenience (in production this would be emailed)
-                console.log(`\n--- 2FA SECURITY ALERT ---`);
-                console.log(`[OTP for ${email}]: ${otp}`);
-                console.log(`--------------------------\n`);
+            if (isMatch) {
+                // Check if 2FA is enabled
+                if (seller.settings && seller.settings.twoFactor) {
+                    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+                    seller.otp = otp;
+                    seller.otpExpires = Date.now() + 10 * 60 * 1000;
+                    await seller.save();
 
-                return res.json({
-                    requiresOTP: true,
-                    email: seller.email,
-                    message: 'Two-Factor Authentication is active. Please enter your 6-digit security code.'
-                });
-            }
-
-            // Normal login if 2FA is off
-            res.json({
-                token: generateToken(seller._id),
-                user: {
-                    _id: seller._id,
-                    name: seller.name,
-                    email: seller.email,
-                    role: seller.role,
-                    shop_name: seller.shop_name,
-                    shop_logo: seller.shop_logo,
-                    verified: seller.verified,
-                    store_health: seller.store_health,
-                    store_performance: seller.store_performance,
-                    store_status: seller.store_status,
-                    store_health_updated_at: seller.store_health_updated_at,
-                    diagnostics: await getSellerDiagnostics(seller),
+                    return res.json({
+                        requiresOTP: true,
+                        email: seller.email,
+                        message: 'Two-Factor Authentication is active.'
+                    });
                 }
-            });
+
+                // Verify JWT_SECRET exists
+                if (!process.env.JWT_SECRET) {
+                    console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables');
+                    res.status(500);
+                    throw new Error('Server configuration error: Security key missing');
+                }
+
+                const diagnostics = await getSellerDiagnostics(seller);
+
+                res.json({
+                    token: generateToken(seller._id),
+                    user: {
+                        _id: seller._id,
+                        name: seller.name,
+                        email: seller.email,
+                        role: seller.role,
+                        shop_name: seller.shop_name,
+                        shop_logo: seller.shop_logo,
+                        verified: seller.verified,
+                        store_health: seller.store_health,
+                        store_performance: seller.store_performance,
+                        store_status: seller.store_status,
+                        store_health_updated_at: seller.store_health_updated_at,
+                        diagnostics,
+                    }
+                });
+            } else {
+                res.status(401);
+                throw new Error('Invalid email or password');
+            }
         } else {
             res.status(401);
             throw new Error('Invalid email or password');
         }
-    } else {
-        res.status(401);
-        throw new Error('Invalid email or password');
+    } catch (error) {
+        console.error('Login Error Details:', error);
+        // Ensure we don't return 500 without a message
+        if (res.statusCode === 200) res.status(500);
+        throw error;
     }
 });
 

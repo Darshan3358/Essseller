@@ -17,8 +17,29 @@ const init = async () => {
     }
 };
 
-// On Vercel (serverless), we export the app directly
-// On local dev, we listen on a port
+// Production (Vercel serverless) - Ensure DB is connected
+let isConnected = false;
+const connect = async () => {
+    if (isConnected) return;
+    await init();
+    isConnected = true;
+};
+
+// Middleware to ensure DB is connected before any request
+app.use(async (req, res, next) => {
+    if (process.env.NODE_ENV === 'production') {
+        try {
+            await connect();
+            next();
+        } catch (error) {
+            console.error('DB Connection Middleware Error:', error);
+            res.status(500).json({ success: false, message: 'Database Connection Error' });
+        }
+    } else {
+        next();
+    }
+});
+
 if (process.env.NODE_ENV !== 'production') {
     // Local development - run as normal server
     init().then(() => {
@@ -34,9 +55,6 @@ if (process.env.NODE_ENV !== 'production') {
             console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
         });
     });
-} else {
-    // Production (Vercel serverless) - init DB on cold start
-    init();
 }
 
 // Export for Vercel serverless
