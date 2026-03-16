@@ -11,6 +11,7 @@ const packagePlanSchema = new mongoose.Schema({
     popular: { type: Boolean, default: false },
     activeBg: { type: String, default: 'bg-blue-500' },
     product_limit: { type: Number, required: true },
+    views_limit: { type: Number, default: 0 },
     order_index: { type: Number, default: 0 } // To control display order
 }, { timestamps: true });
 

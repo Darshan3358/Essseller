@@ -27,6 +27,10 @@ const sellerSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    shop_logo: {
+        type: String,
+        default: '',
+    },
     role: {
         type: String,
         enum: ['admin', 'seller'],
@@ -54,6 +58,10 @@ const sellerSchema = mongoose.Schema({
         default: 0,
     },
     views: {
+        type: Number,
+        default: 0,
+    },
+    used_views: {
         type: Number,
         default: 0,
     },

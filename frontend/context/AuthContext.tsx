@@ -9,6 +9,7 @@ interface User {
     name: string;
     email: string;
     shop_name?: string;
+    shop_logo?: string;
     role?: string;
     verified?: number;
     settings?: {
@@ -53,8 +54,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (storedToken && storedUser && storedUser !== 'undefined') {
             try {
+                const parsedUser = JSON.parse(storedUser);
                 setToken(storedToken);
-                setUser(JSON.parse(storedUser));
+                setUser(parsedUser);
+                
+                // Refresh profile data in background to ensure sync
+                api.get('/auth/profile').then(res => {
+                    if (res && res._id) {
+                        const updatedUser = { ...parsedUser, ...res };
+                        setUser(updatedUser);
+                        localStorage.setItem('user', JSON.stringify(updatedUser));
+                    }
+                }).catch(err => console.error('Initial profile sync failed:', err));
             } catch (error) {
                 console.error('Failed to parse stored user:', error);
                 localStorage.removeItem('token');

@@ -14,12 +14,13 @@ import {
     Lock,
     Smartphone,
     Languages,
-    CreditCard
+    CreditCard,
+    CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslate } from '@/hooks/useTranslate';
 import { useLanguage } from '@/context/LanguageContext';
-import { api } from '@/lib/api';
+import { api, getFullImageUrl } from '@/lib/api';
 import Shell from '@/components/layout/Shell';
 import { toast } from 'react-hot-toast';
 
@@ -158,7 +159,7 @@ function ProfileSettings() {
                         shop_metadesc: response.data.shop_metadesc || '',
                     });
                     if (response.data.shop_logo) {
-                        setLogoPreview(response.data.shop_logo.startsWith('http') ? response.data.shop_logo : `${process.env.NEXT_PUBLIC_API_URL}${response.data.shop_logo}`);
+                        setLogoPreview(getFullImageUrl(response.data.shop_logo));
                     }
                 }
             } catch (error) {
@@ -183,6 +184,7 @@ function ProfileSettings() {
                 const response = await api.put('/sellers/shop-settings', formData);
                 if (response.success) {
                     toast.success('Shop logo updated successfully');
+                    updateUser({ shop_logo: response.data.shop_logo });
                 }
             } catch (error: any) {
                 toast.error(`Error: ${error.message}`);
@@ -190,7 +192,7 @@ function ProfileSettings() {
         }
     };
 
-    const { updateUser } = useAuth();
+    const { user, updateUser } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -200,7 +202,10 @@ function ProfileSettings() {
             if (response.success) {
                 setMessage('Success: Your shop settings have been updated.');
                 // Update global state immediately
-                updateUser({ shop_name: formData.shop_name });
+                updateUser({ 
+                    shop_name: formData.shop_name,
+                    shop_logo: response.data.shop_logo 
+                });
             }
         } catch (error: any) {
             setMessage(`Error: ${error.message}`);
@@ -240,7 +245,18 @@ function ProfileSettings() {
                         />
                     </div>
                     <div>
-                        <h4 className="text-2xl font-black text-gray-900 dark:text-slate-100 leading-none mb-2">{t('Identity')}</h4>
+                        <div className="flex items-center gap-3 mb-2">
+                            <h4 className="text-2xl font-black text-gray-900 dark:text-slate-100 leading-none">{t('Identity')}</h4>
+                            {user?.verified === 1 ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-emerald-100 dark:border-emerald-800/30">
+                                    <CheckCircle2 className="w-3 h-3" /> Verified
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-amber-100 dark:border-amber-800/30">
+                                    <Shield className="w-3 h-3" /> Unverified
+                                </span>
+                            )}
+                        </div>
                         <p className="text-gray-500 dark:text-slate-400 font-medium tracking-tight">Customize how your shop appears to global customers.</p>
                     </div>
                 </div>

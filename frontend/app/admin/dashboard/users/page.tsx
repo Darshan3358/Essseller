@@ -111,6 +111,12 @@ export default function AdminUsersPage() {
             if (editingUser.guarantee_balance !== '' && editingUser.guarantee_balance !== undefined) {
                 payload.guarantee_balance = Number(editingUser.guarantee_balance);
             }
+            if (editingUser.views !== '' && editingUser.views !== undefined) {
+                payload.views = Number(editingUser.views);
+            }
+            if (editingUser.used_views !== '' && editingUser.used_views !== undefined) {
+                payload.used_views = Number(editingUser.used_views);
+            }
             if (editingUser.store_health !== '' && editingUser.store_health !== undefined) {
                 payload.store_health = Number(editingUser.store_health);
             }
@@ -119,6 +125,9 @@ export default function AdminUsersPage() {
             }
             if (editingUser.store_status !== undefined) {
                 payload.store_status = editingUser.store_status;
+            }
+            if (editingUser.verified !== undefined) {
+                payload.verified = Number(editingUser.verified);
             }
             // Only send passwords if admin filled them in
             if (editingUser.password && editingUser.password.trim() !== '') {
@@ -215,7 +224,7 @@ export default function AdminUsersPage() {
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                                 <th className="res-show-mobile" style={{ padding: '14px 16px', width: '40px' }}></th>
-                                {['ID', 'Name', 'Shop', 'Created', 'Password', 'Trans Pass', 'Status', 'Verified', 'Actions'].map((h, i) => (
+                                {['ID', 'Name', 'Shop', 'Views/Used/Rem', 'Balance', 'Created', 'Status', 'Verified', 'Actions'].map((h, i) => (
                                     <th key={h} className={i > 1 && i < 8 ? 'res-hide-mobile' : ''} style={{
                                         padding: '14px 16px', textAlign: 'left',
                                         fontSize: '11px', fontWeight: '700',
@@ -246,32 +255,20 @@ export default function AdminUsersPage() {
                                         <td style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{u.id || '—'}</td>
                                         <td style={{ padding: '12px 16px', fontWeight: '600', fontSize: '14px' }}>{u.name}</td>
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>{u.shop_name}</td>
+                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                <div style={{ fontSize: '13px', fontWeight: '700', color: '#10b981' }}>{u.views?.toLocaleString() || 0} <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 'normal' }}>Total</span></div>
+                                                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>{u.used_views?.toLocaleString() || 0} <span style={{ fontSize: '9px', opacity: 0.6 }}>Used</span></div>
+                                                <div style={{ fontSize: '11px', color: '#6366f1', fontWeight: 'bold' }}>{((u.views || 0) - (u.used_views || 0)).toLocaleString()} <span style={{ fontSize: '9px', opacity: 0.6 }}>Rem</span></div>
+                                            </div>
+                                        </td>
+                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
+                                            <div style={{ fontSize: '13px', fontWeight: '700', color: 'white' }}>${u.wallet_balance?.toFixed(2) || '0.00'}</div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>G: ${u.guarantee_balance?.toFixed(2) || '0.00'}</div>
+                                        </td>
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
                                             <div style={{ fontSize: '12px', fontWeight: '700', color: 'white' }}>
                                                 {new Date(u.createdAt).toLocaleDateString()}
-                                            </div>
-                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
-                                                {new Date(u.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </div>
-                                        </td>
-                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
-                                            <div style={{
-                                                fontSize: '11px', color: 'rgba(255,255,255,0.4)',
-                                                fontFamily: 'monospace', maxWidth: '80px', overflow: 'hidden',
-                                                textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                                background: 'rgba(255,255,255,0.03)', padding: '4px 8px', borderRadius: '4px'
-                                            }} title={u.password}>
-                                                {u.password || '—'}
-                                            </div>
-                                        </td>
-                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
-                                            <div style={{
-                                                fontSize: '11px', color: 'rgba(255,255,255,0.4)',
-                                                fontFamily: 'monospace', maxWidth: '80px', overflow: 'hidden',
-                                                textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                                background: 'rgba(255,255,255,0.03)', padding: '4px 8px', borderRadius: '4px'
-                                            }} title={u.trans_password}>
-                                                {u.trans_password || '—'}
                                             </div>
                                         </td>
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
@@ -442,6 +439,20 @@ export default function AdminUsersPage() {
                                 { label: 'Store Health (%)', key: 'store_health', type: 'number' },
                                 { label: 'Store Performance', key: 'store_performance', type: 'text' },
                                 { label: 'Store Status', key: 'store_status', type: 'text' },
+                                { label: 'Total Views', key: 'views', type: 'number' },
+                                { label: 'Used Views', key: 'used_views', type: 'number' },
+                                {
+                                    label: 'Verified Status (0=Pending, 1=Verified)',
+                                    key: 'verified',
+                                    type: 'number'
+                                },
+                                {
+                                    label: 'Remaining Views (Calculated)',
+                                    key: 'remaining_views',
+                                    type: 'text',
+                                    readOnly: true,
+                                    value: String((Number(editingUser.views || 0) - Number(editingUser.used_views || 0)))
+                                },
                                 { label: 'New Login Password (Leave blank to keep)', key: 'password', type: 'text' },
                                 { label: 'New Trans Password (Leave blank to keep)', key: 'trans_password', type: 'text' },
                             ].map(field => (
@@ -450,15 +461,19 @@ export default function AdminUsersPage() {
                                         {field.label}
                                     </label>
                                     <input
-                                        type={field.type}
-                                        value={editingUser[field.key] || ''}
-                                        onChange={(e) => setEditingUser({ ...editingUser, [field.key]: e.target.value })}
+                                        type={field.type as any}
+                                        value={field.readOnly ? (field as any).value : (editingUser[field.key] || '')}
+                                        onChange={(e) => !field.readOnly && setEditingUser({ ...editingUser, [field.key]: e.target.value })}
                                         style={{
-                                            width: '100%', padding: '12px 16px', background: 'rgba(255,255,255,0.05)',
+                                            width: '100%', padding: '12px 16px', 
+                                            background: field.readOnly ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
                                             border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px',
-                                            color: 'white', fontSize: '14px', outline: 'none'
+                                            color: field.readOnly ? 'rgba(255,255,255,0.4)' : 'white', 
+                                            fontSize: '14px', outline: 'none',
+                                            cursor: field.readOnly ? 'not-allowed' : 'text'
                                         }}
                                         required={['name', 'email', 'shop_name'].includes(field.key)}
+                                        readOnly={field.readOnly}
                                         step={field.type === 'number' ? '0.01' : undefined}
                                     />
                                 </div>

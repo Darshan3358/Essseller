@@ -16,7 +16,7 @@ const CRYPTO_NETWORKS = [
     { key: 'usdt_trc20', label: 'USDT (TRC20)', color: '#26A17B', bg: 'rgba(38,161,123,0.1)', border: 'rgba(38,161,123,0.25)', icon: '₮' },
     { key: 'usdt_erc20', label: 'USDT (ERC20)', color: '#627EEA', bg: 'rgba(98,126,234,0.1)', border: 'rgba(98,126,234,0.25)', icon: '₮' },
     { key: 'btc', label: 'Bitcoin (BTC)', color: '#F7931A', bg: 'rgba(247,147,26,0.1)', border: 'rgba(247,147,26,0.25)', icon: '₿' },
-    { key: 'eth', label: 'Ethereum (ETH)', color: '#627EEA', bg: 'rgba(98,126,234,0.1)', border: 'rgba(98,126,234,0.25)', icon: 'Ξ' },
+    { key: 'bnb', label: 'BNB (BEP20)', color: '#F3BA2F', bg: 'rgba(243,186,47,0.1)', border: 'rgba(243,186,47,0.25)', icon: 'B' },
 ];
 
 type PayMode = 'crypto' | 'bank';
@@ -419,7 +419,15 @@ export default function PaymentPage() {
                         <Lock className="w-3 h-3" />
                         Secure Payment System
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 uppercase">Payment to Supplier</h2>
+                    <div className="flex flex-wrap items-center gap-4">
+                        <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 uppercase">Payment to Supplier</h2>
+                        {user.verified === 1 && (
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 shadow-sm" title="Verified Seller">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Verified</span>
+                            </div>
+                        )}
+                    </div>
                     <p className="text-gray-500 font-medium max-w-lg leading-relaxed">Choose your destination and specify the amount to pay using our secure multi-channel gateway.</p>
                 </div>
 

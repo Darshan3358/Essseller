@@ -37,6 +37,19 @@ export default function DashboardPage() {
         productLimit: 0,
         totalProducts: 0,
         remainingProducts: 0,
+        views: 0,
+        usedViews: 0,
+        remainingViews: 0,
+    });
+    
+    const [planDisplayData, setPlanDisplayData] = useState<any>({
+        plan_title: 'Enterprise Pro',
+        features: [
+            { text: '10k Limit', icon: '⚡' },
+            { text: '20% Profit', icon: '📈' },
+            { text: '24/7 Support', icon: '️' },
+            { text: 'API Access', icon: '📡' }
+        ]
     });
 
     const [chartData, setChartData] = useState<any[]>([]);
@@ -103,6 +116,9 @@ export default function DashboardPage() {
                         productLimit: dbStats.productLimit || 0,
                         totalProducts: dbStats.totalProducts || 0,
                         remainingProducts: dbStats.remainingProducts || 0,
+                        views: dbStats.views || 0,
+                        usedViews: dbStats.used_views || 0,
+                        remainingViews: dbStats.remaining_views || 0,
                     }));
                     if (dbStats.chartData) {
                         setChartData(dbStats.chartData);
@@ -113,6 +129,12 @@ export default function DashboardPage() {
                 const productsRes = await api.get('/products/featured');
                 if (productsRes.success) {
                     setFeaturedProducts(productsRes.data || []);
+                }
+                
+                // Fetch Plan Display Settings
+                const planRes = await api.get('/settings/plan-display');
+                if (planRes.success && planRes.data) {
+                    setPlanDisplayData(planRes.data);
                 }
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
@@ -151,8 +173,15 @@ export default function DashboardPage() {
                                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Live Store Intelligence</span>
                             </div>
                             <div className="space-y-2">
-                                <h1 className="text-2xl sm:text-4xl lg:text-7xl font-black tracking-tight animate-slide-up leading-tight">
-                                    Hello, <span className="text-yellow-300">{(user.shop_name || user.name || 'Seller').toUpperCase()}</span>!
+                                <h1 className="text-2xl sm:text-4xl lg:text-7xl font-black tracking-tight animate-slide-up leading-tight flex flex-wrap items-center gap-3">
+                                    Hello, <span className="text-yellow-300">{(user.shop_name || user.name || 'Seller').toUpperCase()}</span>
+                                    {user.verified === 1 && (
+                                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-[0_0_15px_rgba(255,255,255,0.2)]" title="Verified Seller">
+                                            <CheckCircle2 className="w-5 h-5 lg:w-8 lg:h-8 text-yellow-300" />
+                                            <span className="text-[10px] lg:text-sm font-black uppercase tracking-widest text-white">Verified</span>
+                                        </div>
+                                    )}
+                                    !
                                 </h1>
                                 <p className="text-base md:text-xl text-primary-50 opacity-90 animate-slide-up stagger-1 max-w-lg mx-auto md:mx-0">
                                     Welcome back to your dashboard. All systems are online and running smoothly.
@@ -317,17 +346,12 @@ export default function DashboardPage() {
                                         <div className="absolute inset-0 bg-white/30 rounded-full blur-2xl scale-75"></div>
                                         <Gem className="w-14 h-14 text-white drop-shadow-2xl relative z-10" />
                                     </div>
-                                    <h3 className="text-5xl font-black text-white tracking-tight drop-shadow-md text-center">{stats.planName}</h3>
+                                    <h3 className="text-5xl font-black text-white tracking-tight drop-shadow-md text-center">{planDisplayData.plan_title}</h3>
                                 </div>
 
-                                {/* Features Pills - Matching 2nd Image Labels */}
+                                {/* Features Pills - Dynamic from Settings */}
                                 <div className="flex flex-wrap justify-center gap-3 mb-10">
-                                    {[
-                                        { text: '10k Limit', icon: '⚡' },
-                                        { text: '20% Profit', icon: '📈' },
-                                        { text: '24/7 Support', icon: '�️' },
-                                        { text: 'API Access', icon: '📡' }
-                                    ].map((f, i) => (
+                                    {planDisplayData.features.map((f: any, i: number) => (
                                         <span key={i} className="px-5 py-2.5 bg-white/10 border border-white/20 rounded-2xl text-xs font-bold text-white backdrop-blur-md flex items-center gap-2">
                                             <span>{f.icon}</span> {f.text}
                                         </span>
@@ -342,16 +366,22 @@ export default function DashboardPage() {
 
                                     <div className="grid grid-cols-3 gap-6 text-center pt-4 border-t border-white/10">
                                         <div>
-                                            <p className="text-2xl font-black text-white">3.2K</p>
+                                            <p className="text-2xl font-black text-white">
+                                                {stats.usedViews >= 1000 ? (stats.usedViews / 1000).toFixed(1) + 'K' : stats.usedViews}
+                                            </p>
                                             <p className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">Used</p>
                                         </div>
                                         <div>
-                                            <p className="text-2xl font-black text-white">6.8K</p>
+                                            <p className="text-2xl font-black text-white">
+                                                {stats.remainingViews >= 1000 ? (stats.remainingViews / 1000).toFixed(1) + 'K' : stats.remainingViews}
+                                            </p>
                                             <p className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">Remaining</p>
                                         </div>
                                         <div>
-                                            <p className="text-2xl font-black text-pink-200">30d</p>
-                                            <p className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">Expires</p>
+                                            <p className="text-2xl font-black text-pink-200">
+                                                {stats.views >= 1000 ? (stats.views / 1000).toFixed(1) + 'K' : stats.views}
+                                            </p>
+                                            <p className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">Views</p>
                                         </div>
                                     </div>
                                 </div>

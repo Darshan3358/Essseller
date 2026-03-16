@@ -57,7 +57,7 @@ const getCryptoSettings = asyncHandler(async (req, res) => {
             usdt_trc20: '',
             usdt_erc20: '',
             btc: '',
-            eth: '',
+            bnb: '',
             network_note: 'Please verify the network before sending',
             min_deposit: 10,
         }
@@ -68,9 +68,9 @@ const getCryptoSettings = asyncHandler(async (req, res) => {
 // @route   PUT /api/settings/crypto
 // @access  Private/Admin
 const updateCryptoSettings = asyncHandler(async (req, res) => {
-    const { usdt_trc20, usdt_erc20, btc, eth, network_note, min_deposit } = req.body;
+    const { usdt_trc20, usdt_erc20, btc, bnb, network_note, min_deposit } = req.body;
 
-    const value = { usdt_trc20, usdt_erc20, btc, eth, network_note, min_deposit };
+    const value = { usdt_trc20, usdt_erc20, btc, bnb, network_note, min_deposit };
 
     await SiteSetting.findOneAndUpdate(
         { key: 'crypto_payment' },
@@ -168,6 +168,39 @@ const updateCarouselSettings = asyncHandler(async (req, res) => {
     res.json({ success: true, message: 'Carousel settings updated', carousel: value });
 });
 
+// @desc    Get dashboard plan display settings
+// @route   GET /api/settings/plan-display
+// @access  Public
+const getPlanDisplaySettings = asyncHandler(async (req, res) => {
+    const setting = await SiteSetting.findOne({ key: 'plan_display' });
+    res.json({
+        success: true,
+        data: setting ? setting.value : {
+            plan_title: 'Enterprise Pro',
+            features: [
+                { text: '10k Limit', icon: '⚡' },
+                { text: '20% Profit', icon: '📈' },
+                { text: '24/7 Support', icon: '️' },
+                { text: 'API Access', icon: '📡' }
+            ]
+        }
+    });
+});
+
+// @desc    Update dashboard plan display settings
+// @route   PUT /api/settings/plan-display
+// @access  Private/Admin
+const updatePlanDisplaySettings = asyncHandler(async (req, res) => {
+    const { plan_title, features } = req.body;
+    const value = { plan_title, features };
+    await SiteSetting.findOneAndUpdate(
+        { key: 'plan_display' },
+        { key: 'plan_display', value },
+        { upsert: true, new: true }
+    );
+    res.json({ success: true, message: 'Plan display settings updated', data: value });
+});
+
 module.exports = {
     getInvitationCode,
     updateInvitationCode,
@@ -179,5 +212,7 @@ module.exports = {
     getSecuritySettings,
     updateSecuritySettings,
     getCarouselSettings,
-    updateCarouselSettings
+    updateCarouselSettings,
+    getPlanDisplaySettings,
+    updatePlanDisplaySettings
 };

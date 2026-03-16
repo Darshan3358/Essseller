@@ -5,7 +5,8 @@ const {
     getCryptoSettings, updateCryptoSettings,
     getBankSettings, updateBankSettings,
     getSecuritySettings, updateSecuritySettings,
-    getCarouselSettings, updateCarouselSettings
+    getCarouselSettings, updateCarouselSettings,
+    getPlanDisplaySettings, updatePlanDisplaySettings
 } = require('../controllers/settingsController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -25,8 +26,10 @@ router.put('/bank', protect, admin, updateBankSettings); // Admin only
 router.get('/security', getSecuritySettings);             // Public
 router.put('/security', protect, admin, updateSecuritySettings); // Admin only
 
-// Carousel settings
-router.get('/carousel', getCarouselSettings);             // Public
 router.put('/carousel', protect, admin, updateCarouselSettings); // Admin only
+
+// Plan display settings
+router.get('/plan-display', getPlanDisplaySettings);             // Public
+router.put('/plan-display', protect, admin, updatePlanDisplaySettings); // Admin only
 
 module.exports = router;

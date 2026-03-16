@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Navigation from './Navigation';
-import { LayoutDashboard, Menu, Bell, Search, LogOut, ChevronDown, Wallet, PlusCircle } from 'lucide-react';
+import { LayoutDashboard, Menu, Bell, Search, LogOut, ChevronDown, Wallet, PlusCircle, CheckCircle2 } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { api } from '@/lib/api';
+import { api, getFullImageUrl } from '@/lib/api';
 
 export default function Shell({ children }: { children: React.ReactNode }) {
     const { user, logout } = useAuth();
@@ -61,8 +61,10 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                             <div>
                                 <h1 className="text-2xl font-black tracking-tighter text-blue-600 dark:text-blue-500">SmartSeller</h1>
                                 <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-success-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
-                                    <p className="text-[10px] uppercase tracking-widest text-gray-400 dark:text-slate-500 font-bold">Pro Account</p>
+                                    <span className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(var(--color-rgb),0.4)] ${user?.verified === 1 ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-red-500 shadow-red-500/40'}`} />
+                                    <p className={`text-[10px] uppercase tracking-widest font-black ${user?.verified === 1 ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-500'}`}>
+                                        {user?.verified === 1 ? 'Verified' : 'Unverified Account'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -76,13 +78,28 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                         <div className="glass-card !bg-white/40 dark:!bg-slate-800/40 border-white/40 dark:border-slate-700/40 p-4 group cursor-pointer hover:!bg-white/60 dark:hover:!bg-slate-800/60 transition-all duration-200">
                             <div className="flex items-center gap-3">
                                 <div className="relative">
-                                    <div className="w-12 h-12 bg-gradient-to-tr from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg group-hover:rotate-3 transition-transform">
-                                        {user?.name?.slice(0, 2).toUpperCase() || 'GS'}
+                                    <div className="w-12 h-12 bg-gradient-to-tr from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg group-hover:rotate-3 transition-transform overflow-hidden">
+                                        {(user?.shop_logo || stats?.shopLogo) ? (
+                                            <img 
+                                                src={getFullImageUrl(user?.shop_logo || stats?.shopLogo)} 
+                                                alt="Shop Logo" 
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            user?.name?.slice(0, 2).toUpperCase() || 'GS'
+                                        )}
                                     </div>
                                     <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-success-500 border-2 border-white rounded-full" />
                                 </div>
                                 <div className="flex-1 overflow-hidden">
-                                    <p className="text-sm font-bold text-gray-900 dark:text-slate-100 truncate">{user?.name || 'Guest Seller'}</p>
+                                    <div className="flex items-center gap-1.5 overflow-hidden">
+                                        <p className="text-sm font-bold text-gray-900 dark:text-slate-100 truncate">{user?.name || 'Guest Seller'}</p>
+                                        {user?.verified === 1 && (
+                                            <div title="Verified Seller" className="flex-shrink-0">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500/10" strokeWidth={3} />
+                                            </div>
+                                        )}
+                                    </div>
                                     <p className="text-[10px] text-gray-500 dark:text-slate-400 font-semibold truncate">{user?.email || 'Individual Plan'}</p>
                                 </div>
                                 <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />

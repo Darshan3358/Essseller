@@ -34,7 +34,7 @@ export default function MetricCard({ title, value, subtitle, change, icon, color
         <div className={`bg-white rounded-[2rem] border-2 transition-all duration-500 group relative overflow-hidden h-full flex flex-col p-6 ${theme.border} shadow-[0_10px_40px_rgba(0,0,0,0.04)]`}>
             {/* Top Row: Icon and Trends */}
             <div className="flex justify-between items-start mb-6">
-                <div className={`w-14 h-14 ${theme.icon} rounded-2xl flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform duration-500`}>
+                <div className={`w-14 h-14 ${theme.icon} rounded-2xl flex items-center justify-center text-white shadow-lg transform group-hover:scale-105 transition-transform duration-500`}>
                     {icon}
                 </div>
 

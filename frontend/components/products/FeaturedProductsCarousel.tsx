@@ -112,7 +112,9 @@ export default function FeaturedProductsCarousel({ products }: FeaturedProductsC
 
 function ProductCard({ product }: { product: Product }) {
     const rating = 4.5; // Mock rating
-    const discount = Math.round(((product.price - product.cost) / product.price) * 100);
+    const discount = product.price > product.selling_price 
+        ? Math.round(((product.price - product.selling_price) / product.price) * 100) 
+        : 0;
 
     return (
         <div className="group premium-card overflow-hidden h-full flex flex-col">
@@ -135,14 +137,16 @@ function ProductCard({ product }: { product: Product }) {
                     </div>
                 )}
 
-                {/* Product Image Placeholder */}
-                <div className="w-full h-full bg-gradient-to-br from-primary-100 via-purple-100 to-pink-100 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500">
-                    <div className="text-center">
-                        <div className="w-24 h-24 mx-auto bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-3">
-                            <ShoppingCart className="w-12 h-12 text-primary-600 dark:text-primary-400" />
-                        </div>
-                        <p className="text-sm font-medium text-gray-600 dark:text-slate-400">Product Image</p>
-                    </div>
+                {/* Product Image */}
+                <div className="w-full h-full transform group-hover:scale-110 transition-transform duration-500">
+                    <img
+                        src={product.image?.startsWith('http') ? product.image : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${product.image}`} 
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop';
+                        }}
+                    />
                 </div>
 
                 {/* Hover Overlay */}

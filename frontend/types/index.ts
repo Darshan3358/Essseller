@@ -17,19 +17,26 @@ export interface Client {
 
 // Product Types
 export interface Product {
-    id: string;
-    clientId: string;
+    _id: string;
+    id?: string;
+    seller_id?: string | any;
     name: string;
     description: string;
     price: number;
-    cost: number;
-    imageUrl: string;
+    selling_price: number;
+    profit: number;
     category: string;
-    stock: number;
-    isFeatured: boolean;
+    brand?: string;
+    image: string;
+    gallery?: string[];
+    status?: number;
+    isDeleted?: boolean;
+    isFeatured?: boolean;
+    inStorehouseCarousel?: boolean;
     featuredOrder: number;
-    featuredUntil?: Date;
+    stock: number;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 // Order Types

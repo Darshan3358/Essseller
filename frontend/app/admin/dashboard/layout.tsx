@@ -20,7 +20,7 @@ const navItems = [
     { label: 'Products', icon: Box, href: '/admin/dashboard/products' },
     { label: 'Carousel Management', icon: LayoutDashboard, href: '/admin/dashboard/carousel' },
     { label: 'Support', icon: LifeBuoy, href: '/admin/dashboard/support' },
-    { label: 'Crypto Settings', icon: Settings, href: '/admin/dashboard/settings' },
+    { label: 'Site Settings', icon: Settings, href: '/admin/dashboard/settings' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

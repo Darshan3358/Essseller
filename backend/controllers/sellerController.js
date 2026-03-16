@@ -98,6 +98,8 @@ exports.getDashboardStats = async (req, res) => {
 
         const availableBalance = await getAvailableBalance(seller._id);
 
+        const shopProfile = await ShopProfile.findOne({ seller_id: sellerId });
+
         // Calculate specific time-based stats
         const now = new Date();
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -204,8 +206,12 @@ exports.getDashboardStats = async (req, res) => {
                 productLimit,
                 remainingProducts,
                 planName: activePackage ? activePackage.type : 'N/A',
+                views: seller.views || 0,
+                used_views: seller.used_views || 0,
+                remaining_views: Math.max(0, (seller.views || 0) - (seller.used_views || 0)),
                 categoryCounts,
-                chartData
+                chartData,
+                shopLogo: shopProfile ? shopProfile.shop_logo : ''
             }
         });
     } catch (error) {
@@ -472,17 +478,18 @@ exports.updateShopSettings = async (req, res) => {
             sellerUpdates.settings = { ...(req.user.settings || {}), ...parsedSettings };
         }
         if (shop_name) sellerUpdates.shop_name = shop_name;
+        
+        let shop_logo = '';
+        if (req.files && req.files.shop_logo) {
+            shop_logo = `/uploads/${req.files.shop_logo[0].filename}`;
+            sellerUpdates.shop_logo = shop_logo;
+        }
 
         if (Object.keys(sellerUpdates).length > 0) {
             await Seller.findByIdAndUpdate(sellerId, { $set: sellerUpdates });
         }
 
         let shopProfile = await ShopProfile.findOne({ seller_id: sellerId });
-
-        let shop_logo = '';
-        if (req.files && req.files.shop_logo) {
-            shop_logo = `/uploads/${req.files.shop_logo[0].filename}`;
-        }
 
         if (shopProfile) {
             // Update

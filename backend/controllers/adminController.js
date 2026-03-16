@@ -255,6 +255,8 @@ const updateUser = asyncHandler(async (req, res) => {
     }
     if (req.body.store_performance !== undefined) user.store_performance = req.body.store_performance;
     if (req.body.store_status !== undefined) user.store_status = req.body.store_status;
+    if (req.body.views !== undefined && req.body.views !== '') user.views = Number(req.body.views);
+    if (req.body.used_views !== undefined && req.body.used_views !== '') user.used_views = Number(req.body.used_views);
 
     const updated = await user.save();
     res.json({
@@ -272,7 +274,9 @@ const updateUser = asyncHandler(async (req, res) => {
             store_health: updated.store_health,
             store_performance: updated.store_performance,
             store_status: updated.store_status,
-            store_health_updated_at: updated.store_health_updated_at
+            store_health_updated_at: updated.store_health_updated_at,
+            views: updated.views,
+            used_views: updated.used_views
         }
     });
 });

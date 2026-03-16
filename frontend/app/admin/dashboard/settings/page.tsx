@@ -7,7 +7,7 @@ const CRYPTO_NETWORKS = [
     { key: 'usdt_trc20', label: 'USDT TRC20 Address', placeholder: 'TRC20 address (starts with T...)' },
     { key: 'usdt_erc20', label: 'USDT ERC20 Address', placeholder: 'ERC20 address (starts with 0x...)' },
     { key: 'btc', label: 'Bitcoin (BTC) Address', placeholder: 'BTC wallet address' },
-    { key: 'eth', label: 'Ethereum (ETH) Address', placeholder: 'ETH address (starts with 0x...)' },
+    { key: 'bnb', label: 'BNB (BEP20) Address', placeholder: 'BNB address (starts with 0x...)' },
 ];
 
 const BANK_FIELDS = [
@@ -24,7 +24,7 @@ const emptyForm = (keys: string[]) => Object.fromEntries(keys.map(k => [k, '']))
 export default function AdminSettingsPage() {
     const [tab, setTab] = useState<'crypto' | 'bank' | 'security'>('crypto');
     const [cryptoForm, setCryptoForm] = useState<any>({
-        usdt_trc20: '', usdt_erc20: '', btc: '', eth: '',
+        usdt_trc20: '', usdt_erc20: '', btc: '', bnb: '',
         network_note: 'Please verify the network before sending. Wrong network = lost funds.',
         min_deposit: '10'
     });
@@ -56,7 +56,7 @@ export default function AdminSettingsPage() {
                     usdt_trc20: cRes.crypto.usdt_trc20 || '',
                     usdt_erc20: cRes.crypto.usdt_erc20 || '',
                     btc: cRes.crypto.btc || '',
-                    eth: cRes.crypto.eth || '',
+                    bnb: cRes.crypto.bnb || '',
                     network_note: cRes.crypto.network_note || '',
                     min_deposit: String(cRes.crypto.min_deposit || '10'),
                 });
@@ -123,17 +123,17 @@ export default function AdminSettingsPage() {
         <div style={{ padding: '32px', color: 'white', maxWidth: '720px' }}>
             {/* Header */}
             <div style={{ marginBottom: '28px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 4px' }}>Payment Settings</h1>
+                <h1 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 4px' }}>Site Settings</h1>
                 <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>
-                    Configure your crypto wallet addresses and bank account details. These are shown to sellers on the deposit page.
+                    Configure global site configurations, payment details, and dashboard display elements.
                 </p>
             </div>
 
             {/* Tabs */}
             <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '4px', marginBottom: '24px' }}>
                 {[
-                    { key: 'crypto', label: '₿  Crypto Wallets' },
-                    { key: 'bank', label: '🏦  Bank Transfer' },
+                    { key: 'crypto', label: '₿  Crypto' },
+                    { key: 'bank', label: '🏦  Bank' },
                     { key: 'security', label: '🔒  Security' },
                 ].map(t => (
                     <button key={t.key} onClick={() => setTab(t.key as any)} style={{
@@ -258,7 +258,7 @@ export default function AdminSettingsPage() {
                             </div>
                         </div>
                     )}
-
+                    
                     {/* Save */}
                     <button onClick={handleSave} disabled={saving} style={{
                         background: saving ? 'rgba(99,102,241,0.4)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',

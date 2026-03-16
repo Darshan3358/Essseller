@@ -429,7 +429,15 @@ export default function DepositPage() {
                         <Wallet className="w-3 h-3" />
                         Secure Recharge System
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900">Deposit Funds</h2>
+                    <div className="flex flex-wrap items-center gap-4">
+                        <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900">Deposit Funds</h2>
+                        {user.verified === 1 && (
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 shadow-sm" title="Verified Seller">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Verified</span>
+                            </div>
+                        )}
+                    </div>
                     <p className="text-gray-500 font-medium max-w-lg leading-relaxed">Choose your preferred wallet and specify the amount to recharge using our secure gateway.</p>
                 </div>
 

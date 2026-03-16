@@ -1,0 +1,116 @@
+
+> essmartseller@1.0.0 dev
+> next dev --turbopack
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/thankiayushi/Downloads/essellers-main/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/thankiayushi/Downloads/essellers-main/frontend/package-lock.json
+
+   ▲ Next.js 15.5.9 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.29.118:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 664ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1652ms
+ GET /reports 200 in 1812ms
+ GET /products 200 in 1050ms
+ ✓ Compiled /storehouse in 145ms
+ GET /storehouse 200 in 175ms
+ ○ Compiling / ...
+ ✓ Compiled / in 840ms
+ GET / 200 in 875ms
+ GET / 200 in 39ms
+ GET /reports 200 in 45ms
+ GET /products 200 in 60ms
+ GET /storehouse 200 in 38ms
+ ✓ Compiled /orders in 194ms
+ GET /orders 200 in 221ms
+ ✓ Compiled /packages in 141ms
+ GET /packages 200 in 170ms
+ ✓ Compiled /spread-packages in 141ms
+ GET /spread-packages 200 in 168ms
+ GET /packages 200 in 48ms
+ GET / 200 in 72ms
+ GET /reports 200 in 104ms
+ GET /storehouse 200 in 89ms
+ GET /orders 200 in 78ms
+ ✓ Compiled /support in 150ms
+ GET /support 200 in 176ms
+ GET / 200 in 84ms
+ ✓ Compiled /deposit in 252ms
+ GET /deposit 200 in 300ms
+ GET / 200 in 43ms
+ GET /deposit 200 in 53ms
+ ✓ Compiled /payment in 154ms
+ GET /payment 200 in 182ms
+ GET / 200 in 114ms
+ GET /deposit 200 in 101ms
+ GET /payment 200 in 90ms
+ GET /payment 200 in 201ms
+ GET / 200 in 99ms
+ GET /reports 200 in 68ms
+ GET / 200 in 41ms
+ GET / 200 in 206ms
+ GET /reports 200 in 52ms
+ GET / 200 in 40ms
+ GET /reports 200 in 51ms
+ GET /products 200 in 126ms
+ GET /storehouse 200 in 85ms
+ GET /orders 200 in 88ms
+ GET /packages 200 in 87ms
+ GET /spread-packages 200 in 95ms
+ ✓ Compiled /queries in 145ms
+ GET /queries 200 in 181ms
+ GET / 200 in 49ms
+ ✓ Compiled /uploads in 152ms
+ GET /uploads 200 in 182ms
+ ✓ Compiled /refunds in 124ms
+ GET /refunds 200 in 148ms
+ ✓ Compiled /settings in 165ms
+ GET /settings 200 in 203ms
+ GET /settings 200 in 112ms
+ GET /settings 200 in 102ms
+ GET /settings 200 in 71ms
+ GET /settings 200 in 76ms
+ ✓ Compiled in 203ms
+ GET /settings 200 in 188ms
+ ⚠ Fast Refresh had to perform a full reload when ./frontend/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 23ms
+ GET /settings 200 in 238ms
+ ✓ Compiled in 92ms
+ GET /settings 200 in 156ms
+ ✓ Compiled in 45ms
+ GET /settings 200 in 242ms
+ GET /settings 200 in 65ms
+ GET /settings 200 in 80ms
+ GET /settings 200 in 71ms
+ GET /settings 200 in 84ms
+ GET /settings 200 in 66ms
+ ⚠ Fast Refresh had to perform a full reload when ./frontend/lib/api.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 25ms
+ GET /settings 200 in 210ms
+ ✓ Compiled in 127ms
+ ✓ Compiled in 73ms
+ GET /settings 200 in 197ms
+ GET /settings 200 in 84ms
+ GET / 200 in 112ms
+ GET /reports 200 in 97ms
+ GET /products 200 in 90ms
+ ⚠ Fast Refresh had to perform a full reload when ./frontend/lib/api.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 22ms
+ GET /products 200 in 312ms
+ ⚠ Fast Refresh had to perform a full reload when ./frontend/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 8ms
+ GET /products 200 in 244ms
+ ⚠ Fast Refresh had to perform a full reload when ./frontend/lib/api.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 17ms
+ GET /products 200 in 183ms
+ ✓ Compiled in 190ms
+ GET /settings 200 in 146ms
+ GET /settings 200 in 115ms
