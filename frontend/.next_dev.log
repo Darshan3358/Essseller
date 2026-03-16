@@ -119,3 +119,4 @@
  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
  ✓ Compiled in 94ms
  GET /settings 200 in 191ms
+ ✓ Compiled in 112ms

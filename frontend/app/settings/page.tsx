@@ -262,15 +262,6 @@ function ProfileSettings() {
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <h4 className="text-2xl font-black text-gray-900 dark:text-slate-100 leading-none">{t('Identity')}</h4>
-                            {user?.verified === 1 ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-emerald-100 dark:border-emerald-800/30">
-                                    <CheckCircle2 className="w-3 h-3" /> Verified
-                                </span>
-                            ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-amber-100 dark:border-amber-800/30">
-                                    <Shield className="w-3 h-3" /> Unverified
-                                </span>
-                            )}
                         </div>
                         <p className="text-gray-500 dark:text-slate-400 font-medium tracking-tight">Customize how your shop appears to global customers.</p>
                     </div>

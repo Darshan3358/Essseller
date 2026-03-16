@@ -174,14 +174,7 @@ export default function DashboardPage() {
                             </div>
                             <div className="space-y-2">
                                 <h1 className="text-2xl sm:text-4xl lg:text-7xl font-black tracking-tight animate-slide-up leading-tight flex flex-wrap items-center gap-3">
-                                    Hello, <span className="text-yellow-300">{(user.shop_name || user.name || 'Seller').toUpperCase()}</span>
-                                    {user.verified === 1 && (
-                                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full border border-white/30 shadow-[0_0_15px_rgba(255,255,255,0.2)]" title="Verified Seller">
-                                            <CheckCircle2 className="w-5 h-5 lg:w-8 lg:h-8 text-yellow-300" />
-                                            <span className="text-[10px] lg:text-sm font-black uppercase tracking-widest text-white">Verified</span>
-                                        </div>
-                                    )}
-                                    !
+                                    Hello, <span className="text-yellow-300">{(user.shop_name || user.name || 'Seller').toUpperCase()}</span>!
                                 </h1>
                                 <p className="text-base md:text-xl text-primary-50 opacity-90 animate-slide-up stagger-1 max-w-lg mx-auto md:mx-0">
                                     Welcome back to your dashboard. All systems are online and running smoothly.
