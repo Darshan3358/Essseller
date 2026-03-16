@@ -43,13 +43,11 @@ export default function DashboardPage() {
     });
     
     const [planDisplayData, setPlanDisplayData] = useState<any>({
-        plan_title: 'Enterprise Pro',
-        features: [
-            { text: '10k Limit', icon: '⚡' },
-            { text: '20% Profit', icon: '📈' },
-            { text: '24/7 Support', icon: '️' },
-            { text: 'API Access', icon: '📡' }
-        ]
+        plan_title: 'Loading...',
+        used_text: '0',
+        remaining_text: '0',
+        views_text: '0',
+        features: []
     });
 
     const [chartData, setChartData] = useState<any[]>([]);
@@ -339,7 +337,7 @@ export default function DashboardPage() {
                                         <div className="absolute inset-0 bg-white/30 rounded-full blur-2xl scale-75"></div>
                                         <Gem className="w-14 h-14 text-white drop-shadow-2xl relative z-10" />
                                     </div>
-                                    <h3 className="text-5xl font-black text-white tracking-tight drop-shadow-md text-center">{planDisplayData.plan_title}</h3>
+                                    <h3 className="text-5xl font-black text-white tracking-tight drop-shadow-md text-center">{stats.planName}</h3>
                                 </div>
 
                                 {/* Features Pills - Dynamic from Settings */}
@@ -360,19 +358,19 @@ export default function DashboardPage() {
                                     <div className="grid grid-cols-3 gap-6 text-center pt-4 border-t border-white/10">
                                         <div>
                                             <p className="text-2xl font-black text-white">
-                                                {stats.usedViews >= 1000 ? (stats.usedViews / 1000).toFixed(1) + 'K' : stats.usedViews}
+                                                {stats.usedViews.toLocaleString()}
                                             </p>
                                             <p className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">Used</p>
                                         </div>
                                         <div>
                                             <p className="text-2xl font-black text-white">
-                                                {stats.remainingViews >= 1000 ? (stats.remainingViews / 1000).toFixed(1) + 'K' : stats.remainingViews}
+                                                {stats.remainingViews.toLocaleString()}
                                             </p>
                                             <p className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">Remaining</p>
                                         </div>
                                         <div>
                                             <p className="text-2xl font-black text-pink-200">
-                                                {stats.views >= 1000 ? (stats.views / 1000).toFixed(1) + 'K' : stats.views}
+                                                {stats.views.toLocaleString()}
                                             </p>
                                             <p className="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">Views</p>
                                         </div>

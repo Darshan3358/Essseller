@@ -224,8 +224,8 @@ export default function AdminUsersPage() {
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                                 <th className="res-show-mobile" style={{ padding: '14px 16px', width: '40px' }}></th>
-                                {['ID', 'Name', 'Shop', 'Views/Used/Rem', 'Balance', 'Created', 'Status', 'Verified', 'Actions'].map((h, i) => (
-                                    <th key={h} className={i > 1 && i < 8 ? 'res-hide-mobile' : ''} style={{
+                                {['ID', 'Name', 'Shop', 'Balance', 'Created', 'Status', 'Actions'].map((h, i) => (
+                                    <th key={h} className={i > 1 && i < 6 ? 'res-hide-mobile' : ''} style={{
                                         padding: '14px 16px', textAlign: 'left',
                                         fontSize: '11px', fontWeight: '700',
                                         color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em'
@@ -236,9 +236,9 @@ export default function AdminUsersPage() {
                         <tbody>
                             {loading ? (
                                 <tr><td colSpan={11} style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Loading...</td></tr>
-                            ) : users.length === 0 ? (
+                            ) : users.filter(u => u.role === 'seller').length === 0 ? (
                                 <tr><td colSpan={11} style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>No users found</td></tr>
-                            ) : users.map(u => (
+                            ) : users.filter(u => u.role === 'seller').map(u => (
                                 <React.Fragment key={u._id}>
                                     <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }}
                                         onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
@@ -255,13 +255,7 @@ export default function AdminUsersPage() {
                                         <td style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{u.id || '—'}</td>
                                         <td style={{ padding: '12px 16px', fontWeight: '600', fontSize: '14px' }}>{u.name}</td>
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>{u.shop_name}</td>
-                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                                <div style={{ fontSize: '13px', fontWeight: '700', color: '#10b981' }}>{u.views?.toLocaleString() || 0} <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 'normal' }}>Total</span></div>
-                                                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>{u.used_views?.toLocaleString() || 0} <span style={{ fontSize: '9px', opacity: 0.6 }}>Used</span></div>
-                                                <div style={{ fontSize: '11px', color: '#6366f1', fontWeight: 'bold' }}>{((u.views || 0) - (u.used_views || 0)).toLocaleString()} <span style={{ fontSize: '9px', opacity: 0.6 }}>Rem</span></div>
-                                            </div>
-                                        </td>
+
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
                                             <div style={{ fontSize: '13px', fontWeight: '700', color: 'white' }}>${u.wallet_balance?.toFixed(2) || '0.00'}</div>
                                             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>G: ${u.guarantee_balance?.toFixed(2) || '0.00'}</div>
@@ -274,9 +268,7 @@ export default function AdminUsersPage() {
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
                                             <Badge color={u.freeze === 1 ? 'red' : 'green'}>{u.freeze === 1 ? 'Frozen' : 'Active'}</Badge>
                                         </td>
-                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
-                                            <Badge color={u.verified === 1 ? 'green' : 'yellow'}>{u.verified === 1 ? 'Verified' : 'Pending'}</Badge>
-                                        </td>
+
                                         <td style={{ padding: '12px 16px' }}>
                                             <div style={{ display: 'flex', gap: '6px' }}>
                                                 <button
@@ -315,19 +307,7 @@ export default function AdminUsersPage() {
                                                 >
                                                     <Shield size={14} />
                                                 </button>
-                                                <button
-                                                    onClick={() => handleAction(u._id, { verified: u.verified === 1 ? 0 : 1 })}
-                                                    disabled={actionLoading === u._id}
-                                                    data-tooltip={u.verified === 1 ? 'Unverify Seller' : 'Verify Seller'}
-                                                    style={{
-                                                        background: u.verified === 1 ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
-                                                        border: u.verified === 1 ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(16,185,129,0.3)',
-                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
-                                                        color: u.verified === 1 ? '#f87171' : '#10b981', display: 'flex'
-                                                    }}
-                                                >
-                                                    <CheckCircle size={14} />
-                                                </button>
+
                                                 <button
                                                     onClick={() => handleDelete(u._id, u.name)}
                                                     disabled={actionLoading === u._id}
@@ -364,10 +344,7 @@ export default function AdminUsersPage() {
                                                         <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Status</span>
                                                         <Badge color={u.freeze === 1 ? 'red' : 'green'}>{u.freeze === 1 ? 'Frozen' : 'Active'}</Badge>
                                                     </div>
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
-                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Verified</span>
-                                                        <Badge color={u.verified === 1 ? 'green' : 'yellow'}>{u.verified === 1 ? 'Verified' : 'Pending'}</Badge>
-                                                    </div>
+
                                                 </div>
                                             </td>
                                         </tr>
@@ -441,11 +418,7 @@ export default function AdminUsersPage() {
                                 { label: 'Store Status', key: 'store_status', type: 'text' },
                                 { label: 'Total Views', key: 'views', type: 'number' },
                                 { label: 'Used Views', key: 'used_views', type: 'number' },
-                                {
-                                    label: 'Verified Status (0=Pending, 1=Verified)',
-                                    key: 'verified',
-                                    type: 'number'
-                                },
+
                                 {
                                     label: 'Remaining Views (Calculated)',
                                     key: 'remaining_views',

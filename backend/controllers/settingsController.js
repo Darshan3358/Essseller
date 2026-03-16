@@ -177,6 +177,9 @@ const getPlanDisplaySettings = asyncHandler(async (req, res) => {
         success: true,
         data: setting ? setting.value : {
             plan_title: 'Enterprise Pro',
+            used_text: '10.5K',
+            remaining_text: '5.2K',
+            views_text: '15.7K',
             features: [
                 { text: '10k Limit', icon: '⚡' },
                 { text: '20% Profit', icon: '📈' },
@@ -191,8 +194,8 @@ const getPlanDisplaySettings = asyncHandler(async (req, res) => {
 // @route   PUT /api/settings/plan-display
 // @access  Private/Admin
 const updatePlanDisplaySettings = asyncHandler(async (req, res) => {
-    const { plan_title, features } = req.body;
-    const value = { plan_title, features };
+    const { plan_title, features, used_text, remaining_text, views_text } = req.body;
+    const value = { plan_title, features, used_text, remaining_text, views_text };
     await SiteSetting.findOneAndUpdate(
         { key: 'plan_display' },
         { key: 'plan_display', value },

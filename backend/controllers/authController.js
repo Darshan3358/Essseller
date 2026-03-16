@@ -177,10 +177,12 @@ const registerSeller = asyncHandler(async (req, res) => {
 
     if (req.files) {
         if (req.files.cert_front) {
-            cert_front = '/uploads/' + req.files.cert_front[0].filename;
+            const file = req.files.cert_front[0];
+            cert_front = file.path.startsWith('http') ? file.path : '/uploads/' + file.filename;
         }
         if (req.files.cert_back) {
-            cert_back = '/uploads/' + req.files.cert_back[0].filename;
+            const file = req.files.cert_back[0];
+            cert_back = file.path.startsWith('http') ? file.path : '/uploads/' + file.filename;
         }
     }
 

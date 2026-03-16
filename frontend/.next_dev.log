@@ -120,3 +120,444 @@
  ✓ Compiled in 94ms
  GET /settings 200 in 191ms
  ✓ Compiled in 112ms
+ ✓ Compiled /admin in 233ms
+ GET /admin 200 in 320ms
+ ✓ Compiled /admin/dashboard in 368ms
+ GET /admin/dashboard 200 in 416ms
+ ✓ Compiled /admin/dashboard/users in 148ms
+ GET /admin/dashboard/users 200 in 174ms
+ ✓ Compiled /admin/dashboard/packages in 106ms
+ GET /admin/dashboard/packages 200 in 130ms
+ ✓ Compiled /admin/dashboard/package-plans in 128ms
+ GET /admin/dashboard/package-plans 200 in 162ms
+ ✓ Compiled /admin/dashboard/spread-packages in 126ms
+ GET /admin/dashboard/spread-packages 200 in 164ms
+ GET /admin/dashboard/package-plans 200 in 29ms
+ GET /admin/dashboard/users 200 in 56ms
+ GET /admin/dashboard 200 in 39ms
+ GET /admin/dashboard/users 200 in 53ms
+ GET /admin/dashboard/packages 200 in 53ms
+ GET /admin/dashboard/package-plans 200 in 52ms
+ GET /admin/dashboard/spread-packages 200 in 42ms
+ ✓ Compiled /admin/dashboard/recharge in 251ms
+ GET /admin/dashboard/recharge 200 in 280ms
+ ✓ Compiled /admin/dashboard/withdraw in 136ms
+ GET /admin/dashboard/withdraw 200 in 173ms
+ GET /admin/dashboard/users 200 in 54ms
+ GET /admin/dashboard/package-plans 200 in 55ms
+ GET /admin/dashboard/packages 200 in 51ms
+ GET /admin/dashboard/spread-packages 200 in 51ms
+ GET /admin/dashboard/package-plans 200 in 52ms
+ GET /admin/dashboard/users 200 in 53ms
+ ✓ Compiled in 76ms
+ ✓ Compiled in 75ms
+ ✓ Compiled in 68ms
+ GET /admin/dashboard/users 200 in 227ms
+ GET /admin/dashboard/users 200 in 83ms
+ GET /admin/dashboard/packages 200 in 52ms
+ GET /admin/dashboard/package-plans 200 in 96ms
+ GET /admin/dashboard/spread-packages 200 in 55ms
+ GET /admin/dashboard/users 200 in 53ms
+ GET /admin/dashboard/packages 200 in 36ms
+ GET /admin/dashboard/package-plans 200 in 53ms
+ GET /admin/dashboard/package-plans 200 in 156ms
+ ✓ Compiled in 92ms
+ ✓ Compiled in 86ms
+ ✓ Compiled /admin/dashboard/package-plans in 68ms
+ GET /settings 200 in 312ms
+ GET /admin/dashboard/package-plans 200 in 321ms
+ GET /admin/dashboard/package-plans 200 in 170ms
+ GET /admin 200 in 89ms
+ GET / 200 in 245ms
+ GET / 200 in 71ms
+ GET / 200 in 105ms
+ GET / 200 in 81ms
+ GET / 200 in 126ms
+ ✓ Compiled in 96ms
+ ✓ Compiled in 247ms
+ GET / 200 in 88ms
+ GET / 200 in 80ms
+ ✓ Compiled in 67ms
+ GET / 200 in 100ms
+ GET / 200 in 74ms
+ ✓ Compiled in 69ms
+ ✓ Compiled in 54ms
+ ✓ Compiled in 47ms
+ GET / 200 in 105ms
+ ✓ Compiled in 114ms
+ ✓ Compiled /admin/dashboard/package-plans in 31ms
+ GET /settings 200 in 277ms
+ GET /admin/dashboard/package-plans 200 in 272ms
+ GET / 200 in 271ms
+ GET / 200 in 119ms
+ ✓ Compiled in 123ms
+ ✓ Compiled /login in 265ms
+ GET /login 200 in 315ms
+ GET /login 200 in 36ms
+ ✓ Compiled in 207ms
+ GET /login 200 in 207ms
+ GET / 200 in 101ms
+ GET /reports 200 in 147ms
+ GET /products 200 in 89ms
+ GET /storehouse 200 in 91ms
+ GET /orders 200 in 73ms
+ GET /packages 200 in 67ms
+ GET /spread-packages 200 in 92ms
+ GET /spread-packages 200 in 37ms
+ GET /refunds 200 in 73ms
+ GET /reports 200 in 90ms
+ GET /products 200 in 63ms
+ GET /storehouse 200 in 53ms
+ GET /orders 200 in 34ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 696ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.2u308ei1wvf'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.2u308ei1wvf'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.dztb9w7x127'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.dztb9w7x127'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.3opjrvk9ycb'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.3opjrvk9ycb'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/reports/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/reports/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.899o9s5kmvk'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.899o9s5kmvk'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.bnc9p049md4'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.bnc9p049md4'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/reports/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/reports/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.agm8xs83vl'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.agm8xs83vl'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.1tvuwz5neu'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.1tvuwz5neu'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.xezx5tpdgba'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.xezx5tpdgba'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.hpma470zx6a'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.hpma470zx6a'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/orders/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/orders/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.qv6rriu1y5r'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.qv6rriu1y5r'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/orders/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/orders/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.twjyoqqf6mk'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.twjyoqqf6mk'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.npohna76u2m'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.npohna76u2m'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.kq589oraoy8'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.kq589oraoy8'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/page/app-build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.m4dtk0vg52'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.m4dtk0vg52'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.3ww9aqktgeu'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.3ww9aqktgeu'
+}
+ ✓ Compiled in 308ms
+ ✓ Compiled in 65ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'
+}
+ ✓ Compiled /admin/dashboard/package-plans in 38ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.9x0qqtif4fg'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.9x0qqtif4fg'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.padgfskg3mp'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.padgfskg3mp'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.65lldnk4hi'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.65lldnk4hi'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.86e8nhtd9re'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.86e8nhtd9re'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.c5oeheqgz5k'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.c5oeheqgz5k'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.le1apocou4'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.le1apocou4'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.atlfcj6vbi6'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.atlfcj6vbi6'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.l7hdfw4quf'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.l7hdfw4quf'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.alip6vcmir7'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.alip6vcmir7'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.e76olyuotlw'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.e76olyuotlw'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.p9y6ymc6psn'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.p9y6ymc6psn'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.25vyo3x638d'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.25vyo3x638d'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.w4n96zd0qps'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.w4n96zd0qps'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.t6848prbiw'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.t6848prbiw'
+}
+[Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.jso55lztpe7'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/static/development/_buildManifest.js.tmp.jso55lztpe7'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/settings/page/build-manifest.json'
+}
+ ⨯ Error: Cannot find module '../chunks/ssr/[turbopack]_runtime.js'
+Require stack:
+- /Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/pages/_document.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/require.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/load-components.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/build/utils.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/build/swc/options.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/build/swc/index.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/config.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/next.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/lib/start-server.js
+    at Object.<anonymous> (.next/server/pages/_document.js:1:7) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /settings 500 in 207ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/app/admin/dashboard/package-plans/page/build-manifest.json'
+}
+ ⨯ Error: Cannot find module '../chunks/ssr/[turbopack]_runtime.js'
+Require stack:
+- /Users/thankiayushi/Downloads/essellers-main/frontend/.next/server/pages/_document.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/require.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/load-components.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/build/utils.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/build/swc/options.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/build/swc/index.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/config.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/next.js
+- /Users/thankiayushi/Downloads/essellers-main/frontend/node_modules/next/dist/server/lib/start-server.js
+    at Object.<anonymous> (.next/server/pages/_document.js:1:7) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /admin/dashboard/package-plans 500 in 133ms
+[?25h

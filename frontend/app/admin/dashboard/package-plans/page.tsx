@@ -3,6 +3,22 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Package, Plus, Edit2, Trash2, Save, X, RefreshCw, CheckCircle2, Star, Zap } from 'lucide-react';
 
+const inputStyle = {
+    width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '10px', padding: '10px 14px', color: 'white', fontSize: '13px', outline: 'none'
+};
+
+const labelStyle = {
+    display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase',
+    color: 'rgba(255,255,255,0.4)', marginBottom: '6px', letterSpacing: '0.05em'
+};
+
+const btnStyle: any = {
+    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+    padding: '8px 14px', borderRadius: '10px', border: 'none', cursor: 'pointer',
+    fontSize: '13px', fontWeight: '600', transition: 'all 0.2s'
+};
+
 export default function AdminPackagePlansPage() {
     const [plans, setPlans] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -26,6 +42,9 @@ export default function AdminPackagePlansPage() {
 
     const [planBanner, setPlanBanner] = useState<any>({
         plan_title: 'Enterprise Pro',
+        used_text: '0',
+        remaining_text: '0',
+        views_text: '0',
         features: [
             { text: '', icon: '' },
             { text: '', icon: '' },
@@ -45,13 +64,13 @@ export default function AdminPackagePlansPage() {
                 }),
                 fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings/plan-display`)
             ]);
-            
+
             const plansData = await plansRes.json();
             if (plansData.success) setPlans(plansData.data);
-            
+
             const bannerData = await bannerRes.json();
             if (bannerData.success && bannerData.data) setPlanBanner(bannerData.data);
-            
+
         } catch (err) {
             console.error('Failed to fetch data:', err);
         } finally {
@@ -197,7 +216,7 @@ export default function AdminPackagePlansPage() {
                         <h2 style={{ fontSize: '18px', fontWeight: '800', margin: '0 0 4px' }}>Dashboard Plan Banner</h2>
                         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', margin: 0 }}>Configure the main plan title and feature badges shown on the seller dashboard.</p>
                     </div>
-                    <button 
+                    <button
                         onClick={handleSaveBanner}
                         disabled={savingBanner}
                         style={{ ...btnStyle, background: '#10b981', color: 'white', padding: '8px 24px' }}>
@@ -210,45 +229,62 @@ export default function AdminPackagePlansPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         <div>
                             <label style={labelStyle}>Banner Title</label>
-                            <input 
-                                style={inputStyle} 
-                                value={planBanner.plan_title} 
+                            <input
+                                style={inputStyle}
+                                value={planBanner.plan_title}
                                 onChange={e => setPlanBanner({ ...planBanner, plan_title: e.target.value })}
                                 placeholder="e.g. Enterprise Pro"
                             />
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                            {planBanner.features.map((f: any, i: number) => (
-                                <div key={i} style={{ display: 'flex', gap: '6px' }}>
-                                    <input 
-                                        style={{ ...inputStyle, width: '45px', textAlign: 'center' }} 
-                                        value={f.icon} 
-                                        onChange={e => {
-                                            const nf = [...planBanner.features];
-                                            nf[i].icon = e.target.value;
-                                            setPlanBanner({...planBanner, features: nf});
-                                        }}
-                                        placeholder="⚡"
-                                    />
-                                    <input 
-                                        style={inputStyle} 
-                                        value={f.text} 
-                                        onChange={e => {
-                                            const nf = [...planBanner.features];
-                                            nf[i].text = e.target.value;
-                                            setPlanBanner({...planBanner, features: nf});
-                                        }}
-                                        placeholder="Feature"
-                                    />
-                                </div>
-                            ))}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                            <div>
+                                <label style={labelStyle}>Used Text</label>
+                                <input style={inputStyle} value={planBanner.used_text} onChange={e => setPlanBanner({ ...planBanner, used_text: e.target.value })} placeholder="0" />
+                            </div>
+                            <div>
+                                <label style={labelStyle}>Remaining Text</label>
+                                <input style={inputStyle} value={planBanner.remaining_text} onChange={e => setPlanBanner({ ...planBanner, remaining_text: e.target.value })} placeholder="0" />
+                            </div>
+                            <div>
+                                <label style={labelStyle}>Views Text</label>
+                                <input style={inputStyle} value={planBanner.views_text} onChange={e => setPlanBanner({ ...planBanner, views_text: e.target.value })} placeholder="0" />
+                            </div>
+                        </div>
+                        <div>
+                            <label style={labelStyle}>Feature Badges</label>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                {planBanner.features.map((f: any, i: number) => (
+                                    <div key={i} style={{ display: 'flex', gap: '6px' }}>
+                                        <input
+                                            style={{ ...inputStyle, width: '45px', textAlign: 'center' }}
+                                            value={f.icon}
+                                            onChange={e => {
+                                                const nf = [...planBanner.features];
+                                                nf[i].icon = e.target.value;
+                                                setPlanBanner({ ...planBanner, features: nf });
+                                            }}
+                                            placeholder="⚡"
+                                        />
+                                        <input
+                                            style={inputStyle}
+                                            value={f.text}
+                                            onChange={e => {
+                                                const nf = [...planBanner.features];
+                                                nf[i].text = e.target.value;
+                                                setPlanBanner({ ...planBanner, features: nf });
+                                            }}
+                                            placeholder="Feature"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
                     {/* Live Preview */}
-                    <div style={{ 
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)', 
-                        borderRadius: '20px', display: 'flex', flexDirection: 'column', 
+                    <div style={{
+                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)',
+                        borderRadius: '20px', display: 'flex', flexDirection: 'column',
                         alignItems: 'center', justifyContent: 'center', padding: '32px',
                         color: 'white', position: 'relative', overflow: 'hidden'
                     }}>
@@ -258,12 +294,28 @@ export default function AdminPackagePlansPage() {
                                 <Star size={20} />
                             </div>
                             <h3 style={{ fontSize: '28px', fontWeight: '900', margin: '0 0 12px' }}>{planBanner.plan_title}</h3>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px', marginBottom: '24px' }}>
                                 {planBanner.features.map((f: any, i: number) => (
                                     <span key={i} style={{ background: 'rgba(255,255,255,0.15)', padding: '4px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: '700' }}>
                                         {f.icon} {f.text}
                                     </span>
                                 ))}
+                            </div>
+
+                            {/* Views/Used/Rem Preview Section */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', width: '100%', maxWidth: '300px' }}>
+                                <div>
+                                    <p style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: 'white' }}>{planBanner.used_text || '0'}</p>
+                                    <p style={{ margin: 0, fontSize: '9px', fontWeight: '800', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>Used</p>
+                                </div>
+                                <div>
+                                    <p style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: 'white' }}>{planBanner.remaining_text || '0'}</p>
+                                    <p style={{ margin: 0, fontSize: '9px', fontWeight: '800', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>Remaining</p>
+                                </div>
+                                <div>
+                                    <p style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: '#fbcfe8' }}>{planBanner.views_text || '0'}</p>
+                                    <p style={{ margin: 0, fontSize: '9px', fontWeight: '800', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>Views</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -422,19 +474,3 @@ export default function AdminPackagePlansPage() {
         </div>
     );
 }
-
-const inputStyle = {
-    width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '10px', padding: '10px 14px', color: 'white', fontSize: '13px', outline: 'none'
-};
-
-const labelStyle = {
-    display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase',
-    color: 'rgba(255,255,255,0.4)', marginBottom: '6px', letterSpacing: '0.05em'
-};
-
-const btnStyle: any = {
-    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-    padding: '8px 14px', borderRadius: '10px', border: 'none', cursor: 'pointer',
-    fontSize: '13px', fontWeight: '600', transition: 'all 0.2s'
-};
