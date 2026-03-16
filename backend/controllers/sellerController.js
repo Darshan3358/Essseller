@@ -479,6 +479,7 @@ exports.updateShopSettings = async (req, res) => {
         }
         if (shop_name) sellerUpdates.shop_name = shop_name;
         
+        let shop_logo = '';
         if (req.files && req.files.shop_logo) {
             const file = req.files.shop_logo[0];
             // If using Cloudinary, file.path is the full URL
