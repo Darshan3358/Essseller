@@ -97,12 +97,15 @@ const createProduct = asyncHandler(async (req, res) => {
 
     // Handle single image
     if (req.files && req.files.image) {
-        productData.image = `/uploads/${req.files.image[0].filename}`;
+        const file = req.files.image[0];
+        productData.image = file.path.startsWith('http') ? file.path : `/uploads/${file.filename}`;
     }
 
     // Handle gallery images
     if (req.files && req.files.gallery) {
-        productData.gallery = req.files.gallery.map(file => `/uploads/${file.filename}`);
+        productData.gallery = req.files.gallery.map(file => 
+            file.path.startsWith('http') ? file.path : `/uploads/${file.filename}`
+        );
     }
 
     const product = await Product.create(productData);
