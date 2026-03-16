@@ -5,7 +5,7 @@ const connectDB = require('./config/db');
 // Load environment variables
 dotenv.config();
 
-// Initialize DB connection and rotateCode (runs once on cold start)
+// One-time initialization logic for local development
 const init = async () => {
     try {
         await connectDB();
@@ -17,29 +17,6 @@ const init = async () => {
     }
 };
 
-// Production (Vercel serverless) - Ensure DB is connected
-let isConnected = false;
-const connect = async () => {
-    if (isConnected) return;
-    await init();
-    isConnected = true;
-};
-
-// Middleware to ensure DB is connected before any request
-app.use(async (req, res, next) => {
-    if (process.env.NODE_ENV === 'production') {
-        try {
-            await connect();
-            next();
-        } catch (error) {
-            console.error('DB Connection Middleware Error:', error);
-            res.status(500).json({ success: false, message: 'Database Connection Error' });
-        }
-    } else {
-        next();
-    }
-});
-
 if (process.env.NODE_ENV !== 'production') {
     // Local development - run as normal server
     init().then(() => {
@@ -48,7 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
 
         // Rotate Invitation Code every 5 minutes (only in non-serverless)
         setInterval(() => {
-            rotateCode();
+            rotateCode().catch(err => console.error('Interval rotateCode error:', err));
         }, 300000);
 
         app.listen(PORT, () => {
@@ -57,5 +34,5 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-// Export for Vercel serverless
+// Export for Vercel serverless (Middleware in app.js handles DB connection on cold starts)
 module.exports = app;

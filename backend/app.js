@@ -17,6 +17,40 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
+/**
+ * DB Connection Warm-up for Serverless (Vercel)
+ */
+const connectDB = require('./config/db');
+let isConnected = false;
+
+app.use(async (req, res, next) => {
+    // Skip for static files if any, but focus on /api
+    if (req.url.startsWith('/api') || req.url === '/') {
+        if (!isConnected) {
+            try {
+                console.log('Serverless Warm-up: Connecting to DB...');
+                await connectDB();
+                isConnected = true;
+                
+                // One-time initialization logic
+                try {
+                    const { rotateCode } = require('./controllers/settingsController');
+                    await rotateCode();
+                } catch (rotErr) {
+                    console.error('Initial rotateCode failed:', rotErr.message);
+                }
+            } catch (err) {
+                console.error('CRITICAL: DB Connection Failed:', err.message);
+                return res.status(500).json({ 
+                    success: false, 
+                    message: 'Database Connection Error. Please check MONGO_URI.' 
+                });
+            }
+        }
+    }
+    next();
+});
+
 // Trust proxy for Vercel
 app.set('trust proxy', 1);
 
