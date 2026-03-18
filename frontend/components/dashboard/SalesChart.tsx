@@ -14,7 +14,7 @@ type MetricType = 'sales' | 'profit' | 'orders' | 'aov';
 const metricConfig = {
     sales: {
         label: 'Gross Sales',
-        color: '#6366f1', // Indigo
+        color: '#3b82f6', // Indigo
         icon: DollarSign,
     },
     profit: {

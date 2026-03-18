@@ -138,8 +138,8 @@ export default function AdminSettingsPage() {
                 ].map(t => (
                     <button key={t.key} onClick={() => setTab(t.key as any)} style={{
                         flex: 1, padding: '10px', borderRadius: '9px', border: 'none',
-                        background: tab === t.key ? 'rgba(99,102,241,0.3)' : 'transparent',
-                        color: tab === t.key ? '#a5b4fc' : 'rgba(255,255,255,0.4)',
+                        background: tab === t.key ? 'rgba(59,130,246,0.3)' : 'transparent',
+                        color: tab === t.key ? '#bfdbfe' : 'rgba(255,255,255,0.4)',
                         fontWeight: '700', fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s'
                     }}>{t.label}</button>
                 ))}
@@ -261,7 +261,7 @@ export default function AdminSettingsPage() {
                     
                     {/* Save */}
                     <button onClick={handleSave} disabled={saving} style={{
-                        background: saving ? 'rgba(99,102,241,0.4)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                        background: saving ? 'rgba(59,130,246,0.4)' : 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                         border: 'none', borderRadius: '14px', padding: '16px 32px', color: 'white',
                         fontSize: '15px', fontWeight: '800', cursor: saving ? 'not-allowed' : 'pointer',
                         display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center',

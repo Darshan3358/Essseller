@@ -97,6 +97,7 @@ app.use('/api/withdrawals', withdrawRoutes);
 app.use('/api/recharges', rechargeRoutes);
 app.use('/api/guarantee', guaranteeRoutes);
 app.use('/api/suppliers', supplierRoutes);
+console.log('[Info] Mounting settingsRoutes at /api/settings');
 app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/support', require('./routes/supportRoutes'));
 app.use('/api/uploads', require('./routes/uploadsRoutes'));

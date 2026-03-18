@@ -39,10 +39,10 @@ export default function SettingsPage() {
 
     const tabs: { id: string, name: string, icon: any, color: string, bg: string, darkBg: string }[] = [
         { id: 'Profile', name: t('Shop Profile'), icon: Store, color: 'text-blue-600', bg: 'bg-blue-50', darkBg: 'dark:bg-blue-900/20' },
-        { id: 'Regional', name: t('Regional & Display'), icon: Globe, color: 'text-indigo-600', bg: 'bg-indigo-50', darkBg: 'dark:bg-indigo-900/20' },
+        { id: 'Regional', name: t('Regional & Display'), icon: Globe, color: 'text-blue-600', bg: 'bg-blue-50', darkBg: 'dark:bg-blue-900/20' },
         { id: 'Notifications', name: t('Alerts & Messages'), icon: Bell, color: 'text-amber-600', bg: 'bg-amber-50', darkBg: 'dark:bg-amber-900/20' },
         { id: 'Security', name: t('Account Security'), icon: Shield, color: 'text-emerald-600', bg: 'bg-emerald-50', darkBg: 'dark:bg-emerald-900/20' },
-        { id: 'Appearance', name: t('Visual Interface'), icon: Palette, color: 'text-purple-600', bg: 'bg-purple-50', darkBg: 'dark:bg-purple-900/20' },
+        { id: 'Appearance', name: t('Visual Interface'), icon: Palette, color: 'text-blue-600', bg: 'bg-blue-50', darkBg: 'dark:bg-blue-900/20' },
     ];
 
     const renderContent = () => {
@@ -409,10 +409,10 @@ function RegionalSettings() {
 
     return (
         <div className="glass-card p-10 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-3xl -mr-40 -mt-40 transition-colors group-hover:bg-indigo-500/10" />
+            <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl -mr-40 -mt-40 transition-colors group-hover:bg-blue-500/10" />
 
             <div className="flex items-center gap-6 mb-10 pb-8 border-b border-gray-100 relative z-10">
-                <div className="p-4 bg-indigo-50 text-indigo-600 rounded-2xl shadow-inner">
+                <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl shadow-inner">
                     <Globe className="w-8 h-8" />
                 </div>
                 <div>
@@ -426,7 +426,7 @@ function RegionalSettings() {
             <div className="grid grid-cols-1 gap-10 max-w-2xl relative z-10">
                 <div className="space-y-4">
                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-                        <CreditCard className="w-4 h-4 text-indigo-400" /> Administrative Currency
+                        <CreditCard className="w-4 h-4 text-blue-400" /> Administrative Currency
                     </label>
                     <select
                         value={currency}
@@ -442,7 +442,7 @@ function RegionalSettings() {
 
                 <div className="space-y-4">
                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-                        <Languages className="w-4 h-4 text-indigo-400" /> Platform Language
+                        <Languages className="w-4 h-4 text-blue-400" /> Platform Language
                     </label>
                     <select
                         value={localLang}
@@ -457,7 +457,7 @@ function RegionalSettings() {
 
                 <div className="space-y-4">
                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-                        <Smartphone className="w-4 h-4 text-indigo-400" /> System Timezone
+                        <Smartphone className="w-4 h-4 text-blue-400" /> System Timezone
                     </label>
                     <select
                         value={timezone}
@@ -477,7 +477,7 @@ function RegionalSettings() {
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="btn-primary !bg-indigo-600 hover:!bg-indigo-700 !px-12 !py-4 !rounded-2xl shadow-xl shadow-indigo-600/20 text-sm font-black flex items-center gap-3 disabled:opacity-50"
+                    className="btn-primary !bg-blue-600 hover:!bg-blue-700 !px-12 !py-4 !rounded-2xl shadow-xl shadow-blue-600/20 text-sm font-black flex items-center gap-3 disabled:opacity-50"
                 >
                     {isSaving ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Save className="w-5 h-5" />}
                     {t('Save Settings')}
@@ -817,7 +817,7 @@ function AppearanceSettings() {
     return (
         <div className="glass-card p-10">
             <div className="flex items-center gap-6 mb-10 pb-8 border-b border-gray-100 dark:border-slate-800">
-                <div className="p-4 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl">
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl">
                     <Palette className="w-8 h-8" />
                 </div>
                 <div>
@@ -836,30 +836,30 @@ function AppearanceSettings() {
                             onClick={() => toggleTheme('light')}
                             className={`flex-1 group cursor-pointer space-y-4`}
                         >
-                            <div className={`h-32 rounded-3xl border-4 transition-all duration-300 flex flex-col p-4 bg-white shadow-lg ${theme === 'light' ? 'border-purple-500 scale-105 shadow-purple-500/10' : 'border-gray-50 hover:border-gray-200 grayscale opacity-60'}`}>
+                            <div className={`h-32 rounded-3xl border-4 transition-all duration-300 flex flex-col p-4 bg-white shadow-lg ${theme === 'light' ? 'border-blue-500 scale-105 shadow-blue-500/10' : 'border-gray-50 hover:border-gray-200 grayscale opacity-60'}`}>
                                 <div className="w-12 h-2 bg-gray-100 rounded-full mb-2" />
                                 <div className="w-8 h-2 bg-gray-100 rounded-full" />
                                 <div className="mt-auto flex gap-2">
-                                    <div className="w-4 h-4 bg-purple-100 rounded-md" />
+                                    <div className="w-4 h-4 bg-blue-100 rounded-md" />
                                     <div className="w-4 h-4 bg-blue-100 rounded-md" />
                                 </div>
                             </div>
-                            <p className={`text-center font-black transition-colors ${theme === 'light' ? 'text-purple-600' : 'text-gray-400 group-hover:text-gray-600'}`}>Pristine Light</p>
+                            <p className={`text-center font-black transition-colors ${theme === 'light' ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'}`}>Pristine Light</p>
                         </div>
 
                         <div
                             onClick={() => toggleTheme('dark')}
                             className={`flex-1 group cursor-pointer space-y-4`}
                         >
-                            <div className={`h-32 rounded-3xl border-4 transition-all duration-300 flex flex-col p-4 bg-slate-900 shadow-2xl ${theme === 'dark' ? 'border-purple-500 scale-105 shadow-purple-500/20' : 'border-gray-50 hover:border-gray-200 grayscale opacity-60'}`}>
+                            <div className={`h-32 rounded-3xl border-4 transition-all duration-300 flex flex-col p-4 bg-slate-900 shadow-2xl ${theme === 'dark' ? 'border-blue-500 scale-105 shadow-blue-500/20' : 'border-gray-50 hover:border-gray-200 grayscale opacity-60'}`}>
                                 <div className="w-12 h-2 bg-slate-800 rounded-full mb-2" />
                                 <div className="w-8 h-2 bg-slate-800 rounded-full" />
                                 <div className="mt-auto flex gap-2">
-                                    <div className="w-4 h-4 bg-purple-500/20 rounded-md" />
+                                    <div className="w-4 h-4 bg-blue-500/20 rounded-md" />
                                     <div className="w-4 h-4 bg-blue-500/20 rounded-md" />
                                 </div>
                             </div>
-                            <p className={`text-center font-black transition-colors ${theme === 'dark' ? 'text-purple-600' : 'text-gray-400 group-hover:text-gray-600'}`}>Obsidian Dark</p>
+                            <p className={`text-center font-black transition-colors ${theme === 'dark' ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'}`}>Obsidian Dark</p>
                         </div>
                     </div>
                 </div>
@@ -868,7 +868,7 @@ function AppearanceSettings() {
             <div className="mt-12 pt-8 border-t border-gray-100 dark:border-slate-800 flex justify-end">
                 <button
                     onClick={() => setMessage('Success: Appearance preferences synchronized.')}
-                    className="btn-primary !bg-purple-600 hover:!bg-purple-700 !px-12 !py-4 !rounded-2xl shadow-xl shadow-purple-600/20 text-sm font-black flex items-center gap-3"
+                    className="btn-primary !bg-blue-600 hover:!bg-blue-700 !px-12 !py-4 !rounded-2xl shadow-xl shadow-blue-600/20 text-sm font-black flex items-center gap-3"
                 >
                     <Save className="w-5 h-5" />
                     {t('Save Settings')}

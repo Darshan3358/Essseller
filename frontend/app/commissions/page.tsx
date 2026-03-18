@@ -11,7 +11,7 @@ export default function CommissionsPage() {
         <Shell>
             <div className="space-y-10 pb-20 max-w-[1600px] mx-auto">
                 {/* Visual Header */}
-                <div className="relative p-10 lg:p-14 rounded-[3rem] bg-gradient-to-br from-indigo-600 to-purple-800 text-white overflow-hidden shadow-2xl">
+                <div className="relative p-10 lg:p-14 rounded-[3rem] bg-gradient-to-br from-blue-600 to-blue-800 text-white overflow-hidden shadow-2xl">
                     <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-white/10 rounded-full blur-[100px] animate-pulse" />
                     <div className="absolute bottom-[-10%] left-[-5%] w-64 h-64 bg-pink-500/20 rounded-full blur-[80px]" />
 
@@ -114,7 +114,7 @@ export default function CommissionsPage() {
                             <div className="space-y-6">
                                 {[
                                     { name: t('Product Sales'), percentage: 0, color: 'bg-blue-500' },
-                                    { name: t('Affiliate System'), percentage: 0, color: 'bg-purple-500' },
+                                    { name: t('Affiliate System'), percentage: 0, color: 'bg-blue-500' },
                                     { name: t('Referrals'), percentage: 0, color: 'bg-pink-500' },
                                 ].map((source, i) => (
                                     <div key={i} className="space-y-2">

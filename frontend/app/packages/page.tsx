@@ -111,7 +111,7 @@ export default function PackagesPage() {
     // Per-plan icon background colour
     const iconBg: Record<string, string> = {
         'Starter Merchant': 'bg-blue-500',
-        'Professional Seller': 'bg-purple-500',
+        'Professional Seller': 'bg-blue-500',
         'Enterprise Pro': 'bg-gray-900',
     };
 

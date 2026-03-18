@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem('adminUser', JSON.stringify(user));
             router.push('/admin/dashboard');
         } else {
-            router.push('/');
+            router.push('/dashboard');
         }
     };
 
@@ -151,7 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             setToken(token);
             setUser(user);
-            router.push('/');
+            router.push('/dashboard');
         } catch (error) {
             throw error;
         } finally {

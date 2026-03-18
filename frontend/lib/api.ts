@@ -31,9 +31,16 @@ export const getFullImageUrl = (path: string | null | undefined): string => {
 };
 
 export async function apiRequest(endpoint: string, options: RequestInit = {}) {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    let token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-
+    const isAdminPage = typeof window !== 'undefined' && window.location.pathname.includes('/admin');
+    
+    if (typeof window !== 'undefined' && (endpoint.startsWith('/admin') || isAdminPage)) {
+        const adminToken = localStorage.getItem('adminToken');
+        if (adminToken) {
+            token = adminToken;
+        }
+    }
     
     const isFormData = options.body instanceof FormData;
 

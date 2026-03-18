@@ -84,7 +84,7 @@ export default function CarouselManagement() {
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-[60vh]">
-            <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
+            <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
         </div>
     );
 
@@ -94,7 +94,7 @@ export default function CarouselManagement() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="text-left">
                     <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-                        <Layout className="w-8 h-8 text-indigo-500" />
+                        <Layout className="w-8 h-8 text-blue-500" />
                         Carousel Management
                     </h1>
                     <p className="text-slate-400 font-medium mt-1">Control products featured in the user dashboard discovery carousel.</p>
@@ -106,7 +106,7 @@ export default function CarouselManagement() {
                 <div className="lg:col-span-1">
                     <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 sticky top-24">
                         <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2">
-                            <Settings className="w-5 h-5 text-indigo-400" />
+                            <Settings className="w-5 h-5 text-blue-400" />
                             Display Settings
                         </h3>
                         
@@ -122,7 +122,7 @@ export default function CarouselManagement() {
                                         max="10"
                                         value={settings.slidesPerView || ''}
                                         onChange={(e) => setSettings({ ...settings, slidesPerView: parseInt(e.target.value) || 0 })}
-                                        className="w-full bg-slate-800/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/20 transition-all"
+                                        className="w-full bg-slate-800/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all"
                                     />
                                     <Monitor className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                                 </div>
@@ -132,7 +132,7 @@ export default function CarouselManagement() {
                             <div className="pt-6 border-t border-white/5">
                                 <div className="flex items-center justify-between mb-4">
                                     <span className="text-sm font-bold text-slate-300">Total in Carousel</span>
-                                    <span className="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full text-xs font-black">
+                                    <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs font-black">
                                         {carouselProducts.length} Products
                                     </span>
                                 </div>
@@ -149,7 +149,7 @@ export default function CarouselManagement() {
                             <button 
                                 onClick={handleSaveSettings}
                                 disabled={saveLoading}
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-black py-4 rounded-2xl shadow-xl shadow-indigo-600/20 transition-all active:scale-95 flex items-center justify-center gap-3"
+                                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-black py-4 rounded-2xl shadow-xl shadow-blue-600/20 transition-all active:scale-95 flex items-center justify-center gap-3"
                             >
                                 {saveLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                                 Save Config
@@ -164,20 +164,20 @@ export default function CarouselManagement() {
                         <div className="p-8 border-b border-white/5">
                             <div className="flex flex-col md:flex-row gap-4">
                                 <div className="relative group flex-1">
-                                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
                                     <input 
                                         type="text"
                                         placeholder="Search Storehouse Products..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full bg-slate-800/50 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-white font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/20 transition-all"
+                                        className="w-full bg-slate-800/50 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-white font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all"
                                     />
                                 </div>
                                 <div className="relative min-w-[180px]">
                                     <select
                                         value={selectedCategory}
                                         onChange={(e) => setSelectedCategory(e.target.value)}
-                                        className="w-full bg-slate-800/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/20 transition-all appearance-none cursor-pointer pr-12"
+                                        className="w-full bg-slate-800/50 border border-white/10 rounded-2xl px-6 py-4 text-white font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all appearance-none cursor-pointer pr-12"
                                     >
                                         {categories.map(cat => (
                                             <option key={cat} value={cat} className="bg-slate-900 text-white">{cat}</option>
@@ -222,7 +222,7 @@ export default function CarouselManagement() {
                                                 <button 
                                                     onClick={() => toggleCarouselStatus(p)}
                                                     disabled={actionLoading === p._id}
-                                                    className={`p-3 rounded-2xl transition-all active:scale-95 ${p.inStorehouseCarousel ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-lg shadow-indigo-500/10' : 'bg-slate-800 text-slate-600 border border-white/5 hover:border-slate-500'}`}
+                                                    className={`p-3 rounded-2xl transition-all active:scale-95 ${p.inStorehouseCarousel ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30 shadow-lg shadow-blue-500/10' : 'bg-slate-800 text-slate-600 border border-white/5 hover:border-slate-500'}`}
                                                 >
                                                     {actionLoading === p._id ? (
                                                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -252,7 +252,7 @@ export default function CarouselManagement() {
                 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.3); }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246, 0.3); }
             `}</style>
         </div>
     );

@@ -22,7 +22,7 @@ const groups = [
     {
         name: 'General',
         items: [
-            { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+            { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
             { name: 'Reports', href: '/reports', icon: FileText },
         ]
     },

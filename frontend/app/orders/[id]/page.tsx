@@ -591,7 +591,7 @@ export default function OrderDetailsPage() {
                                             )}
                                         </div>
 
-                                        <div className="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100 text-indigo-700 text-xs font-bold leading-relaxed">
+                                        <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100 text-blue-700 text-xs font-bold leading-relaxed">
                                             {t('Once transferred, remember to submit a deposit request.')}
                                         </div>
                                     </div>
@@ -606,7 +606,7 @@ export default function OrderDetailsPage() {
                                         <button
                                             onClick={handlePayStorehouse}
                                             disabled={payLoading || (walletStats?.mainWallet || 0) < storehouseTotal || !transPassword}
-                                            className="flex-1 py-4 bg-gradient-to-r from-primary-600 to-indigo-700 text-white rounded-2xl font-black text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
+                                            className="flex-1 py-4 bg-gradient-to-r from-primary-600 to-blue-700 text-white rounded-2xl font-black text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
                                         >
                                             <Zap className="w-4 h-4 fill-white" /> {t('Confirm & Pay Now')}
                                         </button>

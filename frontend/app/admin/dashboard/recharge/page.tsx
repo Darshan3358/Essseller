@@ -71,15 +71,15 @@ export default function AdminRechargePage() {
                     {[{ val: 'all', label: 'All' }, { val: '0', label: 'Pending' }, { val: '1', label: 'Approved' }, { val: '2', label: 'Rejected' }].map(f => (
                         <button key={f.val} onClick={() => { setStatusFilter(f.val); setPage(1); }} style={{
                             padding: '7px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: '600',
-                            border: statusFilter === f.val ? '1px solid rgba(99,102,241,0.5)' : '1px solid rgba(255,255,255,0.1)',
-                            background: statusFilter === f.val ? 'rgba(99,102,241,0.25)' : 'rgba(255,255,255,0.05)',
-                            color: statusFilter === f.val ? '#a5b4fc' : 'rgba(255,255,255,0.5)',
+                            border: statusFilter === f.val ? '1px solid rgba(59,130,246,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                            background: statusFilter === f.val ? 'rgba(59,130,246,0.25)' : 'rgba(255,255,255,0.05)',
+                            color: statusFilter === f.val ? '#bfdbfe' : 'rgba(255,255,255,0.5)',
                             cursor: 'pointer'
                         }}>{f.label}</button>
                     ))}
                     <button onClick={fetchRecharges} style={{
-                        background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)',
-                        borderRadius: '8px', color: '#818cf8', padding: '7px 10px', cursor: 'pointer', display: 'flex'
+                        background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)',
+                        borderRadius: '8px', color: '#93c5fd', padding: '7px 10px', cursor: 'pointer', display: 'flex'
                     }}><RefreshCw size={15} /></button>
                 </div>
             </div>
@@ -119,7 +119,7 @@ export default function AdminRechargePage() {
                                             <td className="res-show-mobile" style={{ padding: '14px 16px' }}>
                                                 <button 
                                                     onClick={() => toggleMobileRow(r._id)}
-                                                    style={{ border: 'none', background: 'rgba(99,102,241,0.2)', color: '#6366f1', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                    style={{ border: 'none', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                                 >
                                                     {mobileExpandedRows.has(r._id) ? <Minus size={14} /> : <Plus size={14} />}
                                                 </button>
@@ -139,9 +139,9 @@ export default function AdminRechargePage() {
                                             <td className="res-hide-mobile" style={{ padding: '14px 16px' }}>
                                                 <span style={{
                                                     padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '700',
-                                                    background: r.payment_method === 'bank' ? 'rgba(59,130,246,0.15)' : 'rgba(99,102,241,0.15)',
-                                                    border: `1px solid ${r.payment_method === 'bank' ? 'rgba(59,130,246,0.3)' : 'rgba(99,102,241,0.3)'}`,
-                                                    color: r.payment_method === 'bank' ? '#60a5fa' : '#a5b4fc'
+                                                    background: r.payment_method === 'bank' ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.15)',
+                                                    border: `1px solid ${r.payment_method === 'bank' ? 'rgba(59,130,246,0.3)' : 'rgba(59,130,246,0.3)'}`,
+                                                    color: r.payment_method === 'bank' ? '#60a5fa' : '#bfdbfe'
                                                 }}>
                                                     {r.payment_method === 'bank' ? '🏦 Bank' : '₿ Crypto'}
                                                 </span>
@@ -164,8 +164,8 @@ export default function AdminRechargePage() {
                                             </td>
                                             <td className="res-hide-mobile" style={{ padding: '14px 16px' }}>
                                                 <button onClick={() => setExpandedRow(expandedRow === r._id ? null : r._id)} style={{
-                                                    background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)',
-                                                    borderRadius: '8px', padding: '5px 10px', color: '#a5b4fc',
+                                                    background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)',
+                                                    borderRadius: '8px', padding: '5px 10px', color: '#bfdbfe',
                                                     cursor: 'pointer', fontSize: '12px', fontWeight: '600'
                                                 }}>
                                                     {expandedRow === r._id ? '▲ Hide' : '▼ Proof'}
@@ -210,7 +210,7 @@ export default function AdminRechargePage() {
                                         </tr>
                                         {/* Mobile expanded row */}
                                         {mobileExpandedRows.has(r._id) && (
-                                            <tr className="res-show-mobile" style={{ background: 'rgba(99,102,241,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                            <tr className="res-show-mobile" style={{ background: 'rgba(59,130,246,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                 <td colSpan={10} style={{ padding: '16px' }}>
                                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '12px' }}>
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
@@ -225,8 +225,8 @@ export default function AdminRechargePage() {
                                                         </div>
                                                         <div style={{ marginTop: '4px' }}>
                                                             <button onClick={() => setExpandedRow(expandedRow === r._id ? null : r._id)} style={{
-                                                                width: '100%', background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)',
-                                                                borderRadius: '8px', padding: '10px', color: '#a5b4fc', cursor: 'pointer', fontSize: '12px', fontWeight: '800'
+                                                                width: '100%', background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)',
+                                                                borderRadius: '8px', padding: '10px', color: '#bfdbfe', cursor: 'pointer', fontSize: '12px', fontWeight: '800'
                                                             }}>
                                                                 {expandedRow === r._id ? '▲ Hide Proof Details' : '▼ View Proof Details'}
                                                             </button>
@@ -240,7 +240,7 @@ export default function AdminRechargePage() {
                                             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                 <td colSpan={8} style={{ padding: '0 16px 16px 48px' }}>
                                                     <div style={{
-                                                        background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.15)',
+                                                        background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)',
                                                         borderRadius: '12px', padding: '16px',
                                                         display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '14px'
                                                     }}>
@@ -275,7 +275,7 @@ export default function AdminRechargePage() {
                         {Array.from({ length: pages }, (_, i) => i + 1).map(p => (
                             <button key={p} onClick={() => setPage(p)} style={{
                                 width: '36px', height: '36px', borderRadius: '8px', border: 'none',
-                                background: p === page ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.06)',
+                                background: p === page ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'rgba(255,255,255,0.06)',
                                 color: p === page ? 'white' : 'rgba(255,255,255,0.5)',
                                 cursor: 'pointer', fontWeight: '600', fontSize: '14px'
                             }}>{p}</button>
@@ -291,7 +291,7 @@ export default function AdminRechargePage() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
                 }}>
                     <div style={{
-                        background: '#1e1b4b', border: '1px solid rgba(99,102,241,0.3)',
+                        background: '#1e3a8a', border: '1px solid rgba(59,130,246,0.3)',
                         borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '400px'
                     }}>
                         <h3 style={{ margin: '0 0 16px', color: 'white', fontSize: '18px', fontWeight: '700' }}>Reject Recharge</h3>

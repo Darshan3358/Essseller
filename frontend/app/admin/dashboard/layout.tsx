@@ -20,6 +20,7 @@ const navItems = [
     { label: 'Products', icon: Box, href: '/admin/dashboard/products' },
     { label: 'Carousel Management', icon: LayoutDashboard, href: '/admin/dashboard/carousel' },
     { label: 'Support', icon: LifeBuoy, href: '/admin/dashboard/support' },
+    { label: 'Suppliers', icon: Users, href: '/admin/dashboard/suppliers' },
     { label: 'Site Settings', icon: Settings, href: '/admin/dashboard/settings' },
 ];
 
@@ -56,12 +57,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (!adminUser) {
         return (
             <div style={{
-                minHeight: '100vh', background: '#11102e',
+                minHeight: '100vh', background: '#020617',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
                 <div style={{
                     width: '40px', height: '40px', borderRadius: '50%',
-                    border: '3px solid rgba(99,102,241,0.3)', borderTopColor: '#6366f1',
+                    border: '3px solid rgba(59,130,246,0.3)', borderTopColor: '#3b82f6',
                     animation: 'spin 0.8s linear infinite'
                 }} />
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -70,18 +71,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', background: '#11102e', fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ display: 'flex', minHeight: '100vh', background: '#020617', fontFamily: "'Inter', sans-serif" }}>
             {/* Mobile Header */}
             <header className="mobile-only" style={{
                 position: 'fixed', top: 0, left: 0, right: 0, zIndex: 90,
-                height: '60px', background: '#11102e', borderBottom: '1px solid rgba(255,255,255,0.08)',
+                height: '60px', background: '#020617', borderBottom: '1px solid rgba(255,255,255,0.08)',
                 display: 'none', alignItems: 'center', padding: '0 20px', gap: '12px'
             }}>
                 <button
                     onClick={() => setSidebarOpen(true)}
                     style={{
-                        background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)',
-                        borderRadius: '10px', padding: '8px', color: '#818cf8', cursor: 'pointer', display: 'flex'
+                        background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)',
+                        borderRadius: '10px', padding: '8px', color: '#93c5fd', cursor: 'pointer', display: 'flex'
                     }}
                 >
                     <Menu size={20} />
@@ -108,7 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Sidebar */}
             <aside style={{
                 width: '260px',
-                background: '#11102e', // Match mobile header
+                background: '#020617', // Match mobile header
                 borderRight: '1px solid rgba(255,255,255,0.08)',
                 display: 'flex', flexDirection: 'column',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', overflow: 'hidden', flexShrink: 0,
@@ -121,7 +122,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 }}>
                     <div style={{
                         width: '36px', height: '36px', flexShrink: 0,
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                        background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                         borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center'
                     }}>
                         <Shield size={18} color="white" />
@@ -154,16 +155,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <div style={{
                                     display: 'flex', alignItems: 'center', gap: '12px',
                                     padding: '11px 12px', borderRadius: '12px', marginBottom: '4px',
-                                    background: isActive ? 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.1))' : 'transparent',
-                                    border: isActive ? '1px solid rgba(99,102,241,0.2)' : '1px solid transparent',
-                                    color: isActive ? '#a5b4fc' : 'rgba(255,255,255,0.5)',
+                                    background: isActive ? 'linear-gradient(135deg, rgba(59,130,246,0.2), rgba(96,165,250,0.1))' : 'transparent',
+                                    border: isActive ? '1px solid rgba(59,130,246,0.2)' : '1px solid transparent',
+                                    color: isActive ? '#bfdbfe' : 'rgba(255,255,255,0.5)',
                                     cursor: 'pointer', transition: 'all 0.2s',
                                     whiteSpace: 'nowrap', overflow: 'hidden'
                                 }}>
-                                    <item.icon size={18} style={{ flexShrink: 0, color: isActive ? '#818cf8' : 'rgba(255,255,255,0.4)' }} />
+                                    <item.icon size={18} style={{ flexShrink: 0, color: isActive ? '#93c5fd' : 'rgba(255,255,255,0.4)' }} />
                                     <span style={{ fontSize: '13px', fontWeight: isActive ? '700' : '500' }}>{item.label}</span>
                                     {isActive && (
-                                        <ChevronRight size={14} style={{ marginLeft: 'auto', color: '#818cf8' }} />
+                                        <ChevronRight size={14} style={{ marginLeft: 'auto', color: '#93c5fd' }} />
                                     )}
                                 </div>
                             </Link>
@@ -180,7 +181,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     }}>
                         <div style={{
                             width: '32px', height: '32px', flexShrink: 0, borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             color: 'white', fontWeight: '700', fontSize: '13px'
                         }}>
@@ -234,7 +235,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     bottom: 125%;
                     left: 50%;
                     transform: translateX(-50%) translateY(5px);
-                    background: #1e1b4b;
+                    background: #1e3a8a;
                     color: white;
                     padding: 6px 12px;
                     border-radius: 8px;
@@ -256,7 +257,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     left: 50%;
                     transform: translateX(-50%) translateY(5px);
                     border: 6px solid transparent;
-                    border-top-color: #1e1b4b;
+                    border-top-color: #1e3a8a;
                     opacity: 0;
                     visibility: hidden;
                     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);

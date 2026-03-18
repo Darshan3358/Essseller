@@ -15,9 +15,10 @@ type ProductForm = {
     category: string;
     brand: string;
     image: string;
+    margin?: string;
 };
 
-const emptyForm: ProductForm = { name: '', description: '', price: '', selling_price: '', profit: '', category: '', brand: '', image: '' };
+const emptyForm: ProductForm = { name: '', description: '', price: '', selling_price: '', profit: '', category: '', brand: '', image: '', margin: '' };
 
 function AdminProductsPage() {
     const searchParams = useSearchParams();
@@ -82,6 +83,7 @@ function AdminProductsPage() {
             category: p.category || '',
             brand: p.brand || '',
             image: p.image || '',
+            margin: '',
         });
         setImageFile(null);
         setImagePreview(p.image ? (p.image.startsWith('/') ? `http://localhost:5000${p.image}` : p.image) : '');
@@ -89,14 +91,38 @@ function AdminProductsPage() {
         setShowForm(true);
     };
 
-    const handleFormChange = (field: keyof ProductForm, val: string) => {
-        const updated = { ...form, [field]: val };
-        // Auto-calc profit
-        if (field === 'price' || field === 'selling_price') {
-            const p = parseFloat(field === 'price' ? val : updated.price) || 0;
-            const s = parseFloat(field === 'selling_price' ? val : updated.selling_price) || 0;
+    const handleFormChange = (field: keyof ProductForm | 'margin', val: string) => {
+        const updated = { ...form, [field]: val } as any;
+        
+        if (field === 'selling_price') {
+            const s = parseFloat(val) || 0;
+            const m = parseFloat(updated.margin || '0');
+            if (m > 0 && s > 0) {
+                const cost = s - (s * m / 100);
+                updated.price = String(cost);
+                updated.profit = String(Math.max(0, s - cost));
+            } else {
+                const p = parseFloat(updated.price) || 0;
+                updated.profit = String(Math.max(0, s - p));
+            }
+        } else if (field === 'price') {
+            const p = parseFloat(val) || 0;
+            const s = parseFloat(updated.selling_price) || 0;
             updated.profit = String(Math.max(0, s - p));
+            updated.margin = '';
+        } else if (field === 'margin') {
+            const m = parseFloat(val) || 0;
+            const s = parseFloat(updated.selling_price) || 0;
+            if (s > 0 && m > 0) {
+                const cost = s - (s * m / 100);
+                updated.price = String(cost);
+                updated.profit = String(Math.max(0, s - cost));
+            }
+        } else if (field === 'profit') {
+            // Usually profit is auto-calculated, but if they type it:
+            updated.margin = '';
         }
+        
         setForm(updated);
     };
 
@@ -128,7 +154,9 @@ function AdminProductsPage() {
             let res;
             if (imageFile) {
                 const fd = new FormData();
-                Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+                Object.entries(form).forEach(([k, v]) => {
+                    if (k !== 'margin') fd.append(k, String(v));
+                });
                 fd.append('image', imageFile);
                 const endpoint = editProduct ? `${API}/admin/products/${editProduct._id}` : `${API}/admin/products`;
                 res = await fetch(endpoint, {
@@ -137,11 +165,13 @@ function AdminProductsPage() {
                     body: fd
                 });
             } else {
+                const submitData = { ...form } as any;
+                delete submitData.margin;
                 const endpoint = editProduct ? `${API}/admin/products/${editProduct._id}` : `${API}/admin/products`;
                 res = await fetch(endpoint, {
                     method: editProduct ? 'PUT' : 'POST',
                     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    body: JSON.stringify(form)
+                    body: JSON.stringify(submitData)
                 });
             }
             const data = await res.json();
@@ -205,7 +235,7 @@ function AdminProductsPage() {
                     }}><RefreshCw size={15} /></button>
                     {!sellerIdParam && (
                         <button onClick={openAdd} style={{
-                            padding: '9px 18px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            padding: '9px 18px', background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                             border: 'none', borderRadius: '10px', color: 'white', fontWeight: '700',
                             cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px'
                         }}><Plus size={16} /> Add Product</button>
@@ -238,7 +268,7 @@ function AdminProductsPage() {
                     }}
                 >
                     <option value="">All Categories</option>
-                    {categories.map(c => <option key={c} value={c} style={{ background: '#1a1740' }}>{c}</option>)}
+                    {categories.map(c => <option key={c} value={c} style={{ background: '#1e293b' }}>{c}</option>)}
                 </select>
             </div>
 
@@ -247,7 +277,7 @@ function AdminProductsPage() {
                 <div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>
                     <div style={{
                         display: 'inline-block', width: '36px', height: '36px',
-                        border: '3px solid rgba(99,102,241,0.3)', borderTopColor: '#6366f1',
+                        border: '3px solid rgba(59,130,246,0.3)', borderTopColor: '#3b82f6',
                         borderRadius: '50%', animation: 'spin 0.8s linear infinite'
                     }} />
                 </div>
@@ -273,7 +303,7 @@ function AdminProductsPage() {
                         }}
                             onMouseEnter={e => {
                                 (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
-                                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(99,102,241,0.3)';
+                                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(59,130,246,0.3)';
                             }}
                             onMouseLeave={e => {
                                 (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
@@ -339,9 +369,9 @@ function AdminProductsPage() {
                                         onClick={() => openEdit(p)}
                                         data-tooltip="Edit Product"
                                         style={{
-                                            flex: 1, padding: '8px', background: 'rgba(99,102,241,0.15)',
-                                            border: '1px solid rgba(99,102,241,0.3)', borderRadius: '8px',
-                                            color: '#818cf8', cursor: 'pointer', display: 'flex',
+                                            flex: 1, padding: '8px', background: 'rgba(59,130,246,0.15)',
+                                            border: '1px solid rgba(59,130,246,0.3)', borderRadius: '8px',
+                                            color: '#93c5fd', cursor: 'pointer', display: 'flex',
                                             alignItems: 'center', justifyContent: 'center'
                                         }}
                                     ><Edit2 size={16} /></button>
@@ -369,7 +399,7 @@ function AdminProductsPage() {
                     {Array.from({ length: Math.min(pages, 10) }, (_, i) => i + 1).map(p => (
                         <button key={p} onClick={() => setPage(p)} style={{
                             width: '36px', height: '36px', borderRadius: '8px', border: 'none',
-                            background: p === page ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.06)',
+                            background: p === page ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'rgba(255,255,255,0.06)',
                             color: p === page ? 'white' : 'rgba(255,255,255,0.5)',
                             cursor: 'pointer', fontWeight: '600', fontSize: '14px'
                         }}>{p}</button>
@@ -385,7 +415,7 @@ function AdminProductsPage() {
                     zIndex: 1000, padding: '20px', overflowY: 'auto'
                 }}>
                     <div style={{
-                        background: '#12103a', border: '1px solid rgba(99,102,241,0.3)',
+                        background: '#0f172a', border: '1px solid rgba(59,130,246,0.3)',
                         borderRadius: '24px', padding: '32px', width: '100%', maxWidth: '560px',
                         maxHeight: '90vh', overflowY: 'auto', position: 'relative'
                     }}>
@@ -466,9 +496,30 @@ function AdminProductsPage() {
                             </div>
 
                             {/* Prices */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-                                <FormField label="Cost Price *" value={form.price} onChange={v => handleFormChange('price', v)} placeholder="0" type="number" />
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', marginBottom: '20px' }}>
                                 <FormField label="Selling Price *" value={form.selling_price} onChange={v => handleFormChange('selling_price', v)} placeholder="0" type="number" />
+                                <div style={{ marginBottom: '14px' }}>
+                                    <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                                        Margin %
+                                    </label>
+                                    <select
+                                        value={form.margin || ''}
+                                        onChange={e => handleFormChange('margin', e.target.value)}
+                                        style={{
+                                            width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.07)',
+                                            border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px',
+                                            color: 'white', fontSize: '14px', outline: 'none', cursor: 'pointer'
+                                        }}
+                                    >
+                                        <option value="" style={{ background: '#0f172a' }}>Custom</option>
+                                        <option value="5" style={{ background: '#0f172a' }}>5%</option>
+                                        <option value="7" style={{ background: '#0f172a' }}>7%</option>
+                                        <option value="10" style={{ background: '#0f172a' }}>10%</option>
+                                        <option value="15" style={{ background: '#0f172a' }}>15%</option>
+                                        <option value="20" style={{ background: '#0f172a' }}>20%</option>
+                                    </select>
+                                </div>
+                                <FormField label="Cost Price *" value={form.price} onChange={v => handleFormChange('price', v)} placeholder="0" type="number" />
                                 <FormField label="Profit" value={form.profit} onChange={v => handleFormChange('profit', v)} placeholder="0" type="number" />
                             </div>
 
@@ -479,11 +530,11 @@ function AdminProductsPage() {
                                     color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontWeight: '600', fontSize: '14px'
                                 }}>Cancel</button>
                                 <button type="submit" disabled={saving} style={{
-                                    flex: 2, padding: '13px', background: saving ? 'rgba(99,102,241,0.5)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                                    flex: 2, padding: '13px', background: saving ? 'rgba(59,130,246,0.5)' : 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                                     border: 'none', borderRadius: '12px', color: 'white',
                                     fontWeight: '700', fontSize: '14px', cursor: saving ? 'not-allowed' : 'pointer',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                    boxShadow: saving ? 'none' : '0 8px 20px rgba(99,102,241,0.35)'
+                                    boxShadow: saving ? 'none' : '0 8px 20px rgba(59,130,246,0.35)'
                                 }}>
                                     {saving ? (
                                         <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -499,7 +550,7 @@ function AdminProductsPage() {
                 @keyframes spin { to { transform: rotate(360deg); } }
                 input[type=number]::-webkit-inner-spin-button { opacity: 0; }
                 input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.25) !important; }
-                option { background: #12103a; }
+                option { background: #0f172a; }
             `}</style>
         </div>
     );
@@ -528,7 +579,7 @@ function FormField({ label, value, onChange, placeholder, type = 'text' }: {
                     borderRadius: '10px', color: 'white', fontSize: '14px', outline: 'none',
                     boxSizing: 'border-box', transition: 'border-color 0.2s'
                 }}
-                onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.5)')}
+                onFocus={e => (e.target.style.borderColor = 'rgba(59,130,246,0.5)')}
                 onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.1)')}
             />
         </div>

@@ -8,7 +8,7 @@ const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'comple
 const STATUS_COLORS: any = {
     pending: { color: '#fbbf24', bg: 'rgba(251,191,36,0.15)', border: 'rgba(251,191,36,0.3)' },
     processing: { color: '#60a5fa', bg: 'rgba(96,165,250,0.15)', border: 'rgba(96,165,250,0.3)' },
-    shipped: { color: '#818cf8', bg: 'rgba(129,140,248,0.15)', border: 'rgba(129,140,248,0.3)' },
+    shipped: { color: '#93c5fd', bg: 'rgba(129,140,248,0.15)', border: 'rgba(129,140,248,0.3)' },
     delivered: { color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.3)' },
     completed: { color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.3)' },
     cancelled: { color: '#f87171', bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.3)' },
@@ -221,8 +221,8 @@ export default function AdminOrdersPage() {
             <div className="orders-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '28px' }}>
                 {/* Total Orders */}
                 <div className="order-stat-card" style={{
-                    background: 'linear-gradient(135deg, #3b3bff 0%, #6366f1 100%)',
-                    borderRadius: '18px', padding: '22px', boxShadow: '0 8px 20px rgba(99,102,241,0.3)'
+                    background: 'linear-gradient(135deg, #3b3bff 0%, #3b82f6 100%)',
+                    borderRadius: '18px', padding: '22px', boxShadow: '0 8px 20px rgba(59,130,246,0.3)'
                 }}>
                     <div className="stat-card-header" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                         <div className="stat-card-icon" style={{ padding: '8px', background: 'rgba(255,255,255,0.2)', borderRadius: '10px' }}>
@@ -252,13 +252,13 @@ export default function AdminOrdersPage() {
                     onClick={openAddModal}
                     className="order-stat-card add-btn"
                     style={{
-                        background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
+                        background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)',
                         borderRadius: '18px', padding: '22px', border: 'none', cursor: 'pointer',
-                        textAlign: 'left', boxShadow: '0 8px 20px rgba(139,92,246,0.35)',
+                        textAlign: 'left', boxShadow: '0 8px 20px rgba(96,165,250,0.35)',
                         transition: 'transform 0.15s, box-shadow 0.15s'
                     }}
-                    onMouseEnter={e => { (e.currentTarget.style.transform = 'translateY(-2px)'); (e.currentTarget.style.boxShadow = '0 14px 28px rgba(139,92,246,0.45)'); }}
-                    onMouseLeave={e => { (e.currentTarget.style.transform = 'translateY(0)'); (e.currentTarget.style.boxShadow = '0 8px 20px rgba(139,92,246,0.35)'); }}
+                    onMouseEnter={e => { (e.currentTarget.style.transform = 'translateY(-2px)'); (e.currentTarget.style.boxShadow = '0 14px 28px rgba(96,165,250,0.45)'); }}
+                    onMouseLeave={e => { (e.currentTarget.style.transform = 'translateY(0)'); (e.currentTarget.style.boxShadow = '0 8px 20px rgba(96,165,250,0.35)'); }}
                 >
                     <div className="stat-card-header" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                         <div className="stat-card-icon" style={{ padding: '8px', background: 'rgba(255,255,255,0.2)', borderRadius: '10px' }}>
@@ -282,9 +282,9 @@ export default function AdminOrdersPage() {
                         <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }} style={{
                             padding: '6px 14px', borderRadius: '20px', fontSize: '11px', fontWeight: '700',
                             border: statusFilter === s ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                            background: statusFilter === s ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.04)',
+                            background: statusFilter === s ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'rgba(255,255,255,0.04)',
                             color: statusFilter === s ? 'white' : 'rgba(255,255,255,0.4)',
-                            cursor: 'pointer', textTransform: 'capitalize', boxShadow: statusFilter === s ? '0 4px 10px rgba(99,102,241,0.3)' : 'none'
+                            cursor: 'pointer', textTransform: 'capitalize', boxShadow: statusFilter === s ? '0 4px 10px rgba(59,130,246,0.3)' : 'none'
                         }}>{s}</button>
                     ))}
                 </div>
@@ -309,7 +309,7 @@ export default function AdminOrdersPage() {
                 <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '0' }}>
                         <thead>
-                            <tr style={{ background: 'rgba(99,102,241,0.08)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                            <tr style={{ background: 'rgba(59,130,246,0.08)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                                 <th className="res-show-mobile" style={{ padding: '13px 14px', width: '40px' }}></th>
                                 {['Order Code', 'Customer', 'Seller / Shop', 'Total', 'Cost', 'Status', 'Pick up', 'Payment', 'Date', 'Actions'].map((h, i) => (
                                     <th key={h} className={i > 1 && i < 9 ? 'res-hide-mobile' : ''} style={{
@@ -333,18 +333,18 @@ export default function AdminOrdersPage() {
                                     <React.Fragment key={o._id}>
                                         <tr
                                             style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.15s' }}
-                                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(99,102,241,0.06)')}
+                                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.06)')}
                                             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                         >
                                             <td className="res-show-mobile" style={{ padding: '13px 14px' }}>
                                                 <button 
                                                     onClick={() => toggleRow(o._id)}
-                                                    style={{ border: 'none', background: 'rgba(99,102,241,0.2)', color: '#6366f1', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                    style={{ border: 'none', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                                 >
                                                     {expandedRows.has(o._id) ? <Minus size={14} /> : <Plus size={14} />}
                                                 </button>
                                             </td>
-                                            <td style={{ padding: '13px 14px', fontFamily: 'monospace', color: '#a5b4fc', fontSize: '12px', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                                            <td style={{ padding: '13px 14px', fontFamily: 'monospace', color: '#bfdbfe', fontSize: '12px', fontWeight: '600', whiteSpace: 'nowrap' }}>
                                                 {o.order_code}
                                             </td>
                                             <td style={{ padding: '13px 14px' }}>
@@ -408,8 +408,8 @@ export default function AdminOrdersPage() {
                                                         onClick={() => { setEditModal(o); setEditStatus(o.status); setEditPickUpStatus(o.pick_up_status || 'Unpicked-Up'); }} 
                                                         data-tooltip="Edit Order Status"
                                                         style={{
-                                                            background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)',
-                                                            borderRadius: '8px', padding: '7px 9px', cursor: 'pointer', color: '#818cf8', display: 'flex'
+                                                            background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)',
+                                                            borderRadius: '8px', padding: '7px 9px', cursor: 'pointer', color: '#93c5fd', display: 'flex'
                                                         }}><Edit2 size={13} /></button>
                                                     <button 
                                                         onClick={() => handleDelete(o._id)} 
@@ -425,7 +425,7 @@ export default function AdminOrdersPage() {
 
                                         {/* Expanded Row for Mobile */}
                                         {expandedRows.has(o._id) && (
-                                            <tr className="res-show-mobile" style={{ background: 'rgba(99,102,241,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                            <tr className="res-show-mobile" style={{ background: 'rgba(59,130,246,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                 <td colSpan={10} style={{ padding: '16px' }}>
                                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '12px' }}>
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
@@ -478,10 +478,10 @@ export default function AdminOrdersPage() {
                         {Array.from({ length: Math.min(pages, 10) }, (_, i) => i + 1).map(p => (
                             <button key={p} onClick={() => setPage(p)} style={{
                                 width: '36px', height: '36px', borderRadius: '10px', border: 'none',
-                                background: p === page ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.05)',
+                                background: p === page ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'rgba(255,255,255,0.05)',
                                 color: p === page ? 'white' : 'rgba(255,255,255,0.4)',
                                 cursor: 'pointer', fontWeight: '700', fontSize: '14px',
-                                boxShadow: p === page ? '0 4px 10px rgba(99,102,241,0.3)' : 'none'
+                                boxShadow: p === page ? '0 4px 10px rgba(59,130,246,0.3)' : 'none'
                             }}>{p}</button>
                         ))}
                     </div>
@@ -496,19 +496,19 @@ export default function AdminOrdersPage() {
                     padding: '24px', overflowY: 'auto'
                 }}>
                     <div style={{
-                        background: 'linear-gradient(160deg, #141432 0%, #1e1b4b 100%)',
-                        border: '1px solid rgba(99,102,241,0.25)',
+                        background: 'linear-gradient(160deg, #0f172a 0%, #1e3a8a 100%)',
+                        border: '1px solid rgba(59,130,246,0.25)',
                         borderRadius: '24px', padding: '0', width: '100%', maxWidth: '680px',
                         boxShadow: '0 25px 60px rgba(0,0,0,0.6)', overflow: 'hidden', marginTop: '12px'
                     }}>
                         {/* Modal Header */}
                         <div style={{
-                            background: 'linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(139,92,246,0.15) 100%)',
+                            background: 'linear-gradient(135deg, rgba(59,130,246,0.25) 0%, rgba(96,165,250,0.15) 100%)',
                             borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '22px 28px',
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between'
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div style={{ padding: '10px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: '12px' }}>
+                                <div style={{ padding: '10px', background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', borderRadius: '12px' }}>
                                     <ShoppingCart size={18} color="white" />
                                 </div>
                                 <div>
@@ -533,7 +533,7 @@ export default function AdminOrdersPage() {
                             {/* Section: Seller */}
                             <div style={{ marginBottom: '32px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                                    <div style={{ width: '3px', height: '18px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: '2px' }} />
+                                    <div style={{ width: '3px', height: '18px', background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', borderRadius: '2px' }} />
                                     <span style={{ fontSize: '13px', fontWeight: '800', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Seller</span>
                                 </div>
                                 <label style={labelStyle}>Select Seller *</label>
@@ -545,7 +545,7 @@ export default function AdminOrdersPage() {
                                     >
                                         <option value="">— Select a seller —</option>
                                         {sellers.map(s => (
-                                            <option key={s._id} value={s._id} style={{ background: '#1e1b4b' }}>
+                                            <option key={s._id} value={s._id} style={{ background: '#1e3a8a' }}>
                                                 {s.name} {s.shop_name ? `(${s.shop_name})` : ''}
                                             </option>
                                         ))}
@@ -661,7 +661,7 @@ export default function AdminOrdersPage() {
                                                     >
                                                         <option value="">Select product...</option>
                                                         {sellerProducts.map((p: any) => (
-                                                            <option key={p._id} value={p._id} style={{ background: '#1e1b4b' }}>
+                                                            <option key={p._id} value={p._id} style={{ background: '#1e3a8a' }}>
                                                                 {p.name} — ₹{p.selling_price}
                                                             </option>
                                                         ))}
@@ -707,10 +707,10 @@ export default function AdminOrdersPage() {
                                     color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontWeight: '700', fontSize: '14px'
                                 }}>Cancel</button>
                                 <button onClick={handleSubmitOrder} disabled={submitting} style={{
-                                    flex: 2, padding: '13px', background: submitting ? 'rgba(99,102,241,0.4)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                                    flex: 2, padding: '13px', background: submitting ? 'rgba(59,130,246,0.4)' : 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                                     border: 'none', borderRadius: '12px', color: 'white', cursor: submitting ? 'not-allowed' : 'pointer',
                                     fontWeight: '800', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                    boxShadow: submitting ? 'none' : '0 6px 18px rgba(99,102,241,0.4)'
+                                    boxShadow: submitting ? 'none' : '0 6px 18px rgba(59,130,246,0.4)'
                                 }}>
                                     {submitting ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <ShoppingCart size={16} />}
                                     {submitting ? 'Creating...' : 'Create Order'}
@@ -728,8 +728,8 @@ export default function AdminOrdersPage() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px'
                 }}>
                     <div style={{
-                        background: 'linear-gradient(160deg, #141432 0%, #1e1b4b 100%)',
-                        border: '1px solid rgba(99,102,241,0.25)', borderRadius: '24px',
+                        background: 'linear-gradient(160deg, #0f172a 0%, #1e3a8a 100%)',
+                        border: '1px solid rgba(59,130,246,0.25)', borderRadius: '24px',
                         width: '100%', maxWidth: '640px', maxHeight: '85vh', overflow: 'hidden',
                         boxShadow: '0 30px 70px rgba(0,0,0,0.7)', display: 'flex', flexDirection: 'column'
                     }}>
@@ -745,7 +745,7 @@ export default function AdminOrdersPage() {
                                 </div>
                                 <div>
                                     <h2 style={{ margin: 0, fontSize: '17px', fontWeight: '800', color: 'white' }}>Order Products</h2>
-                                    <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#a5b4fc', fontFamily: 'monospace', fontWeight: '600' }}>
+                                    <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#bfdbfe', fontFamily: 'monospace', fontWeight: '600' }}>
                                         {viewModal.order.order_code}
                                     </p>
                                 </div>
@@ -782,7 +782,7 @@ export default function AdminOrdersPage() {
                         <div style={{ overflowY: 'auto', flex: 1, padding: '20px 24px' }}>
                             {viewModal.loading ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px', gap: '12px' }}>
-                                    <Loader2 size={28} style={{ animation: 'spin 1s linear infinite', color: '#6366f1' }} />
+                                    <Loader2 size={28} style={{ animation: 'spin 1s linear infinite', color: '#3b82f6' }} />
                                     <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Loading products...</span>
                                 </div>
                             ) : viewModal.items.length === 0 ? (
@@ -796,7 +796,7 @@ export default function AdminOrdersPage() {
                                     <div style={{
                                         display: 'grid', gridTemplateColumns: '1fr 80px 90px 90px',
                                         padding: '8px 14px',
-                                        background: 'rgba(99,102,241,0.08)', borderRadius: '10px',
+                                        background: 'rgba(59,130,246,0.08)', borderRadius: '10px',
                                         fontSize: '10px', fontWeight: '700', color: 'rgba(255,255,255,0.4)',
                                         textTransform: 'uppercase', letterSpacing: '0.06em'
                                     }}>
@@ -820,7 +820,7 @@ export default function AdminOrdersPage() {
                                                 background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
                                                 borderRadius: '12px', transition: 'background 0.15s'
                                             }}
-                                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(99,102,241,0.07)')}
+                                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.07)')}
                                             onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
                                             >
                                                 {/* Product Info */}
@@ -835,7 +835,7 @@ export default function AdminOrdersPage() {
                                                     ) : (
                                                         <div style={{
                                                             width: '40px', height: '40px', borderRadius: '8px',
-                                                            background: 'linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.3))',
+                                                            background: 'linear-gradient(135deg, rgba(59,130,246,0.3), rgba(96,165,250,0.3))',
                                                             display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                                                         }}>
                                                             <Package size={16} color="rgba(255,255,255,0.5)" />
@@ -851,8 +851,8 @@ export default function AdminOrdersPage() {
                                                 {/* Qty */}
                                                 <div style={{ textAlign: 'center' }}>
                                                     <span style={{
-                                                        background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)',
-                                                        borderRadius: '8px', padding: '4px 10px', fontSize: '13px', fontWeight: '800', color: '#a5b4fc'
+                                                        background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)',
+                                                        borderRadius: '8px', padding: '4px 10px', fontSize: '13px', fontWeight: '800', color: '#bfdbfe'
                                                     }}>×{qty}</span>
                                                 </div>
                                                 {/* Unit Price */}
@@ -904,13 +904,13 @@ export default function AdminOrdersPage() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
                 }}>
                     <div style={{
-                        background: 'linear-gradient(160deg, #141432 0%, #1e1b4b 100%)',
-                        border: '1px solid rgba(99,102,241,0.3)', borderRadius: '24px',
+                        background: 'linear-gradient(160deg, #0f172a 0%, #1e3a8a 100%)',
+                        border: '1px solid rgba(59,130,246,0.3)', borderRadius: '24px',
                         padding: '32px', width: '100%', maxWidth: '380px',
                         boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
                     }}>
                         <h3 style={{ margin: '0 0 6px', color: 'white', fontSize: '18px', fontWeight: '800' }}>Update Order Status</h3>
-                        <p style={{ margin: '0 0 20px', color: '#a5b4fc', fontSize: '12px', fontFamily: 'monospace', fontWeight: '600' }}>{editModal.order_code}</p>
+                        <p style={{ margin: '0 0 20px', color: '#bfdbfe', fontSize: '12px', fontFamily: 'monospace', fontWeight: '600' }}>{editModal.order_code}</p>
                         <label style={{ ...labelStyle, marginTop: '20px' }}>Order Status</label>
                         <select
                             value={editStatus}
@@ -918,7 +918,7 @@ export default function AdminOrdersPage() {
                             style={{ ...inputStyle, marginBottom: '20px', textTransform: 'capitalize', cursor: 'pointer' }}
                         >
                             {ORDER_STATUSES.map(s => (
-                                <option key={s} value={s} style={{ background: '#1e1b4b', textTransform: 'capitalize' }}>{s}</option>
+                                <option key={s} value={s} style={{ background: '#1e3a8a', textTransform: 'capitalize' }}>{s}</option>
                             ))}
                         </select>
 
@@ -928,8 +928,8 @@ export default function AdminOrdersPage() {
                             onChange={e => setEditPickUpStatus(e.target.value)}
                             style={{ ...inputStyle, marginBottom: '24px', cursor: 'pointer' }}
                         >
-                            <option value="Unpicked-Up" style={{ background: '#1e1b4b' }}>Unpicked-Up</option>
-                            <option value="Picked-Up" style={{ background: '#1e1b4b' }}>Picked-Up</option>
+                            <option value="Unpicked-Up" style={{ background: '#1e3a8a' }}>Unpicked-Up</option>
+                            <option value="Picked-Up" style={{ background: '#1e3a8a' }}>Picked-Up</option>
                         </select>
 
                         <div style={{ display: 'flex', gap: '10px' }}>
@@ -939,10 +939,10 @@ export default function AdminOrdersPage() {
                                 color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontWeight: '700'
                             }}>Cancel</button>
                             <button onClick={handleUpdateStatus} style={{
-                                flex: 1, padding: '12px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                                flex: 1, padding: '12px', background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                                 border: 'none', borderRadius: '12px', color: 'white', cursor: 'pointer', fontWeight: '800',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                boxShadow: '0 4px 14px rgba(99,102,241,0.4)'
+                                boxShadow: '0 4px 14px rgba(59,130,246,0.4)'
                             }}><Check size={15} /> Update</button>
                         </div>
                     </div>

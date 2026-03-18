@@ -33,6 +33,9 @@ export default function WithdrawPage() {
     });
     const [showBankForm, setShowBankForm] = useState(false);
     const [showAllHistory, setShowAllHistory] = useState(false);
+    const [walletType, setWalletType] = useState('main'); // 'main' or 'guarantee'
+    const [withdrawMethod, setWithdrawMethod] = useState('bank'); // 'bank' or 'crypto'
+    const [cryptoDetails, setCryptoDetails] = useState({ network: 'TRC20', wallet_address: '' });
 
     useEffect(() => {
         if (!authLoading && !user) router.push('/login');
@@ -93,9 +96,15 @@ export default function WithdrawPage() {
             setMessage(t('Transaction password is required'));
             return;
         }
-        if (!bankDetails.account_number && !bankDetails.upi_id) {
+        if (withdrawMethod === 'bank' && !bankDetails.account_number && !bankDetails.upi_id) {
             setIsError(true);
             setMessage(t('Please enter your bank account details or UPI ID below'));
+            setShowBankForm(true);
+            return;
+        }
+        if (withdrawMethod === 'crypto' && !cryptoDetails.wallet_address) {
+            setIsError(true);
+            setMessage(t('Please enter your crypto wallet address'));
             setShowBankForm(true);
             return;
         }
@@ -105,8 +114,10 @@ export default function WithdrawPage() {
             const response = await api.post('/withdrawals', {
                 amount: parseFloat(amount),
                 trans_password: transPassword,
-                method: 'bank',
+                method: withdrawMethod === 'crypto' ? 'usdt' : 'bank',
                 bank_details: bankDetails,
+                crypto_details: cryptoDetails,
+                wallet_type: walletType,
             });
 
             if (response.success) {
@@ -153,7 +164,7 @@ export default function WithdrawPage() {
                         {/* LEFT COLUMN */}
                         <div className="md:col-span-1 space-y-6">
                             {/* Balance Card */}
-                            <div className="premium-card p-6 bg-gradient-to-br from-primary-600 to-indigo-700 text-white relative overflow-hidden shadow-xl shadow-primary-900/20">
+                            <div className="premium-card p-6 bg-gradient-to-br from-primary-600 to-blue-700 text-white relative overflow-hidden shadow-xl shadow-primary-900/20">
                                 <div className="absolute top-0 right-0 p-8 opacity-10">
                                     <Wallet className="w-32 h-32" />
                                 </div>
@@ -183,7 +194,7 @@ export default function WithdrawPage() {
                             )}
 
                             {/* Info Box */}
-                            <div className="p-6 rounded-2xl border border-primary-100 dark:border-primary-900/20 bg-primary-50/30 dark:bg-indigo-900/10">
+                            <div className="p-6 rounded-2xl border border-primary-100 dark:border-primary-900/20 bg-primary-50/30 dark:bg-blue-900/10">
                                 <div className="flex items-center gap-2 mb-4">
                                     <Info className="w-4 h-4 text-primary-500 dark:text-primary-400" />
                                     <span className="text-primary-700 dark:text-primary-400 font-bold text-sm tracking-tight">{t('How it works')}</span>
@@ -228,6 +239,48 @@ export default function WithdrawPage() {
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
+                                        {/* Wallet and Method Selection */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest ml-1">{t('Withdraw From')}</label>
+                                                <div className="flex bg-gray-50 dark:bg-slate-800/50 p-1 rounded-2xl">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setWalletType('main')}
+                                                        className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${walletType === 'main' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'}`}
+                                                    >
+                                                        {t('Main Wallet')}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setWalletType('guarantee')}
+                                                        className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${walletType === 'guarantee' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'}`}
+                                                    >
+                                                        {t('Guarantee')}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest ml-1">{t('Withdraw Via')}</label>
+                                                <div className="flex bg-gray-50 dark:bg-slate-800/50 p-1 rounded-2xl">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setWithdrawMethod('bank')}
+                                                        className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${withdrawMethod === 'bank' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'}`}
+                                                    >
+                                                        {t('Bank')}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setWithdrawMethod('crypto')}
+                                                        className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${withdrawMethod === 'crypto' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'}`}
+                                                    >
+                                                        {t('Crypto')}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         {/* Amount Input */}
                                         <div className="space-y-2">
                                             <label className="text-xs font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest ml-1">{t('Amount to Withdraw')}</label>
@@ -243,7 +296,7 @@ export default function WithdrawPage() {
                                             </div>
                                             <div className="flex justify-between items-center px-2">
                                                 <p className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-tight">Min: ₹100</p>
-                                                <p className="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-tight">Available: ₹{walletData?.balance?.toFixed(2) || '0.00'}</p>
+                                                <p className="text-[10px] font-bold text-primary-500 dark:text-primary-400 uppercase tracking-tight">Available: ₹{(walletType === 'main' ? walletData?.balance : walletData?.guaranteeMoney)?.toFixed(2) || '0.00'}</p>
                                             </div>
                                         </div>
 
@@ -261,7 +314,7 @@ export default function WithdrawPage() {
                                             ))}
                                             <button
                                                 type="button"
-                                                onClick={() => setAmount(Math.floor(walletData?.balance || 0).toString())}
+                                                onClick={() => setAmount(Math.floor((walletType === 'main' ? walletData?.balance : walletData?.guaranteeMoney) || 0).toString())}
                                                 className="col-span-2 py-3 px-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-900/30 rounded-2xl text-[11px] font-black text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-all shadow-sm"
                                             >
                                                 {t('Withdraw Max Balance')}
@@ -288,65 +341,93 @@ export default function WithdrawPage() {
                                                 className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-gray-50 dark:bg-slate-800/30 border border-gray-100 dark:border-slate-700 text-xs font-black text-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-slate-800/50 transition-all group"
                                             >
                                                 <Building2 className="w-4 h-4" />
-                                                {showBankForm ? t('Hide Bank Details') : t('Add / Edit Bank Details')}
+                                                {showBankForm ? t(withdrawMethod === 'bank' ? 'Hide Bank Details' : 'Hide Crypto Details') : t(withdrawMethod === 'bank' ? 'Add / Edit Bank Details' : 'Add / Edit Crypto Details')}
                                                 <Plus className={`w-4 h-4 transition-transform duration-300 ${showBankForm ? 'rotate-45 text-red-500' : 'group-hover:scale-125'}`} />
                                             </button>
 
                                             {showBankForm && (
                                                 <div className="mt-4 p-6 bg-gray-50/50 dark:bg-slate-900/30 rounded-3xl space-y-5 border border-dashed border-gray-200 dark:border-slate-700 animate-in fade-in zoom-in-95 duration-300">
-                                                    <p className="text-[10px] text-gray-400 dark:text-slate-500 font-bold uppercase tracking-wider ml-1">{t('Bank details will be saved with your request')}</p>
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                                        <div className="space-y-1.5">
-                                                            <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('Bank Name')}</label>
-                                                            <input
-                                                                type="text"
-                                                                value={bankDetails.bank_name}
-                                                                onChange={e => setBankDetails({ ...bankDetails, bank_name: e.target.value })}
-                                                                placeholder="e.g. Chase, HSBC"
-                                                                className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
-                                                            />
+                                                    <p className="text-[10px] text-gray-400 dark:text-slate-500 font-bold uppercase tracking-wider ml-1">{withdrawMethod === 'bank' ? t('Bank details will be saved with your request') : t('Crypto details will be saved with your request')}</p>
+                                                    
+                                                    {withdrawMethod === 'bank' ? (
+                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                                            <div className="space-y-1.5">
+                                                                <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('Bank Name')}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={bankDetails.bank_name}
+                                                                    onChange={e => setBankDetails({ ...bankDetails, bank_name: e.target.value })}
+                                                                    placeholder="e.g. Chase, HSBC"
+                                                                    className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
+                                                                />
+                                                            </div>
+                                                            <div className="space-y-1.5">
+                                                                <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('Account Holder Name')}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={bankDetails.account_name}
+                                                                    onChange={e => setBankDetails({ ...bankDetails, account_name: e.target.value })}
+                                                                    placeholder="Full legal name"
+                                                                    className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
+                                                                />
+                                                            </div>
+                                                            <div className="space-y-1.5">
+                                                                <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('Account Number')}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={bankDetails.account_number}
+                                                                    onChange={e => setBankDetails({ ...bankDetails, account_number: e.target.value })}
+                                                                    placeholder="Branch account number"
+                                                                    className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
+                                                                />
+                                                            </div>
+                                                            <div className="space-y-1.5">
+                                                                <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('IFSC Code')}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={bankDetails.ifsc_code}
+                                                                    onChange={e => setBankDetails({ ...bankDetails, ifsc_code: e.target.value.toUpperCase() })}
+                                                                    placeholder="Routing / SWIFT / IFSC"
+                                                                    className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
+                                                                />
+                                                            </div>
+                                                            <div className="sm:col-span-2 space-y-1.5">
+                                                                <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('UPI ID (Optional)')}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={bankDetails.upi_id}
+                                                                    onChange={e => setBankDetails({ ...bankDetails, upi_id: e.target.value })}
+                                                                    placeholder="e.g. name@bank"
+                                                                    className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
+                                                                />
+                                                            </div>
                                                         </div>
-                                                        <div className="space-y-1.5">
-                                                            <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('Account Holder Name')}</label>
-                                                            <input
-                                                                type="text"
-                                                                value={bankDetails.account_name}
-                                                                onChange={e => setBankDetails({ ...bankDetails, account_name: e.target.value })}
-                                                                placeholder="Full legal name"
-                                                                className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
-                                                            />
+                                                    ) : (
+                                                        <div className="grid grid-cols-1 gap-5">
+                                                            <div className="space-y-1.5">
+                                                                <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('Network')}</label>
+                                                                <select
+                                                                    value={cryptoDetails.network}
+                                                                    onChange={e => setCryptoDetails({ ...cryptoDetails, network: e.target.value })}
+                                                                    className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
+                                                                >
+                                                                    <option value="TRC20">TRC20</option>
+                                                                    <option value="ERC20">ERC20</option>
+                                                                    <option value="BEP20">BEP20</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="space-y-1.5">
+                                                                <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('Wallet Address')}</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={cryptoDetails.wallet_address}
+                                                                    onChange={e => setCryptoDetails({ ...cryptoDetails, wallet_address: e.target.value })}
+                                                                    placeholder="Enter your crypto wallet address"
+                                                                    className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
+                                                                />
+                                                            </div>
                                                         </div>
-                                                        <div className="space-y-1.5">
-                                                            <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('Account Number')}</label>
-                                                            <input
-                                                                type="text"
-                                                                value={bankDetails.account_number}
-                                                                onChange={e => setBankDetails({ ...bankDetails, account_number: e.target.value })}
-                                                                placeholder="Branch account number"
-                                                                className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
-                                                            />
-                                                        </div>
-                                                        <div className="space-y-1.5">
-                                                            <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('IFSC Code')}</label>
-                                                            <input
-                                                                type="text"
-                                                                value={bankDetails.ifsc_code}
-                                                                onChange={e => setBankDetails({ ...bankDetails, ifsc_code: e.target.value.toUpperCase() })}
-                                                                placeholder="Routing / SWIFT / IFSC"
-                                                                className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
-                                                            />
-                                                        </div>
-                                                        <div className="sm:col-span-2 space-y-1.5">
-                                                            <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase ml-1">{t('UPI ID (Optional)')}</label>
-                                                            <input
-                                                                type="text"
-                                                                value={bankDetails.upi_id}
-                                                                onChange={e => setBankDetails({ ...bankDetails, upi_id: e.target.value })}
-                                                                placeholder="e.g. name@bank"
-                                                                className="input-field text-sm !py-3 !px-5 !rounded-xl dark:!bg-slate-800 dark:!border-slate-700"
-                                                            />
-                                                        </div>
-                                                    </div>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>

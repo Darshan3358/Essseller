@@ -133,7 +133,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                         </button>
 
                         {/* ESS Logo - Responsive */}
-                        <div className="flex items-center gap-2 cursor-pointer group" onClick={() => router.push('/')}>
+                        <div className="flex items-center gap-2 cursor-pointer group" onClick={() => router.push('/dashboard')}>
                             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
                                 <span className="text-white font-black text-xs">ESS</span>
                             </div>
@@ -170,7 +170,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
 
-                <main className="flex-1 p-4 lg:p-8 relative">
+                <main className="flex-1 p-3 sm:p-4 lg:p-8 relative">
                     {children}
                 </main>
             </div>

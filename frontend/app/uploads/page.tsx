@@ -126,8 +126,8 @@ export default function UploadsPage() {
 
     const FileIcon = ({ type }: { type: string }) => {
         if (type === 'image') return <ImageIcon className="w-10 h-10 text-primary-400" />;
-        if (type === 'video') return <Video className="w-10 h-10 text-purple-400" />;
-        if (type === 'doc') return <FileText className="w-10 h-10 text-indigo-400" />;
+        if (type === 'video') return <Video className="w-10 h-10 text-blue-400" />;
+        if (type === 'doc') return <FileText className="w-10 h-10 text-blue-400" />;
         return <File className="w-10 h-10 text-gray-400" />;
     };
 
@@ -226,8 +226,8 @@ export default function UploadsPage() {
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                     {[
                                         { label: 'Images', val: stats.images, color: 'bg-primary-500' },
-                                        { label: 'Videos', val: stats.videos, color: 'bg-purple-500' },
-                                        { label: 'Docs', val: stats.docs, color: 'bg-indigo-500' },
+                                        { label: 'Videos', val: stats.videos, color: 'bg-blue-500' },
+                                        { label: 'Docs', val: stats.docs, color: 'bg-blue-500' },
                                         { label: 'Other', val: stats.other, color: 'bg-gray-300' },
                                     ].map((item, i) => (
                                         <div key={i} className="space-y-1.5">
@@ -354,8 +354,8 @@ export default function UploadsPage() {
                                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{timeAgo(file.mtime)}</span>
                                         </div>
                                         <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${file.type === 'image' ? 'bg-primary-100 text-primary-700' :
-                                                file.type === 'video' ? 'bg-purple-100 text-purple-700' :
-                                                    file.type === 'doc' ? 'bg-indigo-100 text-indigo-700' :
+                                                file.type === 'video' ? 'bg-blue-100 text-blue-700' :
+                                                    file.type === 'doc' ? 'bg-blue-100 text-blue-700' :
                                                         'bg-gray-100 text-gray-600'
                                             }`}>{file.ext || file.type}</span>
                                     </div>

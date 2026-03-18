@@ -31,7 +31,7 @@ export default function AffiliatePage() {
                                 <span className="text-white text-xs font-black uppercase tracking-widest">Affiliate Program</span>
                             </div>
                             <h1 className="text-2xl md:text-4xl lg:text-6xl font-black text-white leading-tight">
-                                Earn <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-purple-400">Recurring Rewards</span> for life.
+                                Earn <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-blue-400">Recurring Rewards</span> for life.
                             </h1>
                             <p className="text-gray-400 text-lg font-medium max-w-lg leading-relaxed">
                                 Share the future of commerce with your network. Get 15% commission on every active referral, paid out instantly.
@@ -62,7 +62,7 @@ export default function AffiliatePage() {
                             {[
                                 { label: 'Total Earned', value: '$0.00', icon: DollarSign, color: 'text-success-400' },
                                 { label: 'Active Referrals', value: '0', icon: Users, color: 'text-primary-400' },
-                                { label: 'Conversion Rate', value: '0.0%', icon: TrendingUp, color: 'text-purple-400' },
+                                { label: 'Conversion Rate', value: '0.0%', icon: TrendingUp, color: 'text-blue-400' },
                                 { label: 'Pending Payout', value: '$0.00', icon: Gift, color: 'text-yellow-400' },
                             ].map((stat, i) => (
                                 <div key={i} className="glass-card !bg-white/5 border-white/10 p-8 hover:!bg-white/10 transition-all duration-300 group/stat">

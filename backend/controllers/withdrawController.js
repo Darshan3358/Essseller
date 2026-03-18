@@ -1,5 +1,6 @@
 const Withdraw = require('../models/Withdraw');
 const Seller = require('../models/Seller');
+const GuaranteeMoney = require('../models/GuaranteeMoney');
 const asyncHandler = require('express-async-handler');
 const { getAvailableBalance } = require('../utils/wallet');
 
@@ -21,7 +22,7 @@ const getWithdrawals = asyncHandler(async (req, res) => {
 // @route   POST /api/withdrawals
 // @access  Private
 const createWithdrawal = asyncHandler(async (req, res) => {
-    const { amount, trans_password, method, bank_details, notes } = req.body;
+    const { amount, trans_password, method, bank_details, crypto_details, wallet_type = 'main', notes } = req.body;
     const sellerId = req.user._id;
 
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
@@ -62,10 +63,21 @@ const createWithdrawal = asyncHandler(async (req, res) => {
     }
 
     // 4. Check Available Balance
-    const availableBalance = await getAvailableBalance(seller._id);
+    let availableBalance = 0;
+    if (wallet_type === 'guarantee') {
+        const guaranteeResult = await GuaranteeMoney.aggregate([
+            { $match: { seller_id: { $in: [seller.id, String(seller.id)] }, status: 1 } },
+            { $group: { _id: null, total: { $sum: { $toDouble: { $ifNull: ["$amount", 0] } } } } }
+        ]);
+        availableBalance = guaranteeResult.length > 0 ? (guaranteeResult[0].total || 0) : 0;
+        availableBalance = seller.guarantee_balance || availableBalance;
+    } else {
+        availableBalance = await getAvailableBalance(seller._id);
+    }
+
     if (Number(amount) > availableBalance) {
         res.status(400);
-        throw new Error(`Insufficient balance. Available: ₹${availableBalance.toFixed(2)}`);
+        throw new Error(`Insufficient balance in ${wallet_type} wallet. Available: ₹${availableBalance.toFixed(2)}`);
     }
 
     // 5. Determine op_type: 1=Bank, 2=USDT
@@ -79,15 +91,20 @@ const createWithdrawal = asyncHandler(async (req, res) => {
         seller_id: seller._id,
         amount: Number(amount),
         op_type,
+        wallet_type,
         status: 0, // PENDING - goes to admin for approval
         message: `Withdrawal request of ₹${amount} submitted. Awaiting admin approval.`,
-        bank_details: {
+        bank_details: op_type === 1 ? {
             bank_name: bankDetails.bank_name || '',
             account_number: bankDetails.account_number || '',
             account_name: bankDetails.account_name || seller.name || '',
             ifsc_code: bankDetails.ifsc_code || '',
             upi_id: bankDetails.upi_id || '',
-        },
+        } : {},
+        crypto_details: op_type === 2 ? {
+            network: crypto_details?.network || '',
+            wallet_address: crypto_details?.wallet_address || '',
+        } : {},
         notes: notes || '',
     });
 

@@ -10,7 +10,7 @@ export default function QueriesPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="space-y-2">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-xs font-black uppercase tracking-widest">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-black uppercase tracking-widest">
                             <HelpCircle className="w-3 h-3" />
                             Customer Inquiries
                         </div>
@@ -20,16 +20,16 @@ export default function QueriesPage() {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                     <div className="glass-card p-8 group">
                         <div className="flex items-start justify-between">
-                            <div className="p-4 bg-purple-50 text-purple-600 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition-all duration-500">
+                            <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
                                 <MessageCircle className="w-6 h-6" />
                             </div>
                             <span className="text-xs font-black text-gray-400 bg-gray-50 px-3 py-1 rounded-full">No new</span>
                         </div>
                         <h4 className="text-4xl font-black text-gray-900 mt-6 leading-tight">0</h4>
-                        <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-2">Active Queries</p>
+                        <p className="text-gray-400 font-bold uppercase tracking-tight sm:tracking-widest text-[9px] sm:text-[10px] mt-2 truncate">Active Queries</p>
                     </div>
                     <div className="glass-card p-8 group">
                         <div className="flex items-start justify-between">
@@ -39,9 +39,9 @@ export default function QueriesPage() {
                             <span className="text-xs font-black text-gray-400 bg-gray-50 px-3 py-1 rounded-full">N/A</span>
                         </div>
                         <h4 className="text-4xl font-black text-gray-900 mt-6 leading-tight">--</h4>
-                        <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-2">Avg Response Time</p>
+                        <p className="text-gray-400 font-bold uppercase tracking-tight sm:tracking-widest text-[9px] sm:text-[10px] mt-2 truncate">Avg Response Time</p>
                     </div>
-                    <div className="glass-card p-8 group">
+                    <div className="glass-card p-8 group col-span-2 md:col-span-1">
                         <div className="flex items-start justify-between">
                             <div className="p-4 bg-success-50 text-success-600 rounded-2xl group-hover:bg-success-600 group-hover:text-white transition-all duration-500">
                                 <CheckCircle2 className="w-6 h-6" />
@@ -49,7 +49,7 @@ export default function QueriesPage() {
                             <span className="text-xs font-black text-gray-400 bg-gray-50 px-3 py-1 rounded-full">Stable</span>
                         </div>
                         <h4 className="text-4xl font-black text-gray-900 mt-6 leading-tight">0%</h4>
-                        <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-2">Resolution Rate</p>
+                        <p className="text-gray-400 font-bold uppercase tracking-tight sm:tracking-widest text-[9px] sm:text-[10px] mt-2 truncate">Resolution Rate</p>
                     </div>
                 </div>
 

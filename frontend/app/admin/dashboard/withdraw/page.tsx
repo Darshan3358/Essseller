@@ -101,15 +101,15 @@ export default function AdminWithdrawPage() {
                     ].map(f => (
                         <button key={f.val} onClick={() => { setStatusFilter(f.val); setPage(1); }} style={{
                             padding: '7px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: '600',
-                            border: statusFilter === f.val ? '1px solid rgba(99,102,241,0.5)' : '1px solid rgba(255,255,255,0.1)',
-                            background: statusFilter === f.val ? 'rgba(99,102,241,0.25)' : 'rgba(255,255,255,0.05)',
-                            color: statusFilter === f.val ? '#a5b4fc' : 'rgba(255,255,255,0.5)',
+                            border: statusFilter === f.val ? '1px solid rgba(59,130,246,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                            background: statusFilter === f.val ? 'rgba(59,130,246,0.25)' : 'rgba(255,255,255,0.05)',
+                            color: statusFilter === f.val ? '#bfdbfe' : 'rgba(255,255,255,0.5)',
                             cursor: 'pointer'
                         }}>{f.label}</button>
                     ))}
                     <button onClick={fetchWithdrawals} style={{
-                        background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)',
-                        borderRadius: '8px', color: '#818cf8', padding: '7px 10px', cursor: 'pointer', display: 'flex'
+                        background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)',
+                        borderRadius: '8px', color: '#93c5fd', padding: '7px 10px', cursor: 'pointer', display: 'flex'
                     }}><RefreshCw size={15} /></button>
                 </div>
             </div>
@@ -170,6 +170,8 @@ export default function AdminWithdrawPage() {
                                 const s = STATUS_MAP[w.status] || STATUS_MAP[0];
                                 const isExpanded = expandedRow === w._id;
                                 const hasBankDetails = !!(w.bank_details && (w.bank_details.account_number || w.bank_details.upi_id));
+                                const hasCryptoDetails = !!(w.crypto_details && w.crypto_details.wallet_address);
+                                const hasDetails = hasBankDetails || hasCryptoDetails;
                                 return (
                                     <React.Fragment key={w._id}>
                                         <tr
@@ -180,7 +182,7 @@ export default function AdminWithdrawPage() {
                                             <td className="res-show-mobile" style={{ padding: '14px 16px' }}>
                                                 <button 
                                                     onClick={() => toggleMobileRow(w._id)}
-                                                    style={{ border: 'none', background: 'rgba(99,102,241,0.2)', color: '#6366f1', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                    style={{ border: 'none', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                                 >
                                                     {mobileExpandedRows.has(w._id) ? <Minus size={14} /> : <Plus size={14} />}
                                                 </button>
@@ -200,12 +202,12 @@ export default function AdminWithdrawPage() {
                                             <td className="res-hide-mobile" style={{ padding: '14px 16px' }}>
                                                 <span style={{
                                                     padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600',
-                                                    background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.3)', color: '#a5b4fc'
+                                                    background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)', color: '#bfdbfe'
                                                 }}>{OP_TYPE[w.op_type] || 'Bank'}</span>
                                             </td>
 
                                             <td className="res-hide-mobile" style={{ padding: '14px 16px' }}>
-                                                {hasBankDetails ? (
+                                                {hasDetails ? (
                                                     <button onClick={() => setExpandedRow(isExpanded ? null : w._id)} style={{
                                                         background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)',
                                                         borderRadius: '8px', color: '#10b981', padding: '5px 10px', cursor: 'pointer',
@@ -273,7 +275,7 @@ export default function AdminWithdrawPage() {
 
                                         {/* Mobile expanded row */}
                                         {mobileExpandedRows.has(w._id) && (
-                                            <tr className="res-show-mobile" style={{ background: 'rgba(99,102,241,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                            <tr className="res-show-mobile" style={{ background: 'rgba(59,130,246,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                 <td colSpan={10} style={{ padding: '16px' }}>
                                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '12px' }}>
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
@@ -290,13 +292,13 @@ export default function AdminWithdrawPage() {
                                                                 {w.createdAt ? new Date(w.createdAt).toLocaleDateString() : '—'}
                                                             </span>
                                                         </div>
-                                                        {hasBankDetails && (
+                                                        {hasDetails && (
                                                             <div style={{ marginTop: '4px' }}>
                                                                 <button onClick={() => setExpandedRow(isExpanded ? null : w._id)} style={{
                                                                     width: '100%', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)',
                                                                     borderRadius: '8px', padding: '10px', color: '#10b981', cursor: 'pointer', fontSize: '12px', fontWeight: '800'
                                                                 }}>
-                                                                    {isExpanded ? '▲ Hide Bank Details' : '▼ View Bank Details'}
+                                                                    {isExpanded ? '▲ Hide Details' : '▼ View Details'}
                                                                 </button>
                                                             </div>
                                                         )}
@@ -315,22 +317,27 @@ export default function AdminWithdrawPage() {
                                                     }}>
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                                             <Building2 size={14} style={{ color: '#10b981' }} />
-                                                            <span style={{ color: '#10b981', fontSize: '12px', fontWeight: '700' }}>Bank Account Details for Transfer</span>
+                                                            <span style={{ color: '#10b981', fontSize: '12px', fontWeight: '700' }}>
+                                                                {w.op_type === 2 ? 'Crypto Address Details for Transfer' : 'Bank Account Details for Transfer'}
+                                                            </span>
+                                                            <span style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)', fontSize: '10px', padding: '2px 8px', borderRadius: '12px', textTransform: 'uppercase', fontWeight: '700' }}>
+                                                                Wallet Type: {w.wallet_type === 'guarantee' ? 'Guarantee Wallet' : 'Main Wallet'}
+                                                            </span>
                                                         </div>
                                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-                                                            {w.bank_details?.bank_name && (
+                                                            {hasBankDetails && w.bank_details?.bank_name && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Bank Name</div>
                                                                     <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{w.bank_details.bank_name}</div>
                                                                 </div>
                                                             )}
-                                                            {w.bank_details?.account_name && (
+                                                            {hasBankDetails && w.bank_details?.account_name && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Account Holder</div>
                                                                     <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{w.bank_details.account_name}</div>
                                                                 </div>
                                                             )}
-                                                            {w.bank_details?.account_number && (
+                                                            {hasBankDetails && w.bank_details?.account_number && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Account Number</div>
                                                                     <div style={{ color: '#f59e0b', fontSize: '14px', fontWeight: '700', letterSpacing: '1px' }}>
@@ -338,16 +345,31 @@ export default function AdminWithdrawPage() {
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                            {w.bank_details?.ifsc_code && (
+                                                            {hasBankDetails && w.bank_details?.ifsc_code && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>IFSC Code</div>
-                                                                    <div style={{ color: '#a5b4fc', fontSize: '14px', fontWeight: '700' }}>{w.bank_details.ifsc_code}</div>
+                                                                    <div style={{ color: '#bfdbfe', fontSize: '14px', fontWeight: '700' }}>{w.bank_details.ifsc_code}</div>
                                                                 </div>
                                                             )}
-                                                            {w.bank_details?.upi_id && (
+                                                            {hasBankDetails && w.bank_details?.upi_id && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>UPI ID</div>
                                                                     <div style={{ color: '#34d399', fontSize: '14px', fontWeight: '700' }}>{w.bank_details.upi_id}</div>
+                                                                </div>
+                                                            )}
+                                                            
+                                                            {hasCryptoDetails && w.crypto_details?.network && (
+                                                                <div>
+                                                                    <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Network</div>
+                                                                    <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{w.crypto_details.network}</div>
+                                                                </div>
+                                                            )}
+                                                            {hasCryptoDetails && w.crypto_details?.wallet_address && (
+                                                                <div>
+                                                                    <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Wallet Address</div>
+                                                                    <div style={{ color: '#bfdbfe', fontSize: '14px', fontWeight: '700', letterSpacing: '0.5px', wordBreak: 'break-all' }}>
+                                                                        {w.crypto_details.wallet_address}
+                                                                    </div>
                                                                 </div>
                                                             )}
                                                         </div>
@@ -374,7 +396,7 @@ export default function AdminWithdrawPage() {
                         {Array.from({ length: pages }, (_, i) => i + 1).map(p => (
                             <button key={p} onClick={() => setPage(p)} style={{
                                 width: '36px', height: '36px', borderRadius: '8px', border: 'none',
-                                background: p === page ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.06)',
+                                background: p === page ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'rgba(255,255,255,0.06)',
                                 color: p === page ? 'white' : 'rgba(255,255,255,0.5)',
                                 cursor: 'pointer', fontWeight: '600', fontSize: '14px'
                             }}>{p}</button>
@@ -390,7 +412,7 @@ export default function AdminWithdrawPage() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
                 }}>
                     <div style={{
-                        background: '#1e1b4b', border: '1px solid rgba(239,68,68,0.3)',
+                        background: '#1e3a8a', border: '1px solid rgba(239,68,68,0.3)',
                         borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '420px'
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>

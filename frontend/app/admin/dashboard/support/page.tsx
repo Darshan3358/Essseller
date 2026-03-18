@@ -76,8 +76,8 @@ export default function AdminSupportPage() {
                     <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>{total} total requests</p>
                 </div>
                 <button onClick={fetchTickets} style={{
-                    background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)',
-                    borderRadius: '8px', color: '#818cf8', padding: '10px', cursor: 'pointer', display: 'flex'
+                    background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)',
+                    borderRadius: '8px', color: '#93c5fd', padding: '10px', cursor: 'pointer', display: 'flex'
                 }}><RefreshCw size={18} className={loading ? 'animate-spin' : ''} /></button>
             </div>
 
@@ -88,7 +88,7 @@ export default function AdminSupportPage() {
                 <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '0' }}>
                         <thead>
-                            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(99,102,241,0.08)' }}>
+                            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(59,130,246,0.08)' }}>
                                 <th className="res-show-mobile" style={{ padding: '14px 16px', width: '40px' }}></th>
                                 {['TID', 'Seller', 'Subject', 'Priority', 'Status', 'Date', 'Action'].map((h, i) => (
                                     <th key={h} className={i === 0 || i === 2 || i === 3 || i === 5 ? 'res-hide-mobile' : ''} style={{
@@ -116,12 +116,12 @@ export default function AdminSupportPage() {
                                                 <td className="res-show-mobile" style={{ padding: '14px 16px' }}>
                                                     <button 
                                                         onClick={() => toggleMobileRow(tkt._id)}
-                                                        style={{ border: 'none', background: 'rgba(99,102,241,0.2)', color: '#818cf8', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex' }}
+                                                        style={{ border: 'none', background: 'rgba(59,130,246,0.2)', color: '#93c5fd', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex' }}
                                                     >
                                                         {isExpanded ? <AlertCircle size={14} /> : <MessageSquare size={14} />}
                                                     </button>
                                                 </td>
-                                                <td className="res-hide-mobile" style={{ padding: '14px 16px', fontSize: '11px', fontWeight: '700', color: '#818cf8' }}>
+                                                <td className="res-hide-mobile" style={{ padding: '14px 16px', fontSize: '11px', fontWeight: '700', color: '#93c5fd' }}>
                                                     {tkt._id ? tkt._id.slice(-6).toUpperCase() : 'N/A'}
                                                 </td>
                                                 <td style={{ padding: '14px 16px' }}>
@@ -140,9 +140,9 @@ export default function AdminSupportPage() {
                                                 <td style={{ padding: '14px 16px' }}>
                                                     <span style={{
                                                         padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: '700',
-                                                        background: tkt.status === 'Resolved' ? 'rgba(16,185,129,0.1)' : 'rgba(99,102,241,0.1)',
-                                                        color: tkt.status === 'Resolved' ? '#10b981' : '#818cf8',
-                                                        border: `1px solid ${tkt.status === 'Resolved' ? 'rgba(16,185,129,0.2)' : 'rgba(99,102,241,0.2)'}`
+                                                        background: tkt.status === 'Resolved' ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)',
+                                                        color: tkt.status === 'Resolved' ? '#10b981' : '#93c5fd',
+                                                        border: `1px solid ${tkt.status === 'Resolved' ? 'rgba(16,185,129,0.2)' : 'rgba(59,130,246,0.2)'}`
                                                     }}>{tkt.status}</span>
                                                 </td>
                                                 <td className="res-hide-mobile" style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
@@ -158,8 +158,8 @@ export default function AdminSupportPage() {
                                                         onClick={() => { setSelectedTicket(tkt); setRemark(tkt.remark || ''); }}
                                                         data-tooltip="Manage Ticket"
                                                         style={{
-                                                            background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)',
-                                                            borderRadius: '8px', color: '#818cf8', padding: '7px 10px', cursor: 'pointer',
+                                                            background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)',
+                                                            borderRadius: '8px', color: '#93c5fd', padding: '7px 10px', cursor: 'pointer',
                                                             display: 'flex', alignItems: 'center', justifyContent: 'center'
                                                         }}
                                                     >
@@ -168,12 +168,12 @@ export default function AdminSupportPage() {
                                                 </td>
                                             </tr>
                                             {isExpanded && (
-                                                <tr className="res-show-mobile" style={{ background: 'rgba(99,102,241,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                                <tr className="res-show-mobile" style={{ background: 'rgba(59,130,246,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                     <td colSpan={10} style={{ padding: '16px' }}>
                                                         <div style={{ display: 'grid', gap: '8px' }}>
                                                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                                 <span style={{ fontSize: '10px', opacity: 0.4, textTransform: 'uppercase' }}>TID</span>
-                                                                <span style={{ fontSize: '12px', color: '#818cf8', fontWeight: '700' }}>{tkt._id?.toUpperCase()}</span>
+                                                                <span style={{ fontSize: '12px', color: '#93c5fd', fontWeight: '700' }}>{tkt._id?.toUpperCase()}</span>
                                                             </div>
                                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                                                 <span style={{ fontSize: '10px', opacity: 0.4, textTransform: 'uppercase' }}>Subject</span>
@@ -211,7 +211,7 @@ export default function AdminSupportPage() {
                     zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
                 }} onClick={() => setSelectedTicket(null)}>
                     <div style={{
-                        background: '#1e1b4b', border: '1px solid rgba(99,102,241,0.3)',
+                        background: '#1e3a8a', border: '1px solid rgba(59,130,246,0.3)',
                         borderRadius: '24px', width: '100%', maxWidth: '500px', overflow: 'hidden'
                     }} onClick={e => e.stopPropagation()}>
                         <div style={{ padding: '24px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -245,8 +245,8 @@ export default function AdminSupportPage() {
                                     onClick={() => handleUpdate('In Progress')}
                                     disabled={isUpdating}
                                     style={{
-                                        flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(99,102,241,0.3)',
-                                        background: 'rgba(99,102,241,0.1)', color: '#818cf8', fontWeight: '700', cursor: 'pointer'
+                                        flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(59,130,246,0.3)',
+                                        background: 'rgba(59,130,246,0.1)', color: '#93c5fd', fontWeight: '700', cursor: 'pointer'
                                     }}
                                 >Update Remark</button>
                                 <button

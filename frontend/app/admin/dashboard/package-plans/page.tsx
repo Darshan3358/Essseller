@@ -197,7 +197,7 @@ export default function AdminPackagePlansPage() {
                 <button
                     onClick={() => setShowAdd(true)}
                     style={{
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', border: 'none',
+                        background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', border: 'none',
                         borderRadius: '8px', color: 'white', padding: '10px 18px', cursor: 'pointer',
                         display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: '700'
                     }}
@@ -283,7 +283,7 @@ export default function AdminPackagePlansPage() {
 
                     {/* Live Preview */}
                     <div style={{
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)',
+                        background: 'linear-gradient(135deg, #3b82f6, #60a5fa, #ec4899)',
                         borderRadius: '20px', display: 'flex', flexDirection: 'column',
                         alignItems: 'center', justifyContent: 'center', padding: '32px',
                         color: 'white', position: 'relative', overflow: 'hidden'
@@ -331,7 +331,7 @@ export default function AdminPackagePlansPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
                 {loading ? (
                     <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '100px' }}>
-                        <RefreshCw size={32} style={{ animation: 'spin 1.5s linear infinite', color: '#6366f1', marginBottom: '16px' }} />
+                        <RefreshCw size={32} style={{ animation: 'spin 1.5s linear infinite', color: '#3b82f6', marginBottom: '16px' }} />
                         <p style={{ color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Synchronizing plans...</p>
                     </div>
                 ) : plans.length === 0 ? (
@@ -341,7 +341,7 @@ export default function AdminPackagePlansPage() {
                     </div>
                 ) : plans.map(plan => (
                     <div key={plan._id} style={{
-                        background: 'rgba(255,255,255,0.04)', border: plan.popular ? '2px solid #6366f1' : '1px solid rgba(255,255,255,0.08)',
+                        background: 'rgba(255,255,255,0.04)', border: plan.popular ? '2px solid #3b82f6' : '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '20px', padding: '24px', position: 'relative', overflow: 'hidden'
                     }}>
                         {plan.popular && (
@@ -381,7 +381,7 @@ export default function AdminPackagePlansPage() {
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                                     <div style={{
                                         width: '48px', height: '48px', borderRadius: '14px',
-                                        background: `linear-gradient(135deg, #6366f1, #a855f7)`,
+                                        background: `linear-gradient(135deg, #3b82f6, #a855f7)`,
                                         display: 'flex', alignItems: 'center', justifyContent: 'center'
                                     }}>
                                         <Zap size={24} color="white" />
@@ -404,13 +404,13 @@ export default function AdminPackagePlansPage() {
                                             <CheckCircle2 size={12} color="#10b981" /> {f}
                                         </div>
                                     ))}
-                                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', marginTop: '8px', paddingTop: '8px', fontSize: '13px', fontWeight: '700', color: '#6366f1' }}>
+                                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', marginTop: '8px', paddingTop: '8px', fontSize: '13px', fontWeight: '700', color: '#3b82f6' }}>
                                         {plan.product_limit.toLocaleString()} Products Limit
                                     </div>
                                 </div>
 
                                 <div style={{ display: 'flex', gap: '8px' }}>
-                                    <button onClick={() => handleEdit(plan)} data-tooltip="Edit Plan Details" style={{ ...btnStyle, flex: 1, background: 'rgba(99,102,241,0.15)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.2)' }}>
+                                    <button onClick={() => handleEdit(plan)} data-tooltip="Edit Plan Details" style={{ ...btnStyle, flex: 1, background: 'rgba(59,130,246,0.15)', color: '#bfdbfe', border: '1px solid rgba(59,130,246,0.2)' }}>
                                         <Edit2 size={16} />
                                     </button>
                                     <button onClick={() => handleDelete(plan._id)} data-tooltip="Delete Plan Permanently" style={{ ...btnStyle, background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
@@ -462,7 +462,7 @@ export default function AdminPackagePlansPage() {
 
                             <button onClick={handleAdd} style={{
                                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white',
+                                background: 'linear-gradient(135deg, #3b82f6, #60a5fa)', color: 'white',
                                 fontWeight: '700', marginTop: '12px', cursor: 'pointer'
                             }}>Create Package Plan</button>
                         </div>

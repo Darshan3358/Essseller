@@ -8,7 +8,7 @@ function StatCard({ icon: Icon, label, value, sub, color }: any) {
     const isPositive = !sub?.includes('-') && sub;
 
     return (
-        <div className="group relative overflow-hidden bg-[#1c1b4e] border border-white/10 rounded-[20px] lg:rounded-[24px] p-5 lg:p-6 transition-all duration-500 hover:border-indigo-500/30 hover:shadow-[0_0_40px_rgba(0,0,0,0.3)]">
+        <div className="group relative overflow-hidden bg-[#1c1b4e] border border-white/10 rounded-[20px] lg:rounded-[24px] p-5 lg:p-6 transition-all duration-500 hover:border-blue-500/30 hover:shadow-[0_0_40px_rgba(0,0,0,0.3)]">
             <div className="flex justify-between items-start mb-4 lg:mb-6">
                 <div className="flex flex-col">
                     <span className="text-white/40 text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.1em] mb-1">{label}</span>
@@ -76,8 +76,8 @@ export default function AdminDashboardPage() {
     if (loading) return (
         <div style={{ padding: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
             <div style={{
-                width: '40px', height: '40px', border: '3px solid rgba(99,102,241,0.3)',
-                borderTopColor: '#6366f1', borderRadius: '50%', animation: 'spin 0.8s linear infinite'
+                width: '40px', height: '40px', border: '3px solid rgba(59,130,246,0.3)',
+                borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite'
             }} />
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
         <div className="min-h-screen bg-transparent p-4 lg:p-10 space-y-10">
             {/* Header */}
             <div>
-                <h1 className="text-3xl lg:text-4xl font-black text-white tracking-tight mb-2 selection:bg-indigo-500">
+                <h1 className="text-3xl lg:text-4xl font-black text-white tracking-tight mb-2 selection:bg-blue-500">
                     Dashboard Overview <span className="text-white/20">Statistics</span>
                 </h1>
                 <p className="text-white/40 text-sm font-medium">
@@ -121,10 +121,10 @@ export default function AdminDashboardPage() {
             <div className="grid grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-5">
                 {/* Top Row on Desktop (3 cards) */}
                 <div className="lg:col-span-4">
-                    <StatCard icon={Users} label="Total Sellers" value={stats?.totalUsers ?? 0} sub={`+${stats?.newSellers ?? 0} today`} color="#6366f1" />
+                    <StatCard icon={Users} label="Total Sellers" value={stats?.totalUsers ?? 0} sub={`+${stats?.newSellers ?? 0} today`} color="#3b82f6" />
                 </div>
                 <div className="lg:col-span-4">
-                    <StatCard icon={Box} label="Products" value={stats?.totalProducts ?? 0} sub="In storehouse" color="#8b5cf6" />
+                    <StatCard icon={Box} label="Products" value={stats?.totalProducts ?? 0} sub="In storehouse" color="#60a5fa" />
                 </div>
                 <div className="lg:col-span-4">
                     <StatCard icon={ShoppingCart} label="Total Orders" value={stats?.totalOrders ?? 0} sub={`${stats?.ordersThisMonth ?? 0} month`} color="#06b6d4" />
@@ -146,25 +146,25 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Sales Statistics Chart */}
-            <div className="bg-[#11102e] border border-white/5 rounded-[32px] p-8 lg:p-10 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[100px] pointer-events-none" />
+            <div className="bg-[#020617] border border-white/5 rounded-[32px] p-8 lg:p-10 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[100px] pointer-events-none" />
                 <SalesChart data={chartData} />
             </div>
 
             {/* Quick Links */}
-            <div className="bg-[#11102e] border border-white/5 rounded-[32px] p-8 lg:p-10 relative overflow-hidden">
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 blur-[100px] pointer-events-none" />
+            <div className="bg-[#020617] border border-white/5 rounded-[32px] p-8 lg:p-10 relative overflow-hidden">
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 blur-[100px] pointer-events-none" />
                 <h2 className="text-xl font-bold text-white mb-8 flex items-center gap-3">
-                    <div className="w-2 h-8 bg-indigo-500 rounded-full" />
+                    <div className="w-2 h-8 bg-blue-500 rounded-full" />
                     Quick Actions
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
                     {[
-                        { label: 'Manage Users', href: '/admin/dashboard/users', color: '#6366f1' },
+                        { label: 'Manage Users', href: '/admin/dashboard/users', color: '#3b82f6' },
                         { label: 'Approve Recharges', href: '/admin/dashboard/recharge', color: '#10b981' },
                         { label: 'Process Withdrawals', href: '/admin/dashboard/withdraw', color: '#f59e0b' },
                         { label: 'View Orders', href: '/admin/dashboard/orders', color: '#06b6d4' },
-                        { label: 'Add Products', href: '/admin/dashboard/products', color: '#8b5cf6' },
+                        { label: 'Add Products', href: '/admin/dashboard/products', color: '#60a5fa' },
                     ].map(a => (
                         <a key={a.href} href={a.href} className="group no-underline">
                             <div 

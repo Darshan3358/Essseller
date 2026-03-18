@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
             <div style={{
                 position: 'absolute', top: '-20%', left: '-10%',
                 width: '500px', height: '500px',
-                background: 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)',
                 borderRadius: '50%', animation: 'pulse 4s ease-in-out infinite'
             }} />
             <div style={{
@@ -72,8 +72,8 @@ export default function AdminLoginPage() {
                     <div style={{
                         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                         width: '80px', height: '80px',
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                        borderRadius: '24px', boxShadow: '0 20px 40px rgba(99,102,241,0.4)',
+                        background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+                        borderRadius: '24px', boxShadow: '0 20px 40px rgba(59,130,246,0.4)',
                         marginBottom: '24px'
                     }}>
                         <Shield size={36} color="white" />
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
                 }}>
                     <div style={{
                         height: '3px',
-                        background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)',
+                        background: 'linear-gradient(90deg, #3b82f6, #60a5fa, #ec4899)',
                         borderRadius: '3px',
                         marginBottom: '32px',
                         marginLeft: '-40px',
@@ -152,7 +152,7 @@ export default function AdminLoginPage() {
                                         boxSizing: 'border-box',
                                         transition: 'border-color 0.2s'
                                     }}
-                                    onFocus={(e) => e.target.style.borderColor = 'rgba(99,102,241,0.6)'}
+                                    onFocus={(e) => e.target.style.borderColor = 'rgba(59,130,246,0.6)'}
                                     onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                                 />
                             </div>
@@ -184,7 +184,7 @@ export default function AdminLoginPage() {
                                         boxSizing: 'border-box',
                                         transition: 'border-color 0.2s'
                                     }}
-                                    onFocus={(e) => e.target.style.borderColor = 'rgba(99,102,241,0.6)'}
+                                    onFocus={(e) => e.target.style.borderColor = 'rgba(59,130,246,0.6)'}
                                     onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                                 />
                             </div>
@@ -196,13 +196,13 @@ export default function AdminLoginPage() {
                             style={{
                                 width: '100%', padding: '15px',
                                 background: loading
-                                    ? 'rgba(99,102,241,0.5)'
-                                    : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                                    ? 'rgba(59,130,246,0.5)'
+                                    : 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                                 border: 'none', borderRadius: '12px',
                                 color: 'white', fontSize: '15px', fontWeight: '700',
                                 cursor: loading ? 'not-allowed' : 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                boxShadow: loading ? 'none' : '0 10px 25px rgba(99,102,241,0.4)',
+                                boxShadow: loading ? 'none' : '0 10px 25px rgba(59,130,246,0.4)',
                                 transition: 'all 0.2s'
                             }}
                         >

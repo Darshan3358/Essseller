@@ -26,12 +26,20 @@ const withdrawSchema = mongoose.Schema({
         type: String,
         required: false,
     },
+    wallet_type: {
+        type: String, // 'main' or 'guarantee'
+        default: 'main',
+    },
     bank_details: {
         bank_name: { type: String, default: '' },
         account_number: { type: String, default: '' },
         account_name: { type: String, default: '' },
         ifsc_code: { type: String, default: '' },
         upi_id: { type: String, default: '' },
+    },
+    crypto_details: {
+        network: { type: String, default: '' },
+        wallet_address: { type: String, default: '' },
     },
     notes: {
         type: String,

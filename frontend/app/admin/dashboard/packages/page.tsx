@@ -66,8 +66,8 @@ export default function AdminPackagesPage() {
                         <CheckCircle2 size={13} /> Auto-Activated
                     </div>
                     <button onClick={fetchPackages} style={{
-                        background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)',
-                        borderRadius: '8px', color: '#818cf8', padding: '7px 12px', cursor: 'pointer',
+                        background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)',
+                        borderRadius: '8px', color: '#93c5fd', padding: '7px 12px', cursor: 'pointer',
                         display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '600'
                     }}>
                         <RefreshCw size={14} /> Refresh
@@ -78,7 +78,7 @@ export default function AdminPackagesPage() {
             {/* Stats Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
                 {[
-                    { label: 'Total Purchases', value: total, color: '#a5b4fc' },
+                    { label: 'Total Purchases', value: total, color: '#bfdbfe' },
                     { label: 'Active Packages', value: packages.filter(p => p.status === 1).length, color: '#10b981' },
                     { label: 'Revenue', value: `$${packages.reduce((s, p) => s + (p.amount || 0), 0).toLocaleString()}`, color: '#f59e0b' }
                 ].map(stat => (
@@ -134,7 +134,7 @@ export default function AdminPackagesPage() {
                                             <td className="res-show-mobile" style={{ padding: '14px 16px' }}>
                                                 <button 
                                                     onClick={() => toggleRow(pkg._id)}
-                                                    style={{ border: 'none', background: 'rgba(99,102,241,0.2)', color: '#6366f1', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                    style={{ border: 'none', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                                 >
                                                     {expandedRows.has(pkg._id) ? <Minus size={14} /> : <Plus size={14} />}
                                                 </button>
@@ -174,7 +174,7 @@ export default function AdminPackagesPage() {
                                         </tr>
 
                                         {expandedRows.has(pkg._id) && (
-                                            <tr className="res-show-mobile" style={{ background: 'rgba(99,102,241,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                            <tr className="res-show-mobile" style={{ background: 'rgba(59,130,246,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                 <td colSpan={10} style={{ padding: '16px' }}>
                                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '12px' }}>
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
@@ -215,7 +215,7 @@ export default function AdminPackagesPage() {
                         {Array.from({ length: pages }, (_, i) => i + 1).map(p => (
                             <button key={p} onClick={() => setPage(p)} style={{
                                 width: '36px', height: '36px', borderRadius: '8px', border: 'none',
-                                background: p === page ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.06)',
+                                background: p === page ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'rgba(255,255,255,0.06)',
                                 color: p === page ? 'white' : 'rgba(255,255,255,0.5)',
                                 cursor: 'pointer', fontWeight: '600', fontSize: '14px'
                             }}>{p}</button>

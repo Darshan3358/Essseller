@@ -109,7 +109,7 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
             {/* Main Score Card - Premium Design */}
             <div className={`premium-card relative overflow-hidden transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                 {/* Dynamic Background Gradients */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100/40 via-purple-100/20 to-transparent rounded-full -translate-y-1/3 translate-x-1/3 blur-3xl" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100/40 via-blue-100/20 to-transparent rounded-full -translate-y-1/3 translate-x-1/3 blur-3xl" />
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-100/40 via-yellow-100/20 to-transparent rounded-full translate-y-1/3 -translate-x-1/3 blur-3xl" />
 
                 <div className="relative z-10 p-6 md:p-10 flex flex-col items-center text-center">
@@ -205,10 +205,10 @@ export default function StoreHealthDashboard({ healthScore }: StoreHealthDashboa
                         {score >= 85 && (
                             <div className="inline-block pt-2">
                                 <div className="group/badge relative">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-purple-400 rounded-full blur-md opacity-40 group-hover/badge:opacity-60 transition-opacity animate-pulse-slow" />
-                                    <div className="relative flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-50 to-purple-50 border border-primary-200/50 rounded-full">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-blue-400 rounded-full blur-md opacity-40 group-hover/badge:opacity-60 transition-opacity animate-pulse-slow" />
+                                    <div className="relative flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200/50 rounded-full">
                                         <Award className="w-5 h-5 text-primary-600" />
-                                        <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-purple-700">
+                                        <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-700 to-blue-700">
                                             Top Rated Seller
                                         </span>
                                         <Sparkles className="w-4 h-4 text-amber-500 animate-spin-slow" />

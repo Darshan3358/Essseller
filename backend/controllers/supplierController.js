@@ -42,7 +42,55 @@ const createSupplier = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Update a supplier
+// @route   PUT /api/suppliers/:id
+// @access  Private/Admin
+const updateSupplier = asyncHandler(async (req, res) => {
+    const supplier = await Supplier.findById(req.params.id);
+
+    if (supplier) {
+        supplier.name = req.body.name || supplier.name;
+        supplier.rating = req.body.rating ?? supplier.rating;
+        supplier.location = req.body.location || supplier.location;
+        supplier.contact = req.body.contact || supplier.contact;
+        supplier.email = req.body.email || supplier.email;
+        supplier.deliveryTimeEstimate = req.body.deliveryTimeEstimate || supplier.deliveryTimeEstimate;
+        supplier.commissionRate = req.body.commissionRate ?? supplier.commissionRate;
+        supplier.status = req.body.status || supplier.status;
+
+        const updatedSupplier = await supplier.save();
+        res.json({
+            success: true,
+            message: 'Supplier updated successfully',
+            data: updatedSupplier
+        });
+    } else {
+        res.status(404);
+        throw new Error('Supplier not found');
+    }
+});
+
+// @desc    Delete a supplier
+// @route   DELETE /api/suppliers/:id
+// @access  Private/Admin
+const deleteSupplier = asyncHandler(async (req, res) => {
+    const supplier = await Supplier.findById(req.params.id);
+
+    if (supplier) {
+        await supplier.deleteOne();
+        res.json({
+            success: true,
+            message: 'Supplier removed successfully'
+        });
+    } else {
+        res.status(404);
+        throw new Error('Supplier not found');
+    }
+});
+
 module.exports = {
     getSuppliers,
-    createSupplier
+    createSupplier,
+    updateSupplier,
+    deleteSupplier
 };

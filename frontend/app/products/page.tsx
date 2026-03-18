@@ -72,18 +72,18 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {/* Products Count */}
-                    <div className="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-900 rounded-3xl p-8 text-white shadow-xl flex flex-col justify-between text-left relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-900 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl flex flex-col justify-between text-left relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
                             <Package size={120} />
                         </div>
                         <div className="relative z-10">
                             <p className="text-sm font-bold text-blue-100 uppercase tracking-widest mb-4">{t('Products')}</p>
-                            <p className="text-6xl font-black mb-6 tracking-tighter">{products.length}</p>
+                            <p className="text-4xl sm:text-6xl font-black mb-4 sm:mb-6 tracking-tighter">{products.length}</p>
                             <div className="space-y-1">
                                 <p className="text-xs font-bold text-blue-200/80 uppercase tracking-wider">{t('Remaining Uploads')}</p>
-                                <p className="text-3xl font-black text-blue-100">{stats?.remainingProducts ?? '—'}</p>
+                                <p className="text-xl sm:text-3xl font-black text-blue-100">{stats?.remainingProducts ?? '—'}</p>
                             </div>
                         </div>
                         <button

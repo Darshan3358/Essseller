@@ -167,8 +167,8 @@ export default function AdminUsersPage() {
                     <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>{total} total sellers</p>
                 </div>
                 <button onClick={fetchUsers} style={{
-                    background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)',
-                    borderRadius: '10px', color: '#818cf8', padding: '8px 12px', cursor: 'pointer',
+                    background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)',
+                    borderRadius: '10px', color: '#93c5fd', padding: '8px 12px', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '600'
                 }}>
                     <RefreshCw size={15} /> Refresh
@@ -203,7 +203,7 @@ export default function AdminUsersPage() {
                             style={{
                                 padding: '6px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: '600',
                                 border: 'none', cursor: 'pointer', transition: 'all 0.2s',
-                                background: statusFilter === st.value ? '#6366f1' : 'transparent',
+                                background: statusFilter === st.value ? '#3b82f6' : 'transparent',
                                 color: statusFilter === st.value ? 'white' : 'rgba(255,255,255,0.6)'
                             }}
                         >
@@ -247,7 +247,7 @@ export default function AdminUsersPage() {
                                         <td className="res-show-mobile" style={{ padding: '12px 16px' }}>
                                             <button 
                                                 onClick={() => toggleRow(u._id)}
-                                                style={{ border: 'none', background: 'rgba(99,102,241,0.2)', color: '#6366f1', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                style={{ border: 'none', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                             >
                                                 {expandedRows.has(u._id) ? <Minus size={14} /> : <Plus size={14} />}
                                             </button>
@@ -325,7 +325,7 @@ export default function AdminUsersPage() {
                                     </tr>
                                     {/* Expanded Row for Mobile */}
                                     {expandedRows.has(u._id) && (
-                                        <tr className="res-show-mobile" style={{ background: 'rgba(99,102,241,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <tr className="res-show-mobile" style={{ background: 'rgba(59,130,246,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                             <td colSpan={11} style={{ padding: '16px' }}>
                                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '12px' }}>
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
@@ -364,7 +364,7 @@ export default function AdminUsersPage() {
                         {Array.from({ length: pages }, (_, i) => i + 1).map(p => (
                             <button key={p} onClick={() => setPage(p)} style={{
                                 width: '36px', height: '36px', borderRadius: '8px', border: 'none',
-                                background: p === page ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.06)',
+                                background: p === page ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'rgba(255,255,255,0.06)',
                                 color: p === page ? 'white' : 'rgba(255,255,255,0.5)',
                                 cursor: 'pointer', fontWeight: '600', fontSize: '14px'
                             }}>{p}</button>
@@ -458,7 +458,7 @@ export default function AdminUsersPage() {
                                     color: 'white', fontWeight: '700', cursor: 'pointer'
                                 }}>Cancel</button>
                                 <button type="submit" disabled={actionLoading === editingUser._id} style={{
-                                    flex: 1, padding: '14px', background: '#6366f1',
+                                    flex: 1, padding: '14px', background: '#3b82f6',
                                     border: 'none', borderRadius: '12px',
                                     color: 'white', fontWeight: '700', cursor: 'pointer',
                                     opacity: actionLoading === editingUser._id ? 0.7 : 1

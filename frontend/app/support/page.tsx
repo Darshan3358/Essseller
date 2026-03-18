@@ -55,7 +55,7 @@ export default function SupportTicketPage() {
 
     const getStatusStyles = (status: string) => {
         switch (status) {
-            case 'Open': return 'bg-indigo-50 text-indigo-600';
+            case 'Open': return 'bg-blue-50 text-blue-600';
             case 'In Progress': return 'bg-amber-50 text-amber-600';
             case 'Resolved': return 'bg-emerald-50 text-emerald-600';
             default: return 'bg-gray-50 text-gray-600';
@@ -66,9 +66,9 @@ export default function SupportTicketPage() {
         <Shell>
             <div className="space-y-10 pb-20 max-w-[1600px] mx-auto">
                 {/* Visual Banner */}
-                <div className="relative p-12 lg:p-20 rounded-[3rem] bg-indigo-900 text-white overflow-hidden group">
+                <div className="relative p-12 lg:p-20 rounded-[3rem] bg-blue-900 text-white overflow-hidden group">
                     <LifeBuoy className="absolute -bottom-10 -left-10 w-64 h-64 text-white/5 group-hover:rotate-12 transition-transform duration-1000" />
-                    <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-indigo-500/20 to-transparent" />
+                    <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-500/20 to-transparent" />
 
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-8">
@@ -79,10 +79,10 @@ export default function SupportTicketPage() {
                             <h1 className="text-3xl lg:text-7xl font-black text-white tracking-tight leading-tight">
                                 Expert Help, <br />When You Need It.
                             </h1>
-                            <p className="text-indigo-200 text-lg font-medium max-w-lg leading-relaxed">
+                            <p className="text-blue-200 text-lg font-medium max-w-lg leading-relaxed">
                                 Our dedicated support engineers are on standby 24/7 to help you resolve any issues with your store or shipments.
                             </p>
-                            <button onClick={() => setShowModal(true)} className="px-10 py-5 bg-white text-indigo-900 rounded-[2rem] font-black text-lg shadow-2xl hover:scale-105 transition-all flex items-center gap-3">
+                            <button onClick={() => setShowModal(true)} className="px-10 py-5 bg-white text-blue-900 rounded-[2rem] font-black text-lg shadow-2xl hover:scale-105 transition-all flex items-center gap-3">
                                 <Plus className="w-6 h-6" />
                                 Create New Ticket
                             </button>
@@ -93,13 +93,13 @@ export default function SupportTicketPage() {
                 {/* Ticket List Header */}
                 <div className="flex flex-col md:flex-row items-center gap-4">
                     <div className="relative flex-1 group w-full md:w-auto">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-indigo-600 transition-colors" />
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
                         <input
                             type="text"
                             placeholder="Search your tickets (ID or subject)..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-16 pr-6 py-5 bg-white border border-gray-100 rounded-[2rem] shadow-sm focus:ring-4 focus:ring-indigo-100 transition-all font-medium"
+                            className="w-full pl-16 pr-6 py-5 bg-white border border-gray-100 rounded-[2rem] shadow-sm focus:ring-4 focus:ring-blue-100 transition-all font-medium"
                         />
                     </div>
                     <div className="flex bg-gray-100/50 p-2 rounded-[2rem] border border-gray-100 w-full md:w-auto shrink-0 overflow-x-auto no-scrollbar">
@@ -107,7 +107,7 @@ export default function SupportTicketPage() {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'
+                                className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'
                                     }`}
                             >
                                 {tab}
@@ -126,7 +126,7 @@ export default function SupportTicketPage() {
                         </div>
                     ) : (
                         filteredTickets.map((tkt, i) => (
-                            <div key={i} className="glass-card group hover:border-indigo-100 transition-all p-8 flex flex-col md:flex-row items-center gap-10">
+                            <div key={i} className="glass-card group hover:border-blue-100 transition-all p-8 flex flex-col md:flex-row items-center gap-10">
                                 <div className="shrink-0">
                                     <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center relative ${getStatusStyles(tkt.status)}`}>
                                         <FileText className="w-10 h-10" />
@@ -140,13 +140,13 @@ export default function SupportTicketPage() {
 
                                 <div className="flex-1 space-y-4 text-left">
                                     <div className="flex items-center gap-3">
-                                        <h3 className="text-xl font-black text-gray-900 leading-tight group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{tkt.subject}</h3>
+                                        <h3 className="text-xl font-black text-gray-900 leading-tight group-hover:text-blue-600 transition-colors uppercase tracking-tight">{tkt.subject}</h3>
                                         <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-lg shrink-0">TKT-{tkt._id?.slice(-4).toUpperCase()}</span>
                                     </div>
                                     <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-gray-500">
                                         <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-gray-400" /> Opened {new Date(tkt.createdAt).toLocaleDateString()}</span>
                                         <span className={`flex items-center gap-1.5 ${tkt.status === 'Resolved' ? 'text-emerald-600' :
-                                            tkt.status === 'In Progress' ? 'text-amber-600' : 'text-indigo-600 animate-pulse'
+                                            tkt.status === 'In Progress' ? 'text-amber-600' : 'text-blue-600 animate-pulse'
                                             }`}>
                                             {tkt.status === 'Resolved' ? <CheckCircle2 className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                                             {tkt.status}
@@ -156,7 +156,7 @@ export default function SupportTicketPage() {
 
                                 <button
                                     onClick={() => setSelectedTicket(tkt)}
-                                    className="w-full md:w-auto px-8 py-4 bg-gray-50 group-hover:bg-indigo-600 text-gray-500 group-hover:text-white rounded-[1.5rem] font-black shadow-sm group-hover:shadow-xl group-hover:shadow-indigo-500/30 transition-all flex items-center justify-center gap-3"
+                                    className="w-full md:w-auto px-8 py-4 bg-gray-50 group-hover:bg-blue-600 text-gray-500 group-hover:text-white rounded-[1.5rem] font-black shadow-sm group-hover:shadow-xl group-hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-3"
                                 >
                                     View Case
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -172,7 +172,7 @@ export default function SupportTicketPage() {
                         <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
                             <div className="p-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 font-bold">
+                                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 font-bold">
                                         <FileText className="w-6 h-6" />
                                     </div>
                                     <div>
@@ -194,10 +194,10 @@ export default function SupportTicketPage() {
 
                                 {selectedTicket.remark && (
                                     <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest flex items-center gap-2">
+                                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
                                             <CheckCircle2 className="w-4 h-4" /> Admin Response
                                         </p>
-                                        <div className="p-6 bg-indigo-50 border border-indigo-100 rounded-3xl text-indigo-900 font-bold italic leading-relaxed">
+                                        <div className="p-6 bg-blue-50 border border-blue-100 rounded-3xl text-blue-900 font-bold italic leading-relaxed">
                                             "{selectedTicket.remark}"
                                         </div>
                                     </div>
@@ -206,7 +206,7 @@ export default function SupportTicketPage() {
                                 <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-100">
                                     <div>
                                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Current Status</p>
-                                        <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest ${selectedTicket.status === 'Resolved' ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'
+                                        <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest ${selectedTicket.status === 'Resolved' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'
                                             }`}>
                                             {selectedTicket.status}
                                         </span>
@@ -249,7 +249,7 @@ export default function SupportTicketPage() {
                                     required
                                     value={formData.subject}
                                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                     placeholder="e.g. Cannot update my banking details"
                                 />
                             </div>
@@ -260,7 +260,7 @@ export default function SupportTicketPage() {
                                     rows={5}
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none"
                                     placeholder="Please provide as much context as possible..."
                                 />
                             </div>
@@ -269,7 +269,7 @@ export default function SupportTicketPage() {
                                 <select
                                     value={formData.priority}
                                     onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                 >
                                     <option value="Low">Low - General Inquiry</option>
                                     <option value="Medium">Medium - Issue impacting work</option>
@@ -287,7 +287,7 @@ export default function SupportTicketPage() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg shadow-indigo-500/30 transition-all disabled:opacity-50"
+                                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50"
                                 >
                                     {isSubmitting ? 'Creating...' : 'Submit Ticket'}
                                 </button>

@@ -67,11 +67,11 @@ export default function ReportsPage() {
                 </div>
 
                 {/* Analytics Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
                         { title: 'Total Revenue', value: '$0.00', change: '0.0%', icon: DollarSign, color: 'text-primary-600', bg: 'bg-primary-50' },
-                        { title: 'Orders Placed', value: '0', change: '0.0%', icon: Package, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-                        { title: 'Avg Order Value', value: '$0.00', change: '0.0%', icon: BarChart3, color: 'text-purple-600', bg: 'bg-purple-50' },
+                        { title: 'Orders Placed', value: '0', change: '0.0%', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
+                        { title: 'Avg Order Value', value: '$0.00', change: '0.0%', icon: BarChart3, color: 'text-blue-600', bg: 'bg-blue-50' },
                         { title: 'Gross Profit', value: '$0.00', change: '0.0%', icon: TrendingUp, color: 'text-success-600', bg: 'bg-success-50' },
                     ].map((stat, idx) => (
                         <div key={idx} className="metric-card">
@@ -126,8 +126,8 @@ export default function ReportsPage() {
                         <div className="space-y-4">
                             {[
                                 { name: 'Direct Store', value: 65, color: 'bg-primary-500' },
-                                { name: 'Marketplace', value: 25, color: 'bg-indigo-500' },
-                                { name: 'Social Media', value: 10, color: 'bg-purple-500' },
+                                { name: 'Marketplace', value: 25, color: 'bg-blue-500' },
+                                { name: 'Social Media', value: 10, color: 'bg-blue-500' },
                             ].map((item, idx) => (
                                 <div key={idx} className="space-y-2">
                                     <div className="flex justify-between text-sm">
@@ -141,10 +141,10 @@ export default function ReportsPage() {
                             ))}
                         </div>
                     </div>
-                    <div className="premium-card p-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+                    <div className="premium-card p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
                         <TrendingUp className="w-10 h-10 mb-4 opacity-50" />
                         <h3 className="text-xl font-bold mb-2">Growth Forecast</h3>
-                        <p className="text-indigo-100 text-sm mb-6">Based on your current data, we expect a 25% revenue increase in the next quarter. Keep optimizing your product stock!</p>
+                        <p className="text-blue-100 text-sm mb-6">Based on your current data, we expect a 25% revenue increase in the next quarter. Keep optimizing your product stock!</p>
                         <button className="w-full py-3 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl font-bold transition-all">
                             View Detailed Forecast
                         </button>

@@ -100,7 +100,7 @@ export default function SpreadPackagesPage() {
                                     ? 'border-blue-500 shadow-2xl shadow-blue-500/20 bg-white/80 dark:bg-slate-900/80'
                                     : 'border-transparent dark:border-slate-800 hover:border-gray-200 dark:hover:border-slate-700 bg-white/60 dark:bg-slate-900/60'}`}>
 
-                                    <div className={`w-16 h-16 rounded-3xl bg-gradient-to-br ${pkg.color || 'from-blue-500 to-indigo-600'} flex items-center justify-center mb-8 shadow-xl group-hover:scale-110 transition-transform duration-500`}>
+                                    <div className={`w-16 h-16 rounded-3xl bg-gradient-to-br ${pkg.color || 'from-blue-500 to-blue-600'} flex items-center justify-center mb-8 shadow-xl group-hover:scale-110 transition-transform duration-500`}>
                                         <Box className="w-8 h-8 text-white" />
                                     </div>
 
@@ -148,7 +148,7 @@ export default function SpreadPackagesPage() {
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 md:p-10 w-full max-w-md shadow-2xl border border-gray-100 dark:border-slate-800 animate-in zoom-in-95 duration-300">
                         <div className="flex justify-between items-center mb-6">
-                            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${selectedPackage.color || 'from-blue-500 to-indigo-600'} flex items-center justify-center shadow-lg`}>
+                            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${selectedPackage.color || 'from-blue-500 to-blue-600'} flex items-center justify-center shadow-lg`}>
                                 <Zap className="w-6 h-6 text-white" />
                             </div>
                             <button

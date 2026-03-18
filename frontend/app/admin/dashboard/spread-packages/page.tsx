@@ -14,7 +14,7 @@ export default function AdminSpreadPackagesPage() {
         price: 0,
         duration: 'Month',
         features: '',
-        color: 'from-blue-500 to-indigo-600',
+        color: 'from-blue-500 to-blue-600',
         popular: false,
         active: true
     });
@@ -50,7 +50,7 @@ export default function AdminSpreadPackagesPage() {
                 price: pkg.price,
                 duration: pkg.duration || 'Month',
                 features: pkg.features.join('\n'),
-                color: pkg.color || 'from-blue-500 to-indigo-600',
+                color: pkg.color || 'from-blue-500 to-blue-600',
                 popular: pkg.popular || false,
                 active: pkg.active ?? true
             });
@@ -61,7 +61,7 @@ export default function AdminSpreadPackagesPage() {
                 price: 0,
                 duration: 'Month',
                 features: '',
-                color: 'from-blue-500 to-indigo-600',
+                color: 'from-blue-500 to-blue-600',
                 popular: false,
                 active: true
             });
@@ -138,11 +138,11 @@ export default function AdminSpreadPackagesPage() {
                 <button
                     onClick={() => handleOpenModal()}
                     style={{
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                        background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                         border: 'none', borderRadius: '10px', color: 'white',
                         padding: '10px 20px', cursor: 'pointer', display: 'flex',
                         alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: '700',
-                        boxShadow: '0 4px 12px rgba(99,102,241,0.3)'
+                        boxShadow: '0 4px 12px rgba(59,130,246,0.3)'
                     }}
                 >
                     <Plus size={18} /> New Package
@@ -151,7 +151,7 @@ export default function AdminSpreadPackagesPage() {
 
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '100px' }}>
-                    <RefreshCw size={32} style={{ animation: 'spin 1.5s linear infinite', color: '#6366f1', marginBottom: '16px' }} />
+                    <RefreshCw size={32} style={{ animation: 'spin 1.5s linear infinite', color: '#3b82f6', marginBottom: '16px' }} />
                     <p style={{ color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Loading packages...</p>
                 </div>
             ) : packages.length === 0 ? (
@@ -164,7 +164,7 @@ export default function AdminSpreadPackagesPage() {
                     {packages.map((pkg) => (
                         <div key={pkg._id} style={{
                             background: 'rgba(255,255,255,0.04)',
-                            border: pkg.popular ? '2px solid #6366f1' : '1px solid rgba(255,255,255,0.08)',
+                            border: pkg.popular ? '2px solid #3b82f6' : '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '20px', padding: '24px', position: 'relative', overflow: 'hidden'
                         }}>
                             {!pkg.active && (
@@ -185,7 +185,7 @@ export default function AdminSpreadPackagesPage() {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                                 <div style={{
                                     width: '48px', height: '48px', borderRadius: '14px',
-                                    background: `linear-gradient(to bottom right, ${pkg.color?.split(' ')[0].replace('from-', '') || '#6366f1'}, ${pkg.color?.split(' ')[1].replace('to-', '') || '#8b5cf6'})`,
+                                    background: `linear-gradient(to bottom right, ${pkg.color?.split(' ')[0].replace('from-', '') || '#3b82f6'}, ${pkg.color?.split(' ')[1].replace('to-', '') || '#60a5fa'})`,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     boxShadow: '0 8px 16px rgba(0,0,0,0.2)'
                                 }}>
@@ -193,7 +193,7 @@ export default function AdminSpreadPackagesPage() {
                                 </div>
                                 <div>
                                     <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800' }}>{pkg.name}</h3>
-                                    <span style={{ fontSize: '11px', fontWeight: '700', color: '#6366f1', textTransform: 'uppercase' }}>{pkg.duration} Plan</span>
+                                    <span style={{ fontSize: '11px', fontWeight: '700', color: '#3b82f6', textTransform: 'uppercase' }}>{pkg.duration} Plan</span>
                                 </div>
                             </div>
 
@@ -212,7 +212,7 @@ export default function AdminSpreadPackagesPage() {
                             </div>
 
                             <div style={{ display: 'flex', gap: '8px' }}>
-                                <button onClick={() => handleOpenModal(pkg)} data-tooltip="Edit Package Details" style={{ ...btnStyle, flex: 1, background: 'rgba(99,102,241,0.15)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.2)' }}>
+                                <button onClick={() => handleOpenModal(pkg)} data-tooltip="Edit Package Details" style={{ ...btnStyle, flex: 1, background: 'rgba(59,130,246,0.15)', color: '#bfdbfe', border: '1px solid rgba(59,130,246,0.2)' }}>
                                     <Edit2 size={16} />
                                 </button>
                                 <button onClick={() => handleDelete(pkg._id)} data-tooltip="Delete Package Permanently" style={{ ...btnStyle, background: 'rgba(239,68,68,0.1)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
@@ -296,7 +296,7 @@ export default function AdminSpreadPackagesPage() {
                                     type="text" value={formData.color}
                                     onChange={e => setFormData({ ...formData, color: e.target.value })}
                                     style={inputStyle}
-                                    placeholder="from-blue-500 to-indigo-600"
+                                    placeholder="from-blue-500 to-blue-600"
                                 />
                             </div>
 
@@ -316,7 +316,7 @@ export default function AdminSpreadPackagesPage() {
                             </div>
 
                             <button type="submit" style={{
-                                marginTop: '12px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                                marginTop: '12px', background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
                                 border: 'none', borderRadius: '12px', color: 'white', padding: '14px',
                                 fontWeight: '800', cursor: 'pointer', display: 'flex',
                                 alignItems: 'center', justifyContent: 'center', gap: '10px',

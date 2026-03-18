@@ -239,7 +239,7 @@ export default function PaymentPage() {
                                                     <div className="flex items-center gap-2">
                                                         <p className="font-mono text-sm font-bold text-gray-900 break-all flex-1">{selectedCryptoAddr}</p>
                                                         <button onClick={() => handleCopy(selectedCryptoAddr, selectedNetwork)} style={{
-                                                            background: copied === selectedNetwork ? '#10b981' : '#6366f1',
+                                                            background: copied === selectedNetwork ? '#10b981' : '#3b82f6',
                                                             border: 'none', borderRadius: '8px', padding: '7px', cursor: 'pointer', color: 'white', flexShrink: 0
                                                         }}>
                                                             {copied === selectedNetwork ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -374,7 +374,7 @@ export default function PaymentPage() {
                                         <button onClick={() => setShowPayment(false)} className="flex-1 py-4 text-sm font-black text-gray-400 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-colors">
                                             Cancel
                                         </button>
-                                        <button onClick={handleConfirmPayment} className="flex-1 py-4 bg-gradient-to-r from-primary-600 to-indigo-700 text-white rounded-2xl font-black text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                        <button onClick={handleConfirmPayment} className="flex-1 py-4 bg-gradient-to-r from-primary-600 to-blue-700 text-white rounded-2xl font-black text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
                                             <Check className="w-4 h-4" /> I Have Sent — Submit
                                         </button>
                                     </div>
@@ -432,7 +432,7 @@ export default function PaymentPage() {
                 </div>
 
                 {/* Selection Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-3 sm:gap-6">
                     {[
                         { key: 'supplier', label: 'Supplier Payment', desc: 'Direct payment to storehouse for order processing.', Icon: ShoppingCart, color: 'blue' },
                         { key: 'vault', label: 'Vault / Deposit', desc: 'Add funds to your secure business vault.', Icon: ShieldCheck, color: 'indigo' },
@@ -440,24 +440,24 @@ export default function PaymentPage() {
                         const IconComp = Icon || Wallet;
                         return (
                             <div key={key} onClick={() => setPaymentType(key as any)}
-                                className={`premium-card p-8 cursor-pointer transition-all duration-300 relative group overflow-hidden ${paymentType === key
-                                    ? `ring-2 ring-primary-500 bg-primary-50/50 shadow-2xl`
+                                className={`premium-card p-4 sm:p-8 cursor-pointer transition-all duration-300 relative group overflow-hidden ${paymentType === key
+                                    ? `ring-1 sm:ring-2 ring-primary-500 bg-primary-50/50 shadow-xl sm:shadow-2xl`
                                     : 'hover:bg-white/80 opacity-70 hover:opacity-100'}`}
                             >
                                 {paymentType === key && (
-                                    <div className="absolute top-0 right-0 p-5">
-                                        <div className="bg-primary-600 text-white p-1 rounded-full shadow-lg animate-scale-in">
-                                            <CheckCircle2 className="w-4 h-4" />
+                                    <div className="absolute top-0 right-0 p-3 sm:p-5">
+                                        <div className="bg-primary-600 text-white p-0.5 sm:p-1 rounded-full shadow-lg animate-scale-in">
+                                            <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                         </div>
                                     </div>
                                 )}
-                                <div className="flex items-center gap-6 relative z-10">
-                                    <div className={`p-5 rounded-[1.5rem] transition-all duration-500 ${paymentType === key ? `bg-primary-600 text-white shadow-xl scale-110` : 'bg-gray-100 text-gray-400 group-hover:scale-110'}`}>
-                                        {key === 'supplier' ? <Building2 className="w-8 h-8" /> : <ShieldCheck className="w-8 h-8" />}
+                                <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 sm:gap-6 relative z-10 w-full">
+                                    <div className={`p-3 sm:p-5 rounded-xl sm:rounded-[1.5rem] transition-all duration-500 ${paymentType === key ? `bg-primary-600 text-white shadow-md sm:shadow-xl xl:scale-110` : 'bg-gray-100 text-gray-400 group-hover:scale-110'}`}>
+                                        {key === 'supplier' ? <Building2 className="w-6 h-6 sm:w-8 sm:h-8" /> : <ShieldCheck className="w-6 h-6 sm:w-8 sm:h-8" />}
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className={`text-xl font-black transition-colors ${paymentType === key ? 'text-primary-900' : 'text-gray-900'}`}>{label}</h3>
-                                        <p className="text-sm text-gray-500 font-medium mt-1 leading-tight">{desc}</p>
+                                    <div className="flex-1 w-full">
+                                        <h3 className={`text-sm sm:text-xl font-black transition-colors leading-tight ${paymentType === key ? 'text-primary-900' : 'text-gray-900'}`}>{label}</h3>
+                                        <p className="text-[10px] sm:text-sm text-gray-500 font-medium mt-1 sm:mt-1.5 leading-tight">{desc}</p>
                                     </div>
                                 </div>
                             </div>
@@ -521,7 +521,7 @@ export default function PaymentPage() {
                                 }`}
                         >
                             {!(isSubmitting || !amount) && (
-                                <div className="absolute inset-0 bg-gradient-to-r from-primary-600 via-indigo-600 to-primary-600 bg-[length:200%_100%] animate-gradientShift group-hover:opacity-90 transition-opacity" />
+                                <div className="absolute inset-0 bg-gradient-to-r from-primary-600 via-blue-600 to-primary-600 bg-[length:200%_100%] animate-gradientShift group-hover:opacity-90 transition-opacity" />
                             )}
                             {isSubmitting ? <RefreshCw className="w-7 h-7 animate-spin relative z-10" /> : <Zap className="w-7 h-7 fill-white relative z-10" />}
                             <span className="relative z-10 tracking-tight">{isSubmitting ? 'Processing Gateway...' : `Initialize Secure Payment`}</span>

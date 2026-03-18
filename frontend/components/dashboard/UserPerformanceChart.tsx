@@ -15,7 +15,7 @@ type MetricType = 'sales' | 'profit' | 'orders' | 'aov';
 const metricConfig = {
     sales: {
         label: 'Gross Sales',
-        color: '#6366f1', // Indigo
+        color: '#3b82f6', // Indigo
         icon: DollarSign,
     },
     profit: {
@@ -115,7 +115,7 @@ export default function UserPerformanceChart({ data, onRangeChange }: UserPerfor
             </div>
 
             {/* Metric Selection Tabs */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10">
                 {(Object.keys(metricConfig) as MetricType[]).map((metric) => {
                     const item = metricConfig[metric];
                     const isSelected = selectedMetrics.includes(metric);
@@ -125,7 +125,7 @@ export default function UserPerformanceChart({ data, onRangeChange }: UserPerfor
                         <button
                             key={metric}
                             onClick={() => toggleMetric(metric)}
-                            className={`flex items-center gap-4 px-6 py-5 rounded-3xl border transition-all duration-500 text-left relative overflow-hidden group ${isSelected
+                            className={`flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 rounded-3xl border transition-all duration-500 text-left relative overflow-hidden group ${isSelected
                                 ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-md'
                                 : 'bg-slate-50/50 dark:bg-transparent border-transparent opacity-60 hover:opacity-100 hover:bg-slate-50 dark:hover:bg-slate-800/30'
                                 }`}
@@ -138,25 +138,25 @@ export default function UserPerformanceChart({ data, onRangeChange }: UserPerfor
                             )}
                             
                             <div 
-                                className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-inner"
+                                className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-inner"
                                 style={{ 
                                     backgroundColor: isSelected ? `${item.color}15` : 'rgba(0,0,0,0.03)',
                                     color: item.color
                                 }}
                             >
-                                <Icon size={22} className={isSelected ? 'scale-110' : 'scale-100 opacity-50'} />
+                                <Icon className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${isSelected ? 'scale-110' : 'scale-100 opacity-50'}`} />
                             </div>
                             
-                            <div className="flex-1 min-w-0">
-                                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest truncate">{item.label}</p>
-                                <div className="flex items-baseline gap-1 mt-1">
-                                    <p className="text-slate-900 dark:text-white font-black text-lg truncate">
+                            <div className="flex-1 min-w-0 w-full">
+                                <p className="text-slate-400 dark:text-slate-500 text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate">{item.label}</p>
+                                <div className="flex items-baseline gap-1 mt-0.5 sm:mt-1">
+                                    <p className="text-slate-900 dark:text-white font-black text-sm sm:text-lg truncate">
                                         {metric === 'orders' 
                                             ? Math.round(data.reduce((a, b: any) => a + (b[metric] || 0), 0) / (data.length || 1))
                                             : `₹${(data.reduce((a, b: any) => a + (b[metric] || 0), 0) / (data.length || 1)).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
                                         }
                                     </p>
-                                    <span className="text-slate-400 dark:text-slate-600 text-[10px] font-bold">avg</span>
+                                    <span className="text-slate-400 dark:text-slate-600 text-[9px] sm:text-[10px] font-bold">avg</span>
                                 </div>
                             </div>
                         </button>

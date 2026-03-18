@@ -67,7 +67,7 @@ export default function OrdersPage() {
 
     return (
         <Shell>
-            <div className="space-y-8">
+            <div className="space-y-4 sm:space-y-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="text-left">
                         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-slate-100">{t('Orders')}</h2>

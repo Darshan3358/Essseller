@@ -229,7 +229,7 @@ export default function DepositPage() {
                                                     <div className="flex items-center gap-2">
                                                         <p className="font-mono text-sm font-bold text-gray-900 break-all flex-1">{selectedCryptoAddr}</p>
                                                         <button onClick={() => handleCopy(selectedCryptoAddr, selectedNetwork)} style={{
-                                                            background: copied === selectedNetwork ? '#10b981' : '#6366f1',
+                                                            background: copied === selectedNetwork ? '#10b981' : '#3b82f6',
                                                             border: 'none', borderRadius: '8px', padding: '7px', cursor: 'pointer', color: 'white', flexShrink: 0
                                                         }}>
                                                             {copied === selectedNetwork ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -384,7 +384,7 @@ export default function DepositPage() {
                                         <button onClick={() => setShowPayment(false)} className="flex-1 py-4 text-sm font-black text-gray-400 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-colors">
                                             Cancel
                                         </button>
-                                        <button onClick={handleConfirmPayment} className="flex-1 py-4 bg-gradient-to-r from-primary-600 to-indigo-700 text-white rounded-2xl font-black text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                        <button onClick={handleConfirmPayment} className="flex-1 py-4 bg-gradient-to-r from-primary-600 to-blue-700 text-white rounded-2xl font-black text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
                                             <Check className="w-4 h-4" /> I Have Sent — Submit
                                         </button>
                                     </div>
@@ -530,7 +530,7 @@ export default function DepositPage() {
                                 }`}
                         >
                             {!(isSubmitting || !amount) && (
-                                <div className="absolute inset-0 bg-gradient-to-r from-primary-600 via-indigo-600 to-primary-600 bg-[length:200%_100%] animate-gradientShift group-hover:opacity-90 transition-opacity" />
+                                <div className="absolute inset-0 bg-gradient-to-r from-primary-600 via-blue-600 to-primary-600 bg-[length:200%_100%] animate-gradientShift group-hover:opacity-90 transition-opacity" />
                             )}
                             {isSubmitting ? <RefreshCw className="w-7 h-7 animate-spin relative z-10" /> : <Zap className="w-7 h-7 fill-white relative z-10" />}
                             <span className="relative z-10 tracking-tight">{isSubmitting ? 'Preparing Gateway...' : `Proceed to Secure Payment`}</span>

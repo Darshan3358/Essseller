@@ -109,7 +109,7 @@ export default function StorehouseCarousel({ onProductAdded }: StorehouseCarouse
             <div className="flex items-center justify-between mb-8 px-4">
                 <div className="flex items-center gap-3">
                     <div className="p-3 bg-white dark:bg-slate-900 shadow-xl rounded-2xl border border-gray-100 dark:border-slate-800">
-                        <TrendingUp className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                        <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div className="text-left">
                         <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-slate-100 leading-none">New Opportunities</h2>
@@ -181,7 +181,7 @@ export default function StorehouseCarousel({ onProductAdded }: StorehouseCarouse
                                             className={`mt-auto w-full flex items-center justify-center gap-2 py-3 rounded-xl text-[11px] font-black transition-all duration-300
                                                 ${isAdded 
                                                     ? 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600 cursor-not-allowed' 
-                                                    : 'bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-lg shadow-primary-600/20 hover:shadow-primary-600/40 active:scale-95 uppercase tracking-widest'}`}
+                                                    : 'bg-gradient-to-r from-primary-600 to-blue-600 text-white shadow-lg shadow-primary-600/20 hover:shadow-primary-600/40 active:scale-95 uppercase tracking-widest'}`}
                                         >
                                             {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : isAdded ? 'Linked to Store' : 'Add to My Store'}
                                         </button>
@@ -195,8 +195,8 @@ export default function StorehouseCarousel({ onProductAdded }: StorehouseCarouse
             </div>
 
             <style jsx global>{`
-                .swiper-pagination-store .swiper-pagination-bullet { width: 8px; height: 8px; background: rgba(99, 102, 241, 0.2); opacity: 1; transition: all 0.3s; }
-                .swiper-pagination-store .swiper-pagination-bullet-active { width: 24px; border-radius: 4px; background: #6366f1; }
+                .swiper-pagination-store .swiper-pagination-bullet { width: 8px; height: 8px; background: rgba(59,130,246, 0.2); opacity: 1; transition: all 0.3s; }
+                .swiper-pagination-store .swiper-pagination-bullet-active { width: 24px; border-radius: 4px; background: #3b82f6; }
             `}</style>
         </div>
     );
