@@ -206,9 +206,9 @@ exports.getDashboardStats = async (req, res) => {
                 productLimit,
                 remainingProducts,
                 planName: activePackage ? activePackage.type : 'N/A',
-                views: seller.views || 0,
-                used_views: seller.used_views || 0,
-                remaining_views: Math.max(0, (seller.views || 0) - (seller.used_views || 0)),
+                views: seller.views || productLimit || 0,
+                used_views: totalProducts,
+                remaining_views: Math.max(0, (seller.views || productLimit || 0) - totalProducts),
                 categoryCounts,
                 chartData,
                 shopLogo: shopProfile ? shopProfile.shop_logo : ''

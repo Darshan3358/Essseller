@@ -20,6 +20,7 @@ interface User {
     store_health?: number;
     store_performance?: string;
     store_status?: string;
+    freeze?: number;
     store_health_updated_at?: string;
     diagnostics?: {
         fulfillment: string;
@@ -65,7 +66,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         setUser(updatedUser);
                         localStorage.setItem('user', JSON.stringify(updatedUser));
                     }
-                }).catch(err => console.error('Initial profile sync failed:', err));
+                }).catch(err => {
+                    console.error('Initial profile sync failed:', err.message);
+                    if (err.message && err.message.toLowerCase().includes('frozen')) {
+                        logout();
+                        alert('Your account is currently frozen. Please contact administration.');
+                    }
+                });
             } catch (error) {
                 console.error('Failed to parse stored user:', error);
                 localStorage.removeItem('token');

@@ -92,7 +92,12 @@ const deletePackagePlan = asyncHandler(async (req, res) => {
 // @desc    Get admin dashboard stats
 // @route   GET /api/admin/stats
 // @access  Private/Admin
+// @desc    Get admin dashboard stats
+// @route   GET /api/admin/stats
+// @access  Private/Admin
 const getDashboardStats = asyncHandler(async (req, res) => {
+    const range = req.query.range || '7days';
+    
     const totalUsers = await Seller.countDocuments({ role: 'seller' });
     const totalProducts = await Product.countDocuments({ isDeleted: { $ne: true } });
     const totalOrders = await Order.countDocuments({});
@@ -119,15 +124,28 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     // New sellers this month
     const newSellers = await Seller.countDocuments({ role: 'seller', createdAt: { $gte: startOfMonth } });
 
-    // Last 7 days chart data
+    // Chart data based on range
+    let days = 7;
+    if (range === '30days') days = 30;
+    else if (range === '6months') days = 180;
+    else if (range === '12months') days = 365;
+
     const chartData = [];
-    for (let i = 6; i >= 0; i--) {
+    // If range is long, we might want to aggregate by month/week, 
+    // but for now let's do daily or a subset to avoid too many points if needed.
+    // For 180/365 days, we'll aggregate by 5-day blocks or months? 
+    // Let's stick to daily for 30, and maybe weekly for 180/365.
+    
+    const interval = days > 30 ? (days === 180 ? 7 : 30) : 1; 
+    const loops = Math.ceil(days / interval);
+
+    for (let i = loops - 1; i >= 0; i--) {
         const date = new Date();
-        date.setDate(date.getDate() - i);
+        date.setDate(date.getDate() - (i * interval));
         date.setHours(0, 0, 0, 0);
         
         const nextDate = new Date(date);
-        nextDate.setDate(nextDate.getDate() + 1);
+        nextDate.setDate(nextDate.getDate() + interval);
 
         const dayStats = await Order.aggregate([
             {
@@ -146,10 +164,18 @@ const getDashboardStats = asyncHandler(async (req, res) => {
         ]);
 
         const dayData = dayStats[0] || { sales: 0, cost: 0, count: 0 };
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+        
+        let label = '';
+        if (days <= 7) {
+            label = date.toLocaleDateString('en-US', { weekday: 'short' });
+        } else if (days <= 30) {
+            label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        } else {
+            label = date.toLocaleDateString('en-US', { month: 'short', year: days > 180 ? '2-digit' : undefined });
+        }
         
         chartData.push({
-            date: dayName,
+            date: label,
             fullDate: date.toISOString().split('T')[0],
             sales: Math.round(dayData.sales),
             profit: Math.round(dayData.sales - dayData.cost),
@@ -364,9 +390,18 @@ const updatePackageStatus = asyncHandler(async (req, res) => {
         throw new Error('Package not found');
     }
 
-    pkg.status = status;
+    const oldStatus = pkg.status;
+    pkg.status = Number(status);
     if (reason) pkg.reason = reason;
     await pkg.save();
+
+    // If approved (status 1) and was not previously approved
+    if (pkg.status === 1 && oldStatus !== 1) {
+        // Update seller's views to match the package's product_limit
+        await Seller.findByIdAndUpdate(pkg.seller_id, {
+            $set: { views: pkg.product_limit }
+        });
+    }
 
     res.json({ success: true, package: pkg });
 });

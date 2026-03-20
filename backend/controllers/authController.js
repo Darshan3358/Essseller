@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const Seller = require('../models/Seller');
 const nodemailer = require('nodemailer');
 const Order = require('../models/Order');
+const sendEmail = require('../utils/sendEmail');
 
 // Helper to calculate real-time store diagnostics
 const getSellerDiagnostics = async (seller) => {
@@ -56,21 +57,42 @@ const authUser = asyncHandler(async (req, res) => {
         const seller = await Seller.findOne({ email });
 
         if (seller) {
+            // Check if seller account is frozen
+            if (seller.freeze === 1) {
+                res.status(403);
+                throw new Error('Your account is currently frozen. Please contact administration.');
+            }
+
             // Support both hashed and plain text passwords (for seeded data)
             const isMatch = await seller.matchPassword(password) || seller.password === password;
 
             if (isMatch) {
-                // Check if 2FA is enabled
-                if (seller.settings && seller.settings.twoFactor) {
+                // Admin MUST use OTP always, OR if 2FA is enabled for seller
+                if (seller.role === 'admin' || (seller.settings && seller.settings.twoFactor)) {
                     const otp = Math.floor(100000 + Math.random() * 900000).toString();
                     seller.otp = otp;
                     seller.otpExpires = Date.now() + 10 * 60 * 1000;
                     await seller.save();
 
+                    console.log(`[AUTH] OTP generated for ${seller.email}: ${otp}`);
+
+                    // Send Email
+                    try {
+                        await sendEmail({
+                            email: seller.email,
+                            subject: 'Your Login OTP - EssSmartSeller',
+                            message: `Hello, your one-time password for login is: ${otp}. It will expire in 10 minutes.`
+                        });
+                    } catch (emailErr) {
+                        console.error('Failed to send OTP email:', emailErr.message);
+                    }
+
                     return res.json({
                         requiresOTP: true,
                         email: seller.email,
-                        message: 'Two-Factor Authentication is active.'
+                        message: seller.role === 'admin' 
+                            ? 'Admin security check: Please enter the OTP sent to your registered email.' 
+                            : 'Two-Factor Authentication is active. Please enter your OTP.'
                     });
                 }
 
@@ -248,6 +270,10 @@ const getUserProfile = asyncHandler(async (req, res) => {
     const seller = await Seller.findById(req.user._id);
 
     if (seller) {
+        if (seller.freeze === 1) {
+            res.status(403);
+            throw new Error('Your account is currently frozen. Please contact administration.');
+        }
         res.json({
             _id: seller._id,
             name: seller.name,

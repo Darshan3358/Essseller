@@ -24,6 +24,33 @@ export default function AdminPackagePlansPage() {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<any>(null);
+
+    // Helper functions for formatting/parsing numbers with K/M suffixes
+    const parseFriendlyNumber = (val: string): number => {
+        if (!val) return 0;
+        const s = val.toString().toUpperCase().trim();
+        let num = parseFloat(s) || 0;
+        if (s.endsWith('K')) num = parseFloat(s.slice(0, -1)) * 1000;
+        else if (s.endsWith('M')) num = parseFloat(s.slice(0, -1)) * 1000000;
+        return num;
+    };
+
+    const formatFriendlyNumber = (num: number): string => {
+        if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+        return Math.max(0, Math.floor(num)).toString();
+    };
+
+    const updateBannerField = (value: string) => {
+        const totalNum = parseFriendlyNumber(value);
+        setPlanBanner({ 
+            ...planBanner, 
+            views_text: value,
+            used_text: '0',
+            remaining_text: formatFriendlyNumber(totalNum)
+        });
+    };
+
     const [showAdd, setShowAdd] = useState(false);
     const [addForm, setAddForm] = useState<any>({
         sku: '',
@@ -236,18 +263,15 @@ export default function AdminPackagePlansPage() {
                                 placeholder="e.g. Enterprise Pro"
                             />
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
                             <div>
-                                <label style={labelStyle}>Used Text</label>
-                                <input style={inputStyle} value={planBanner.used_text} onChange={e => setPlanBanner({ ...planBanner, used_text: e.target.value })} placeholder="0" />
-                            </div>
-                            <div>
-                                <label style={labelStyle}>Remaining Text</label>
-                                <input style={inputStyle} value={planBanner.remaining_text} onChange={e => setPlanBanner({ ...planBanner, remaining_text: e.target.value })} placeholder="0" />
-                            </div>
-                            <div>
-                                <label style={labelStyle}>Views Text</label>
-                                <input style={inputStyle} value={planBanner.views_text} onChange={e => setPlanBanner({ ...planBanner, views_text: e.target.value })} placeholder="0" />
+                                <label style={labelStyle}>Total Views Limit (Set by Admin)</label>
+                                <input 
+                                    style={inputStyle} 
+                                    value={planBanner.views_text} 
+                                    onChange={e => updateBannerField(e.target.value)} 
+                                    placeholder="e.g. 10K" 
+                                />
                             </div>
                         </div>
                         <div>

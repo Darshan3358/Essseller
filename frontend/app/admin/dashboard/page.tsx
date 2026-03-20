@@ -47,13 +47,14 @@ function StatCard({ icon: Icon, label, value, sub, color }: any) {
 export default function AdminDashboardPage() {
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [range, setRange] = useState('7days');
     const [chartData, setChartData] = useState<any[]>([]);
 
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
         
-        fetch(`${apiUrl}/admin/stats`, {
+        fetch(`${apiUrl}/admin/stats?range=${range}`, {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(r => {
@@ -68,10 +69,9 @@ export default function AdminDashboardPage() {
             })
             .catch(err => {
                 console.error('Fetch error:', err);
-                // Optional: set some state to show an error UI to the user
             })
             .finally(() => setLoading(false));
-    }, []);
+    }, [range]);
 
     if (loading) return (
         <div style={{ padding: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
@@ -148,7 +148,7 @@ export default function AdminDashboardPage() {
             {/* Sales Statistics Chart */}
             <div className="bg-[#020617] border border-white/5 rounded-[32px] p-8 lg:p-10 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[100px] pointer-events-none" />
-                <SalesChart data={chartData} />
+                <SalesChart data={chartData} onRangeChange={(r) => setRange(r)} />
             </div>
 
             {/* Quick Links */}

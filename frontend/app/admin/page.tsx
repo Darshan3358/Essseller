@@ -7,6 +7,9 @@ import { Shield, Mail, Lock, LogIn, Zap } from 'lucide-react';
 export default function AdminLoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [otp, setOtp] = useState('');
+    const [showOTP, setShowOTP] = useState(false);
+    const [msg, setMsg] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -27,6 +30,12 @@ export default function AdminLoginPage() {
 
             if (!res.ok) throw new Error(data.message || 'Login failed');
 
+            if (data.requiresOTP) {
+                setShowOTP(true);
+                setMsg(data.message);
+                return;
+            }
+
             if (data.user?.role !== 'admin') {
                 throw new Error('Access denied. Admin account required.');
             }
@@ -36,6 +45,36 @@ export default function AdminLoginPage() {
             router.push('/admin/dashboard');
         } catch (err: any) {
             setError(err.message || 'Login failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleVerifyOTP = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || 'Verification failed');
+
+            if (data.role !== 'admin') {
+                throw new Error('Access denied. Only Admin can use this portal.');
+            }
+
+            localStorage.setItem('adminToken', data.token);
+            localStorage.setItem('adminUser', JSON.stringify(data));
+            router.push('/admin/dashboard');
+        } catch (err: any) {
+            setError(err.message);
         } finally {
             setLoading(false);
         }
@@ -110,7 +149,7 @@ export default function AdminLoginPage() {
                         borderTopRightRadius: '24px'
                     }} />
 
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={showOTP ? handleVerifyOTP : handleSubmit}>
                         {error && (
                             <div style={{
                                 padding: '12px 16px',
@@ -126,69 +165,125 @@ export default function AdminLoginPage() {
                             </div>
                         )}
 
-                        <div style={{ marginBottom: '20px' }}>
-                            <label style={{
-                                display: 'block', fontSize: '11px', fontWeight: '700',
-                                color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase',
-                                letterSpacing: '0.1em', marginBottom: '8px'
-                            }}>Admin Email</label>
-                            <div style={{ position: 'relative' }}>
-                                <Mail size={18} style={{
-                                    position: 'absolute', left: '14px', top: '50%',
-                                    transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)'
-                                }} />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="admin@essmarter.com"
-                                    required
-                                    style={{
-                                        width: '100%', padding: '14px 14px 14px 44px',
-                                        background: 'rgba(255,255,255,0.07)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '12px', color: 'white',
-                                        fontSize: '14px', outline: 'none',
-                                        boxSizing: 'border-box',
-                                        transition: 'border-color 0.2s'
-                                    }}
-                                    onFocus={(e) => e.target.style.borderColor = 'rgba(59,130,246,0.6)'}
-                                    onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
-                                />
+                        {msg && !error && (
+                            <div style={{
+                                padding: '12px 16px',
+                                background: 'rgba(16,185,129,0.1)',
+                                border: '1px solid rgba(16,185,129,0.3)',
+                                borderRadius: '12px',
+                                color: '#6ee7b7',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                marginBottom: '20px'
+                            }}>
+                                {msg}
                             </div>
-                        </div>
+                        )}
 
-                        <div style={{ marginBottom: '28px' }}>
-                            <label style={{
-                                display: 'block', fontSize: '11px', fontWeight: '700',
-                                color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase',
-                                letterSpacing: '0.1em', marginBottom: '8px'
-                            }}>Password</label>
-                            <div style={{ position: 'relative' }}>
-                                <Lock size={18} style={{
-                                    position: 'absolute', left: '14px', top: '50%',
-                                    transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)'
-                                }} />
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    required
+                        {!showOTP ? (
+                            <>
+                                <div style={{ marginBottom: '20px' }}>
+                                    <label style={{
+                                        display: 'block', fontSize: '11px', fontWeight: '700',
+                                        color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase',
+                                        letterSpacing: '0.1em', marginBottom: '8px'
+                                    }}>Admin Email</label>
+                                    <div style={{ position: 'relative' }}>
+                                        <Mail size={18} style={{
+                                            position: 'absolute', left: '14px', top: '50%',
+                                            transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)'
+                                        }} />
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            placeholder="admin@essmarter.com"
+                                            required
+                                            style={{
+                                                width: '100%', padding: '14px 14px 14px 44px',
+                                                background: 'rgba(255,255,255,0.07)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '12px', color: 'white',
+                                                fontSize: '14px', outline: 'none',
+                                                boxSizing: 'border-box',
+                                                transition: 'border-color 0.2s'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div style={{ marginBottom: '28px' }}>
+                                    <label style={{
+                                        display: 'block', fontSize: '11px', fontWeight: '700',
+                                        color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase',
+                                        letterSpacing: '0.1em', marginBottom: '8px'
+                                    }}>Password</label>
+                                    <div style={{ position: 'relative' }}>
+                                        <Lock size={18} style={{
+                                            position: 'absolute', left: '14px', top: '50%',
+                                            transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)'
+                                        }} />
+                                        <input
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            required
+                                            style={{
+                                                width: '100%', padding: '14px 14px 14px 44px',
+                                                background: 'rgba(255,255,255,0.07)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '12px', color: 'white',
+                                                fontSize: '14px', outline: 'none',
+                                                boxSizing: 'border-box',
+                                                transition: 'border-color 0.2s'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div style={{ marginBottom: '28px' }}>
+                                <label style={{
+                                    display: 'block', fontSize: '11px', fontWeight: '700',
+                                    color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase',
+                                    letterSpacing: '0.1em', marginBottom: '8px'
+                                }}>Verification Code</label>
+                                <div style={{ position: 'relative' }}>
+                                    <Shield size={18} style={{
+                                        position: 'absolute', left: '14px', top: '50%',
+                                        transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)'
+                                    }} />
+                                    <input
+                                        type="text"
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        placeholder="6-digit code"
+                                        required
+                                        maxLength={6}
+                                        style={{
+                                            width: '100%', padding: '14px 14px 14px 44px',
+                                            paddingLeft: '44px',
+                                            background: 'rgba(255,255,255,0.07)',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '12px', color: 'white',
+                                            fontSize: '24px', letterSpacing: '0.3em', textAlign: 'left',
+                                            outline: 'none', boxSizing: 'border-box'
+                                        }}
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowOTP(false)}
                                     style={{
-                                        width: '100%', padding: '14px 14px 14px 44px',
-                                        background: 'rgba(255,255,255,0.07)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '12px', color: 'white',
-                                        fontSize: '14px', outline: 'none',
-                                        boxSizing: 'border-box',
-                                        transition: 'border-color 0.2s'
-                                    }}
-                                    onFocus={(e) => e.target.style.borderColor = 'rgba(59,130,246,0.6)'}
-                                    onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
-                                />
+                                        background: 'none', border: 'none', color: '#60a5fa',
+                                        fontSize: '12px', fontWeight: '600', marginTop: '12px',
+                                        cursor: 'pointer', padding: 0
+                                    }}>
+                                    Use different account?
+                                </button>
                             </div>
-                        </div>
+                        )}
 
                         <button
                             type="submit"
@@ -215,7 +310,7 @@ export default function AdminLoginPage() {
                             ) : (
                                 <>
                                     <Zap size={18} />
-                                    Access Admin Panel
+                                    {showOTP ? 'Verify & Login' : 'Access Admin Panel'}
                                 </>
                             )}
                         </button>

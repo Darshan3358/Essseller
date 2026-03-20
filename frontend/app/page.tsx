@@ -11,6 +11,7 @@ import { Outfit } from 'next/font/google';
 import styles from './landing.module.css';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { ShoppingCart, Star, Sparkles as SparklesIcon, Monitor, Watch, Zap, ShoppingBag as ShoppingBagIcon } from 'lucide-react';
 
 const outfit = Outfit({ subsets: ['latin'], weight: ['400', '500', '700', '800'] });
 
@@ -101,99 +102,106 @@ export default function LandingPage() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full mb-8 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Professional E-Commerce Seller Platform</span>
+            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Global E-Commerce Excellence</span>
           </div>
 
           <h1 className={styles.h1}>
-            Empower Your E-Commerce Journey with <span>EssSmartSeller</span>
+            Your Global Store, <span>Powered by Intelligence.</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            The powerful all-in-one ecosystem for managing products, coordinating with suppliers, and tracking orders. Scale your seller profile with a one-time license activation.
+            The ultimate ecosystem for modern sellers. Discover high-margin products, coordinate with elite suppliers, and scale your brand globally.
           </p>
           <div className={styles.heroCtas}>
             <button onClick={handleGetStarted} className={styles.btnPrimary}>
-              Start Selling Today
+              Open Your Store
             </button>
-            <Link href="#how-it-works" className={styles.btnSecondary}>
-              View Demo
+            <Link href="#showcase" className={styles.btnSecondary}>
+              Explore Catalog
             </Link>
           </div>
 
-          <motion.div
-            className={styles.dashboardMockup}
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            {/* Fintech Dashboard Mockup */}
-            <div className="w-full max-w-4xl h-64 md:h-[450px] bg-[#0A0F1C] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(0,123,255,0.2)] flex flex-col relative group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/10 to-transparent pointer-events-none" />
-
-              {/* Mockup Toolbar */}
-              <div className="h-12 bg-[#05070A] border-b border-white/5 flex items-center justify-between px-6">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-slate-800" />
-                  <div className="w-3 h-3 rounded-full bg-slate-800" />
-                  <div className="w-3 h-3 rounded-full bg-slate-800" />
+          {/* Product Showcase - E-commerce Feel */}
+          <div id="showcase" className={styles.productShowcase}>
+            {[
+              {
+                id: 1,
+                name: 'Audiophile Pro X-1',
+                category: 'Electronics',
+                price: 249,
+                oldPrice: 399,
+                image: '/wireless_headphones_hero_1773860911797.png'
+              },
+              {
+                id: 2,
+                name: 'Zenith Titanium',
+                category: 'Fashion',
+                price: 189,
+                oldPrice: 249,
+                image: '/smart_watch_hero_1773861068085.png'
+              },
+              {
+                id: 3,
+                name: 'Neo-Flow Runners',
+                category: 'Footwear',
+                price: 129,
+                oldPrice: 199,
+                image: '/running_sneakers_hero_1773861091920.png'
+              },
+              {
+                id: 4,
+                name: 'Aura Matte Series',
+                category: 'Lifestyle',
+                price: 45,
+                oldPrice: 89,
+                image: '/eco_water_bottle_hero_1773861108133.png'
+              }
+            ].map((product) => (
+              <motion.div
+                key={product.id}
+                className={styles.productCard}
+                whileHover={{ y: -10 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <div className={styles.productImage}>
+                  <img src={product.image} alt={product.name} />
                 </div>
-                <div className="h-6 w-64 bg-white/5 rounded-full border border-white/5" />
-                <div className="w-8 h-8 rounded-lg bg-blue-500/20" />
-              </div>
-
-              <div className="flex-1 p-8 flex gap-8 z-10">
-                {/* Sidebar Sidebar */}
-                <div className="hidden md:flex w-48 flex-col gap-6">
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <div key={i} className={`h-8 rounded-lg flex items-center gap-3 px-3 ${i === 1 ? 'bg-blue-500/20 border border-blue-500/20' : 'bg-white/5'}`}>
-                      <div className={`w-3 h-3 rounded-sm ${i === 1 ? 'bg-blue-400' : 'bg-white/10'}`} />
-                      <div className="h-2 flex-1 bg-white/10 rounded-full" />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Main Content Area */}
-                <div className="flex-1 flex flex-col gap-8">
-                  {/* Stats Row */}
-                  <div className="grid grid-cols-3 gap-6">
-                    {[
-                      { label: 'Active Orders', val: '2,341', color: 'text-blue-400' },
-                      { label: 'Net Profit', val: '$14,210', color: 'text-emerald-400' },
-                      { label: 'Fulfillment', val: '98.2%', color: 'text-blue-400' }
-                    ].map((s, idx) => (
-                      <div key={idx} className="bg-white/5 border border-white/5 p-4 rounded-xl flex flex-col gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{s.label}</span>
-                        <span className={`text-2xl font-black ${s.color}`}>{s.val}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Large Chart Area */}
-                  <div className="flex-1 bg-white/2 rounded-xl border border-white/5 p-6 relative overflow-hidden">
-                    <div className="flex justify-between items-center mb-6">
-                      <span className="text-xs font-bold text-slate-400">Profit Overview</span>
-                      <div className="flex gap-2">
-                        <div className="w-12 h-4 bg-blue-500/20 rounded" />
-                        <div className="w-12 h-4 bg-emerald-500/20 rounded" />
-                      </div>
-                    </div>
-                    <div className="absolute inset-x-0 bottom-0 h-32 flex items-end gap-1 px-4">
-                      {Array.from({ length: 24 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="flex-1 bg-gradient-to-t from-blue-500/40 to-blue-400/80 rounded-t-sm"
-                          style={{ height: `${Math.sin(i * 0.5) * 40 + 60}%`, opacity: 0.6 + (i / 50) }}
-                        />
-                      ))}
-                    </div>
-                    <div className="absolute inset-0 flex flex-col justify-around px-4 pointer-events-none">
-                      {[1, 2, 3, 4].map(i => <div key={i} className="w-full h-px bg-white/5" />)}
-                    </div>
+                <div className={styles.productInfo}>
+                  <p className={styles.productCategory}>{product.category}</p>
+                  <h3 className={styles.productTitle}>{product.name}</h3>
+                  <div className={styles.productPrice}>
+                    ${product.price}
+                    <span>${product.oldPrice}</span>
                   </div>
                 </div>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            ))}
+          </div>
         </motion.section>
+
+        {/* 3. Trending Categories */}
+        <section className={styles.section}>
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl font-black text-white">Trending Categories</h2>
+            <Link href="/register" className="text-blue-400 font-bold flex items-center gap-2 hover:underline">
+              View All <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className={styles.categoryGrid}>
+            {[
+              { name: 'Electronics', icon: <Monitor className="w-6 h-6" /> },
+              { name: 'Fashion', icon: <Watch className="w-6 h-6" /> },
+              { name: 'Fitness', icon: <Zap className="w-6 h-6" /> },
+              { name: 'Home & Living', icon: <ShoppingBagIcon className="w-6 h-6" /> },
+            ].map((cat, i) => (
+              <div key={i} className={styles.categoryCard}>
+                <div className="p-4 bg-white/5 rounded-2xl text-blue-400">
+                  {cat.icon}
+                </div>
+                <span>{cat.name}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
 
 

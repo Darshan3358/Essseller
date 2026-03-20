@@ -7,6 +7,7 @@ import { TrendingUp, DollarSign, ShoppingCart, CreditCard, ChevronDown } from 'l
 
 interface SalesChartProps {
     data: ChartDataPoint[];
+    onRangeChange?: (range: DateRange) => void;
 }
 
 type MetricType = 'sales' | 'profit' | 'orders' | 'aov';
@@ -34,7 +35,7 @@ const metricConfig = {
     },
 };
 
-export default function SalesChart({ data }: SalesChartProps) {
+export default function SalesChart({ data, onRangeChange }: SalesChartProps) {
     const [selectedMetrics, setSelectedMetrics] = useState<MetricType[]>(['sales', 'profit']);
     const [dateRange, setDateRange] = useState<DateRange>('7days');
 
@@ -90,7 +91,10 @@ export default function SalesChart({ data }: SalesChartProps) {
                     {(['7days', '30days', '6months', '12months'] as DateRange[]).map((range) => (
                         <button
                             key={range}
-                            onClick={() => setDateRange(range)}
+                            onClick={() => {
+                                setDateRange(range);
+                                if (onRangeChange) onRangeChange(range);
+                            }}
                             className={`px-6 py-2 rounded-full text-xs font-bold transition-all duration-300 ${dateRange === range
                                 ? 'bg-[#3B82F6] text-white shadow-[0_0_20px_rgba(59,130,246,0.5)]'
                                 : 'text-white/40 hover:text-white'
