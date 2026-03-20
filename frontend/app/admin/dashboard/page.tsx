@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Users, Package, CreditCard, ArrowDownCircle, ShoppingCart, Box, TrendingUp, Clock, AlertCircle, RefreshCw, Copy, Check, Key, Trash2, Plus, Lock, Unlock } from 'lucide-react';
+import { Users, Package, CreditCard, ArrowDownCircle, ShoppingCart, Box, TrendingUp, Clock, AlertCircle, RefreshCw, Copy, Check, Key, Trash2, Lock, Unlock } from 'lucide-react';
 import SalesChart from '@/components/dashboard/SalesChart';
 
 function StatCard({ icon: Icon, label, value, sub, color }: any) {
@@ -13,7 +13,7 @@ function StatCard({ icon: Icon, label, value, sub, color }: any) {
                     <span className="text-white/40 text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.1em] mb-1">{label}</span>
                     <h3 className="text-xl lg:text-2xl font-black text-white tracking-tight leading-none group-hover:scale-105 transition-transform duration-500">{value}</h3>
                 </div>
-                <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl lg:rounded-2xl flex items-center justify-center transition-all duration-500" style={{ background: `${color}15`, border: `1px solid ${color}33` }}>
+                <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl lg:rounded-2xl flex items-center justify-center" style={{ background: `${color}15`, border: `1px solid ${color}33` }}>
                     <Icon size={16} className="lg:hidden" style={{ color }} />
                     <Icon size={18} className="hidden lg:block" style={{ color }} />
                 </div>
@@ -32,12 +32,10 @@ export default function AdminDashboardPage() {
     const [range, setRange] = useState('7days');
     const [chartData, setChartData] = useState<any[]>([]);
 
-    // Invite codes state
+    // Invite codes
     const [codes, setCodes] = useState<any[]>([]);
     const [codesLoading, setCodesLoading] = useState(false);
-    const [newCodeInput, setNewCodeInput] = useState('');
-    const [newCodeLabel, setNewCodeLabel] = useState('');
-    const [creating, setCreating] = useState(false);
+    const [generating, setGenerating] = useState(false);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [codeMsg, setCodeMsg] = useState('');
     const [codeError, setCodeError] = useState('');
@@ -60,61 +58,53 @@ export default function AdminDashboardPage() {
         setCodesLoading(true);
         try {
             const res = await fetch(`${apiUrl}/settings/invite-codes`, { headers: { Authorization: `Bearer ${getToken()}` } });
+            const contentType = res.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                // Server not restarted yet or route missing — silently skip
+                setCodesLoading(false);
+                return;
+            }
             const data = await res.json();
-            if (data.success) setCodes(data.codes);
+            if (data.success) { setCodes(data.codes); setCodeError(''); }
         } catch (e) { console.error(e); }
         setCodesLoading(false);
     };
 
+    // Generate random code and auto-save immediately
     const generateRandom = async () => {
         const prefixes = ['LKC', 'ESS', 'REF', 'ACT', 'VIP'];
         const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
         const generated = `${prefix}${Math.floor(1000 + Math.random() * 9000)}`;
-        setNewCodeInput(generated);
         setCodeMsg(''); setCodeError('');
-
-        // Auto-save immediately
-        setCreating(true);
+        setGenerating(true);
         try {
             const res = await fetch(`${apiUrl}/settings/invite-codes`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-                body: JSON.stringify({ code: generated, label: newCodeLabel.trim() })
+                body: JSON.stringify({ code: generated })
             });
+            const contentType = res.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                setCodeError('Server error — please restart the backend and try again.');
+                setGenerating(false);
+                return;
+            }
             const data = await res.json();
             if (data.success) {
-                setCodeMsg(`✅ Activation code updated successfully!`);
-                setNewCodeInput(''); setNewCodeLabel('');
+                setCodeMsg('✅ Activation code updated successfully!');
                 fetchCodes();
+                setTimeout(() => setCodeMsg(''), 3000);
             } else { setCodeError(data.message || 'Failed to create'); }
-        } catch (e: any) { setCodeError(e.message); }
-        setCreating(false);
-    };
-
-    const createCode = async () => {
-        setCreating(true); setCodeMsg(''); setCodeError('');
-        try {
-            const res = await fetch(`${apiUrl}/settings/invite-codes`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-                body: JSON.stringify({ code: newCodeInput.trim().toUpperCase() || undefined, label: newCodeLabel.trim() })
-            });
-            const data = await res.json();
-            if (data.success) {
-                setCodeMsg(`✅ Code "${data.data.code}" created!`);
-                setNewCodeInput(''); setNewCodeLabel('');
-                fetchCodes();
-            } else { setCodeError(data.message || 'Failed to create'); }
-        } catch (e: any) { setCodeError(e.message); }
-        setCreating(false);
+        } catch (e: any) { setCodeError('Network error: ' + e.message); }
+        setGenerating(false);
     };
 
     const deleteCode = async (id: string, code: string) => {
-        if (!confirm(`Delete code "${code}"? This cannot be undone.`)) return;
+        if (!confirm(`Delete code "${code}"?`)) return;
         try {
             const res = await fetch(`${apiUrl}/settings/invite-codes/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${getToken()}` } });
             const data = await res.json();
-            if (data.success) { setCodeMsg('🗑 Code deleted'); fetchCodes(); }
+            if (data.success) { fetchCodes(); setCodeMsg('🗑 Code deleted'); setTimeout(() => setCodeMsg(''), 2000); }
             else setCodeError(data.message || 'Delete failed');
         } catch (e: any) { setCodeError(e.message); }
     };
@@ -180,7 +170,7 @@ export default function AdminDashboardPage() {
                 <SalesChart data={chartData} onRangeChange={(r) => setRange(r)} />
             </div>
 
-            {/* ── Single-Use Activation Code Manager ── */}
+            {/* ── Activation Code Manager ── */}
             <div style={{
                 background: 'linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%)',
                 border: '1px solid rgba(139,92,246,0.2)',
@@ -190,164 +180,114 @@ export default function AdminDashboardPage() {
             }}>
                 <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
 
-                {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
+                {/* Header row */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                         <div style={{ padding: '12px', background: 'linear-gradient(135deg, #7c3aed, #8b5cf6)', borderRadius: '16px', boxShadow: '0 8px 20px rgba(124,58,237,0.4)' }}>
                             <Key size={22} color="white" />
                         </div>
                         <div>
                             <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: 'white' }}>Activation Codes</h2>
-                            <p style={{ margin: '3px 0 0', fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>
-                                Each code is single-use — one account per code
-                            </p>
+                            <p style={{ margin: '3px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Single-use — one account per code</p>
                         </div>
                     </div>
-                    {/* Summary badges */}
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                        <div style={{ padding: '6px 14px', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: '10px', fontSize: '12px', fontWeight: '700', color: '#10b981' }}>
-                            {unusedCodes.length} Available
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
+                            <a 
+                                href="/admin/dashboard/invite-codes"
+                                style={{ 
+                                    textDecoration: 'none', fontSize: '10px', fontWeight: '800', 
+                                    color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', 
+                                    letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '4px',
+                                    transition: 'color 0.2s', cursor: 'pointer'
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.color = '#7c3aed'}
+                                onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.3)'}
+                            >
+                                View History <TrendingUp size={10} />
+                            </a>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <a 
+                                    href="/admin/dashboard/invite-codes?tab=available"
+                                    style={{ textDecoration: 'none', padding: '7px 16px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '10px', fontSize: '11px', fontWeight: '800', color: '#10b981', cursor: 'pointer', transition: 'all 0.2s' }}
+                                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(16,185,129,0.15)'}
+                                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(16,185,129,0.08)'}
+                                >
+                                    {unusedCodes.length} Available
+                                </a>
+                                <a 
+                                    href="/admin/dashboard/invite-codes?tab=used"
+                                    style={{ textDecoration: 'none', padding: '7px 16px', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)', borderRadius: '10px', fontSize: '11px', fontWeight: '800', color: '#f87171', cursor: 'pointer', transition: 'all 0.2s' }}
+                                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.12)'}
+                                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.06)'}
+                                >
+                                    {usedCodes.length} Used
+                                </a>
+                            </div>
                         </div>
-                        <div style={{ padding: '6px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '10px', fontSize: '12px', fontWeight: '700', color: '#f87171' }}>
-                            {usedCodes.length} Used
-                        </div>
+                        <button
+                            onClick={generateRandom}
+                            disabled={generating}
+                            style={{
+                                padding: '12px 20px', borderRadius: '14px', cursor: generating ? 'not-allowed' : 'pointer',
+                                background: generating ? 'rgba(139,92,246,0.25)' : 'linear-gradient(135deg, #7c3aed, #8b5cf6)',
+                                border: 'none', color: 'white', fontWeight: '900', fontSize: '13px',
+                                display: 'flex', alignItems: 'center', gap: '8px',
+                                boxShadow: generating ? 'none' : '0 8px 24px rgba(124,58,237,0.35)',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            {generating ? <div style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : <RefreshCw size={14} />}
+                            {generating ? 'Generating...' : 'Generate Random'}
+                        </button>
                     </div>
                 </div>
 
-                {/* Create New Code */}
-                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px', marginBottom: '24px' }}>
-                    <div style={{ fontSize: '10px', fontWeight: '700', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px' }}>Generate New Code</div>
-                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                        <input
-                            value={newCodeInput}
-                            onChange={e => { setNewCodeInput(e.target.value.toUpperCase()); setCodeMsg(''); setCodeError(''); }}
-                            placeholder="e.g. LKC1234 (leave blank to auto-generate)"
-                            maxLength={16}
-                            style={{
-                                flex: 2, minWidth: '180px', padding: '12px 16px',
-                                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: '10px', color: 'white', fontSize: '15px', fontWeight: '700',
-                                fontFamily: 'monospace', letterSpacing: '0.1em', outline: 'none', boxSizing: 'border-box'
-                            }}
-                        />
-                        <input
-                            value={newCodeLabel}
-                            onChange={e => setNewCodeLabel(e.target.value)}
-                            placeholder="Label (e.g. 'For Rahul')"
-                            style={{
-                                flex: 1, minWidth: '140px', padding: '12px 16px',
-                                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: '10px', color: 'white', fontSize: '13px', outline: 'none', boxSizing: 'border-box'
-                            }}
-                        />
-                        <button onClick={generateRandom} style={{
-                            padding: '12px 16px', borderRadius: '10px', cursor: 'pointer',
-                            background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.25)',
-                            color: '#60a5fa', fontWeight: '700', fontSize: '12px',
-                            display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap'
-                        }}>
-                            <RefreshCw size={13} /> Random
-                        </button>
-                        <button onClick={createCode} disabled={creating} style={{
-                            padding: '12px 20px', borderRadius: '10px', cursor: creating ? 'not-allowed' : 'pointer',
-                            background: creating ? 'rgba(139,92,246,0.2)' : 'linear-gradient(135deg, #7c3aed, #8b5cf6)',
-                            border: 'none', color: 'white', fontWeight: '800', fontSize: '13px',
-                            display: 'flex', alignItems: 'center', gap: '6px',
-                            boxShadow: creating ? 'none' : '0 4px 14px rgba(124,58,237,0.4)'
-                        }}>
-                            {creating ? <div style={{ width: '13px', height: '13px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : <Plus size={13} />}
-                            {creating ? 'Creating...' : 'Create Code'}
-                        </button>
-                    </div>
-                    {codeMsg && <div style={{ marginTop: '12px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', fontWeight: '600', color: '#10b981' }}>{codeMsg}</div>}
-                    {codeError && <div style={{ marginTop: '12px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', fontWeight: '600', color: '#f87171' }}>⚠ {codeError}</div>}
-                </div>
-
-                {/* Code List */}
-                {codesLoading ? (
-                    <div style={{ padding: '30px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Loading codes...</div>
-                ) : codes.length === 0 ? (
-                    <div style={{ padding: '30px', textAlign: 'center', color: 'rgba(255,255,255,0.25)', fontSize: '14px', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '12px' }}>
-                        No codes yet. Create your first activation code above.
-                    </div>
-                ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {/* Available codes first */}
-                        {unusedCodes.length > 0 && (
-                            <>
-                                <div style={{ fontSize: '10px', fontWeight: '700', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <Unlock size={11} /> Available ({unusedCodes.length})
+                {/* Display ONLY the latest unused code */}
+                {unusedCodes.length > 0 && !codeError && (
+                    <div style={{ 
+                        background: 'rgba(255,255,255,0.03)', 
+                        border: '1px solid rgba(255,255,255,0.06)', 
+                        borderRadius: '20px', padding: '20px 24px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        animation: 'fadeIn 0.5s ease-out'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                            <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(52,211,153,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Unlock size={24} className="text-[#34d399]" />
+                            </div>
+                            <div>
+                                <span style={{ fontSize: '10px', fontWeight: '800', color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Latest Available Code</span>
+                                <div style={{ fontSize: '28px', fontWeight: '900', color: '#34d399', fontFamily: 'monospace', letterSpacing: '0.15em', marginTop: '2px' }}>
+                                    {unusedCodes[0].code}
                                 </div>
-                                {unusedCodes.map(c => (
-                                    <div key={c._id} style={{
-                                        display: 'flex', alignItems: 'center', gap: '12px',
-                                        background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)',
-                                        borderRadius: '12px', padding: '12px 16px', flexWrap: 'wrap'
-                                    }}>
-                                        <span style={{ fontFamily: 'monospace', fontSize: '18px', fontWeight: '900', color: '#34d399', letterSpacing: '0.1em', flex: 1, minWidth: '100px' }}>{c.code}</span>
-                                        {c.label && <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', fontStyle: 'italic' }}>{c.label}</span>}
-                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                            <Clock size={10} /> {new Date(c.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
-                                        </span>
-                                        <div style={{ display: 'flex', gap: '6px' }}>
-                                            <button onClick={() => copyCode(c.code, c._id)} style={{
-                                                padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', border: 'none',
-                                                background: copiedId === c._id ? 'rgba(16,185,129,0.15)' : 'rgba(52,211,153,0.1)',
-                                                color: copiedId === c._id ? '#10b981' : '#34d399',
-                                                fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px'
-                                            }}>
-                                                {copiedId === c._id ? <Check size={11} /> : <Copy size={11} />}
-                                                {copiedId === c._id ? 'Copied' : 'Copy'}
-                                            </button>
-                                            <button onClick={() => deleteCode(c._id, c.code)} style={{
-                                                padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', border: 'none',
-                                                background: 'rgba(239,68,68,0.08)', color: '#f87171',
-                                                display: 'flex', alignItems: 'center'
-                                            }}>
-                                                <Trash2 size={12} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </>
-                        )}
-
-                        {/* Used codes */}
-                        {usedCodes.length > 0 && (
-                            <>
-                                <div style={{ fontSize: '10px', fontWeight: '700', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '16px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <Lock size={11} /> Used ({usedCodes.length})
-                                </div>
-                                {usedCodes.map(c => (
-                                    <div key={c._id} style={{
-                                        display: 'flex', alignItems: 'center', gap: '12px',
-                                        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-                                        borderRadius: '12px', padding: '12px 16px', flexWrap: 'wrap', opacity: 0.7
-                                    }}>
-                                        <span style={{ fontFamily: 'monospace', fontSize: '16px', fontWeight: '700', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textDecoration: 'line-through', flex: 1, minWidth: '100px' }}>{c.code}</span>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                            {c.usedBy && <span style={{ fontSize: '11px', color: '#f87171', fontWeight: '600' }}>Used by: {c.usedBy}</span>}
-                                            {c.usedAt && <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.2)' }}>
-                                                {new Date(c.usedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                            </span>}
-                                        </div>
-                                        <button onClick={() => deleteCode(c._id, c.code)} style={{
-                                            padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', border: 'none',
-                                            background: 'rgba(239,68,68,0.06)', color: 'rgba(248,113,113,0.5)',
-                                            display: 'flex', alignItems: 'center'
-                                        }}>
-                                            <Trash2 size={12} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </>
-                        )}
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => copyCode(unusedCodes[0].code, unusedCodes[0]._id)}
+                            style={{ 
+                                padding: '10px 20px', borderRadius: '12px', background: copiedId === unusedCodes[0]._id ? '#059669' : 'rgba(52,211,153,0.1)', 
+                                color: copiedId === unusedCodes[0]._id ? 'white' : '#34d399', border: 'none', fontWeight: '800', fontSize: '13px',
+                                transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'
+                            }}
+                        >
+                            {copiedId === unusedCodes[0]._id ? <Check size={16} /> : <Copy size={16} />}
+                            {copiedId === unusedCodes[0]._id ? 'Copied' : 'Copy Latest'}
+                        </button>
                     </div>
                 )}
 
-                <p style={{ margin: '20px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.18)', lineHeight: '1.6' }}>
-                    🔒 Each code works for exactly one registration. Once used, it is automatically locked. Share codes individually with new sellers.
-                </p>
+                {(codeMsg || codeError) && (
+                    <div style={{ marginTop: '20px' }}>
+                        {codeMsg && <div style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: '10px', padding: '11px 16px', fontSize: '13px', fontWeight: '600', color: '#10b981' }}>{codeMsg}</div>}
+                        {codeError && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '10px', padding: '11px 16px', fontSize: '13px', fontWeight: '600', color: '#f87171' }}>⚠ {codeError}</div>}
+                    </div>
+                )}
+
+                <style>{`
+                    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                `}</style>
             </div>
 
             {/* Quick Actions */}
@@ -357,19 +297,19 @@ export default function AdminDashboardPage() {
                     <div className="w-2 h-8 bg-blue-500 rounded-full" />
                     Quick Actions
                 </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-3 lg:gap-4">
                     {[
-                        { label: 'Manage Users', href: '/admin/dashboard/users', color: '#3b82f6' },
-                        { label: 'Approve Recharges', href: '/admin/dashboard/recharge', color: '#10b981' },
-                        { label: 'Process Withdrawals', href: '/admin/dashboard/withdraw', color: '#f59e0b' },
-                        { label: 'View Orders', href: '/admin/dashboard/orders', color: '#06b6d4' },
-                        { label: 'Add Products', href: '/admin/dashboard/products', color: '#60a5fa' },
+                        { label: 'Manage Users', href: '/admin/dashboard/users', color: '#3b82f6', icon: Users },
+                        { label: 'Approve Recharges', href: '/admin/dashboard/recharge', color: '#10b981', icon: CreditCard },
+                        { label: 'Process Withdrawals', href: '/admin/dashboard/withdraw', color: '#f59e0b', icon: ArrowDownCircle },
+                        { label: 'View Orders', href: '/admin/dashboard/orders', color: '#06b6d4', icon: ShoppingCart },
+                        { label: 'Activation Codes', href: '/admin/dashboard/invite-codes', color: '#7c3aed', icon: Key },
+                        { label: 'Add Products', href: '/admin/dashboard/products', color: '#60a5fa', icon: Box },
                     ].map(a => (
                         <a key={a.href} href={a.href} className="group no-underline">
                             <div className="h-full flex flex-col items-center justify-center gap-3 lg:gap-4 p-4 lg:p-6 rounded-3xl border border-white/5 bg-white/5 transition-all duration-300 hover:bg-white/10 hover:border-white/10 hover:translate-y-[-4px]">
-                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110" style={{ background: `${a.color}15`, border: `1px solid ${a.color}33` }}>
-                                    <Package size={18} className="lg:hidden" style={{ color: a.color }} />
-                                    <Package size={20} className="hidden lg:block" style={{ color: a.color }} />
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-500" style={{ background: `${a.color}15`, border: `1px solid ${a.color}33` }}>
+                                    <a.icon size={20} style={{ color: a.color }} />
                                 </div>
                                 <span className="text-white font-bold text-[11px] lg:text-sm text-center">{a.label}</span>
                             </div>

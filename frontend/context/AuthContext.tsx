@@ -148,16 +148,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const register = async (userData: any) => {
         setIsLoading(true);
         try {
+            console.log('[AUTH] Registering user with API...');
             const data = await api.post('/auth/register', userData);
+            console.log('[AUTH] Registration response data:', data);
+            
             const { token, user } = data;
 
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
+            if (!token || !user) {
+                console.error('[AUTH] Registration failed validation: token or user missing. Data:', data);
+                throw new Error('Invalid registration response');
+            }
 
-            setToken(token);
-            setUser(user);
-            router.push('/dashboard');
+            handleAuthSuccess(token, user);
         } catch (error) {
+            console.error('[AUTH] Registration context failed:', error);
             throw error;
         } finally {
             setIsLoading(false);

@@ -28,7 +28,7 @@ let codeRotated = false;
 
 app.use(async (req, res, next) => {
     // Only ensure DB is connected for API routes
-    if (req.url.startsWith('/api') || req.url === '/') {
+    if ((req.url && typeof req.url === 'string' && req.url.startsWith('/api')) || (req.url && typeof req.url === 'string' && req.url === '/')) {
         // readyState 1 = connected; check each request to handle dropped connections
         if (mongoose.connection.readyState !== 1) {
             try {
@@ -38,12 +38,7 @@ app.use(async (req, res, next) => {
                 // One-time initialization logic per serverless instance
                 if (!codeRotated) {
                     codeRotated = true;
-                    try {
-                        const { rotateCode } = require('./controllers/settingsController');
-                        await rotateCode();
-                    } catch (rotErr) {
-                        console.error('Initial rotateCode failed:', rotErr.message);
-                    }
+                    // Rotation disabled as per request
                 }
             } catch (err) {
                 console.error('CRITICAL: DB Connection Failed:', err.message);

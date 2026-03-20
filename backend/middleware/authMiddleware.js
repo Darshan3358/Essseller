@@ -7,6 +7,7 @@ const protect = asyncHandler(async (req, res, next) => {
 
     if (
         req.headers.authorization &&
+        typeof req.headers.authorization === 'string' &&
         req.headers.authorization.startsWith('Bearer')
     ) {
         try {

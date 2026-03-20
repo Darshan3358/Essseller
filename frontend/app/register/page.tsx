@@ -143,7 +143,9 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-black text-gray-700 dark:text-slate-300 uppercase tracking-widest ml-1">Invitation Code</label>
+                            <label className="text-sm font-black text-gray-700 dark:text-slate-300 uppercase tracking-widest ml-1 flex items-center gap-1">
+                                Invitation Code <span className="text-gray-400 text-[10px] font-medium ml-1">(Optional)</span>
+                            </label>
                             <div className="relative group/input text-left">
                                 <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-slate-500 group-focus-within/input:text-primary-500 transition-colors" />
                                 <input
@@ -152,7 +154,7 @@ export default function RegisterPage() {
                                     value={formData.invitation_code}
                                     onChange={handleChange}
                                     className="w-full pl-12 pr-6 py-4 bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:bg-white dark:focus:bg-slate-800 transition-all text-sm font-medium dark:text-slate-100"
-                                    placeholder="Invite code (Optional)"
+                                    placeholder="Enter invite code (if any)"
                                 />
                             </div>
                         </div>

@@ -1,3 +1,4 @@
+const path = require('path');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -188,20 +189,19 @@ const RegCode = require('../models/RegCode');
 const registerSeller = asyncHandler(async (req, res) => {
     const { name, email, password, shop_name, trans_password, cert_type, invitation_code } = req.body;
 
-    // ── Validate Invitation Code (Single-Use) ──────────────────────────────
-    if (!invitation_code || !invitation_code.trim()) {
-        res.status(400);
-        throw new Error('Invitation code is required to register.');
-    }
+    // ── Validate Invitation Code IF provided (Optional) ──────────────────────
+    if (invitation_code && invitation_code.trim()) {
+        const regCode = await RegCode.findOne({
+            code: invitation_code.trim().toUpperCase(),
+            isUsed: false
+        });
 
-    const regCode = await RegCode.findOne({
-        code: invitation_code.trim().toUpperCase(),
-        isUsed: false
-    });
-
-    if (!regCode) {
-        res.status(400);
-        throw new Error('Invalid or already used invitation code. Please contact admin for a new code.');
+        if (!regCode) {
+            res.status(400);
+            throw new Error('Invalid or already used invitation code. Leave blank or contact admin for a valid code.');
+        }
+        // Store for later marking as used
+        req.regCodeRecord = regCode;
     }
     // ────────────────────────────────────────────────────────────────────────
 
@@ -219,13 +219,17 @@ const registerSeller = asyncHandler(async (req, res) => {
     let cert_back = '';
 
     if (req.files) {
-        if (req.files.cert_front) {
+        if (req.files.cert_front && req.files.cert_front[0]) {
             const file = req.files.cert_front[0];
-            cert_front = file.path.startsWith('http') ? file.path : '/uploads/' + file.filename;
+            const pathValue = file.path || '';
+            const filenameValue = file.filename || '';
+            cert_front = pathValue.startsWith('http') ? pathValue : '/uploads/' + (filenameValue || path.basename(pathValue));
         }
-        if (req.files.cert_back) {
+        if (req.files.cert_back && req.files.cert_back[0]) {
             const file = req.files.cert_back[0];
-            cert_back = file.path.startsWith('http') ? file.path : '/uploads/' + file.filename;
+            const pathValue = file.path || '';
+            const filenameValue = file.filename || '';
+            cert_back = pathValue.startsWith('http') ? pathValue : '/uploads/' + (filenameValue || path.basename(pathValue));
         }
     }
 
@@ -244,11 +248,13 @@ const registerSeller = asyncHandler(async (req, res) => {
         });
 
         if (seller) {
-            // ── Mark the invite code as used (single-use enforcement) ──────
-            regCode.isUsed = true;
-            regCode.usedBy = email;
-            regCode.usedAt = new Date();
-            await regCode.save();
+            // ── Mark the invite code as used IF it was provided ───────────
+            if (req.regCodeRecord) {
+                req.regCodeRecord.isUsed = true;
+                req.regCodeRecord.usedBy = email;
+                req.regCodeRecord.usedAt = new Date();
+                await req.regCodeRecord.save();
+            }
             // ─────────────────────────────────────────────────────────────
 
             res.status(201).json({

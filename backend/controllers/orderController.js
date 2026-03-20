@@ -383,7 +383,13 @@ const updateOrder = asyncHandler(async (req, res) => {
 
         order.status = req.body.status || order.status;
         order.pick_up_status = req.body.pick_up_status || order.pick_up_status;
-        order.payment_status = req.body.payment_status || order.payment_status;
+        if (req.body.payment_status) {
+            order.payment_status = req.body.payment_status;
+            // Auto-set pick status when paid
+            if (req.body.payment_status.toLowerCase() === 'paid') {
+                order.pick_up_status = 'Picked-Up';
+            }
+        }
 
         const updatedOrder = await order.save();
         res.json(updatedOrder);

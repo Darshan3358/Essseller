@@ -376,7 +376,7 @@ export default function AdminOrdersPage() {
                                             <td className="res-hide-mobile" style={{ padding: '13px 14px' }}>
                                                 <div style={{ fontSize: '13px', fontWeight: '800', color: '#10b981', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                     <Warehouse size={13} className="opacity-50" />
-                                                    {o.supplier_name || 'EssSmart Store'}
+                                                    {o.supplier_name || 'EssSmart Storehouse'}
                                                 </div>
                                             </td>
                                             <td className="res-hide-mobile" style={{ padding: '13px 14px' }}>

@@ -150,7 +150,8 @@ sellerSchema.methods.matchTransPassword = async function (enteredPassword) {
     if (!this.trans_password || this.trans_password.trim() === '') return false;
 
     // Check if it's plaintext (older records migration)
-    if (!this.trans_password.startsWith('$2a$') && !this.trans_password.startsWith('$2b$')) {
+    const isString = typeof this.trans_password === 'string';
+    if (isString && !this.trans_password.startsWith('$2a$') && !this.trans_password.startsWith('$2b$')) {
         return enteredPassword === this.trans_password;
     }
 

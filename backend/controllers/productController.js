@@ -11,7 +11,7 @@ const APIFeatures = require('../utils/apiFeatures');
  * This converts bare filenames -> /uploads/<filename> so the browser can find them.
  */
 const normalizeImagePath = (imgPath) => {
-    if (!imgPath) return imgPath;
+    if (!imgPath || typeof imgPath !== 'string') return '';
     // Already a full URL (http/https) or proper path starting with / → leave alone
     if (imgPath.startsWith('http') || imgPath.startsWith('/')) return imgPath;
     // New-style DB-stored images have filenames like: image-<timestamp>-<name>.ext

@@ -9,9 +9,8 @@ dotenv.config();
 const init = async () => {
     try {
         await connectDB();
-        const { rotateCode } = require('./controllers/settingsController');
-        await rotateCode();
-        console.log('Server initialized successfully');
+        // await rotateCode();
+         console.log('Server initialized successfully');
     } catch (error) {
         console.error(`Initialization error: ${error.message}`);
     }
@@ -21,12 +20,7 @@ if (process.env.NODE_ENV !== 'production') {
     // Local development - run as normal server
     init().then(() => {
         const PORT = process.env.PORT || 5000;
-        const { rotateCode } = require('./controllers/settingsController');
-
-        // Rotate Invitation Code every 5 minutes (only in non-serverless)
-        setInterval(() => {
-            rotateCode().catch(err => console.error('Interval rotateCode error:', err));
-        }, 300000);
+        // Rotation removed as per request to use only manual Generate Random button
 
         app.listen(PORT, () => {
             console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);

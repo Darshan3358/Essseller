@@ -791,7 +791,13 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     }
 
     if (req.body.status) order.status = req.body.status;
-    if (req.body.payment_status) order.payment_status = req.body.payment_status;
+    if (req.body.payment_status) {
+        order.payment_status = req.body.payment_status;
+        // Auto-set pick status to Picked when payment is marked as paid
+        if (req.body.payment_status.toLowerCase() === 'paid') {
+            order.pick_up_status = 'Picked-Up';
+        }
+    }
     if (req.body.pick_up_status) order.pick_up_status = req.body.pick_up_status;
 
     await order.save();
