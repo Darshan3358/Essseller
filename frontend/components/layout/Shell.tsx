@@ -13,6 +13,22 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [stats, setStats] = useState<any>(null);
     const [imageError, setImageError] = useState(false);
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const notificationRef = useRef<HTMLDivElement>(null);
+
+    const fetchNotifications = async () => {
+        try {
+            const response = await api.get('/notifications');
+            if (response.success) {
+                setNotifications(response.notifications);
+                setUnreadCount(response.unreadCount);
+            }
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    };
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -28,8 +44,46 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
         if (user) {
             fetchStats();
+            fetchNotifications();
+            
+            // Poll for notifications every 2 minutes
+            const interval = setInterval(fetchNotifications, 120000);
+            return () => clearInterval(interval);
         }
     }, [user]);
+
+    // Handle click outside notification dropdown
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+                setIsNotificationOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleMarkAsRead = async (id: string, link?: string) => {
+        try {
+            await api.put(`/notifications/${id}/read`);
+            fetchNotifications();
+            if (link) {
+                router.push(link);
+                setIsNotificationOpen(false);
+            }
+        } catch (error) {
+            console.error('Error marking as read:', error);
+        }
+    };
+
+    const handleMarkAllAsRead = async () => {
+        try {
+            await api.put('/notifications/read-all');
+            fetchNotifications();
+        } catch (error) {
+            console.error('Error marking all as read:', error);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative">
@@ -163,10 +217,69 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
                         <div className="h-8 w-[1px] bg-gray-200 hidden sm:block mx-1"></div>
 
-                        <button className="p-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-2xl relative group transition-all shrink-0">
-                            <Bell className="w-5 h-5 text-gray-600 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
-                            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-danger-500 rounded-full border-2 border-white dark:border-slate-900" />
-                        </button>
+                        <div className="relative" ref={notificationRef}>
+                            <button 
+                                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                                className="p-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-2xl relative group transition-all shrink-0"
+                            >
+                                <Bell className="w-5 h-5 text-gray-600 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-danger-500 rounded-full border-2 border-white dark:border-slate-900 animate-pulse" />
+                                )}
+                            </button>
+
+                            {/* Notification Dropdown */}
+                            {isNotificationOpen && (
+                                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="p-4 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+                                        <h3 className="font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+                                            Notifications
+                                            {unreadCount > 0 && <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] rounded-full">{unreadCount}</span>}
+                                        </h3>
+                                        <button 
+                                            onClick={handleMarkAllAsRead}
+                                            className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                                        >
+                                            Mark all read
+                                        </button>
+                                    </div>
+                                    <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                                        {notifications.length > 0 ? (
+                                            notifications.map((notif) => (
+                                                <div 
+                                                    key={notif._id}
+                                                    onClick={() => handleMarkAsRead(notif._id, notif.link)}
+                                                    className={`p-4 border-b border-gray-50 dark:border-slate-800/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors relative ${!notif.read ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
+                                                >
+                                                    {!notif.read && (
+                                                        <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-500 rounded-full" />
+                                                    )}
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-sm font-bold text-gray-900 dark:text-slate-100">{notif.title}</span>
+                                                        <p className="text-xs text-gray-500 dark:text-slate-400 line-clamp-2">{notif.message}</p>
+                                                        <span className="text-[10px] text-gray-400 dark:text-slate-500 mt-1">
+                                                            {new Date(notif.createdAt).toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="p-8 text-center bg-white dark:bg-slate-900">
+                                                <div className="w-12 h-12 bg-gray-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                                                    <Bell className="w-6 h-6 text-gray-300 dark:text-slate-600" />
+                                                </div>
+                                                <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">No new notifications</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    {notifications.length > 0 && (
+                                        <div className="p-3 bg-gray-50/50 dark:bg-slate-800/50 text-center border-t border-gray-100 dark:border-slate-800">
+                                            <p className="text-[10px] text-gray-400 dark:text-slate-500 font-bold uppercase tracking-wider">Stay updated with your store activity</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </header>
 

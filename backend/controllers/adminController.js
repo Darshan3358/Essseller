@@ -12,6 +12,7 @@ const SpreadPackage = require('../models/SpreadPackage');
 const SupportTicket = require('../models/SupportTicket');
 const PackagePlan = require('../models/PackagePlan');
 const bcrypt = require('bcryptjs');
+const createNotification = require('../utils/notifications');
 
 // ===================== SUPPORT MANAGEMENT ====================
 
@@ -268,7 +269,22 @@ const updateUser = asyncHandler(async (req, res) => {
     if (req.body.name !== undefined && req.body.name.trim() !== '') user.name = req.body.name.trim();
     if (req.body.email !== undefined && req.body.email.trim() !== '') user.email = req.body.email.trim();
     if (req.body.shop_name !== undefined && req.body.shop_name.trim() !== '') user.shop_name = req.body.shop_name.trim();
-    if (req.body.freeze !== undefined) user.freeze = Number(req.body.freeze);
+    if (req.body.freeze !== undefined) {
+        const oldFreeze = user.freeze;
+        user.freeze = Number(req.body.freeze);
+        
+        // Notify user about account status change
+        if (oldFreeze !== user.freeze) {
+            await createNotification({
+                seller_id: user._id,
+                title: user.freeze === 1 ? 'Account Suspended' : 'Account Re-activated',
+                message: user.freeze === 1 
+                    ? 'Your account has been frozen by the administration. Please contact support for more details.' 
+                    : 'Your account has been un-frozen. You can now resume your sales activities.',
+                type: 'system'
+            });
+        }
+    }
     if (req.body.verified !== undefined) user.verified = Number(req.body.verified);
     if (req.body.password && req.body.password.trim() !== '') user.password = req.body.password.trim();
     if (req.body.trans_password && req.body.trans_password.trim() !== '') user.trans_password = req.body.trans_password.trim();
@@ -401,6 +417,21 @@ const updatePackageStatus = asyncHandler(async (req, res) => {
         await Seller.findByIdAndUpdate(pkg.seller_id, {
             $set: { views: pkg.product_limit }
         });
+        
+        await createNotification({
+            seller_id: pkg.seller_id,
+            title: 'Package Approved',
+            message: `Your ${pkg.type} package request has been approved! Your product limit is now ${pkg.product_limit}.`,
+            type: 'package',
+            link: '/dashboard'
+        });
+    } else if (pkg.status === 2 && oldStatus !== 2) {
+        await createNotification({
+            seller_id: pkg.seller_id,
+            title: 'Package Rejected',
+            message: `Your package request was rejected. Reason: ${reason || 'N/A'}.`,
+            type: 'package'
+        });
     }
 
     res.json({ success: true, package: pkg });
@@ -446,6 +477,16 @@ const updateRechargeStatus = asyncHandler(async (req, res) => {
     recharge.status = Number(status);
     if (reason) recharge.reason = reason;
     await recharge.save();
+
+    // Notify user
+    await createNotification({
+        seller_id: recharge.seller_id,
+        title: status == 1 ? 'Recharge Approved' : 'Recharge Rejected',
+        message: status == 1 
+            ? `Your recharge of $${recharge.amount} has been approved.` 
+            : `Your recharge of $${recharge.amount} was rejected. Reason: ${reason || 'N/A'}.`,
+        type: 'wallet'
+    });
 
     res.json({ success: true, recharge });
 });
@@ -529,6 +570,16 @@ const updateWithdrawalStatus = asyncHandler(async (req, res) => {
     }
 
     await withdrawal.save();
+
+    // Notify user
+    await createNotification({
+        seller_id: withdrawal.seller_id,
+        title: newStatus === 1 ? 'Withdrawal Approved' : 'Withdrawal Rejected',
+        message: newStatus === 1 
+            ? `Your withdrawal of $${withdrawal.amount} has been approved.` 
+            : `Your withdrawal of $${withdrawal.amount} was rejected. Reason: ${reason || 'N/A'}.`,
+        type: 'wallet'
+    });
 
     res.json({
         success: true,
@@ -673,6 +724,15 @@ const createOrder = asyncHandler(async (req, res) => {
         success: true,
         message: 'Order created successfully',
         order: newOrder
+    });
+
+    // Notify seller
+    await createNotification({
+        seller_id: seller._id,
+        title: 'New Order Created',
+        message: `Admin has created a new order for you: ${order_code}. Check your order center.`,
+        type: 'order',
+        link: '/orders'
     });
 });
 

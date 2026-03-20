@@ -14,6 +14,7 @@ const rechargeRoutes = require('./routes/rechargeRoutes');
 const guaranteeRoutes = require('./routes/guaranteeRoutes');
 const supplierRoutes = require('./routes/supplierRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -103,6 +104,7 @@ app.use('/api/support', require('./routes/supportRoutes'));
 app.use('/api/uploads', require('./routes/uploadsRoutes'));
 app.use('/api/spread-packages', require('./routes/spreadPackageRoutes'));
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');

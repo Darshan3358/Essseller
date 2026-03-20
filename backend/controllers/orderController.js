@@ -8,6 +8,7 @@ const Withdraw = require('../models/Withdraw');
 const Seller = require('../models/Seller');
 const Recharge = require('../models/Recharge');
 const SiteSetting = require('../models/SiteSetting');
+const createNotification = require('../utils/notifications');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -55,6 +56,15 @@ const addOrderItems = asyncHandler(async (req, res) => {
         });
 
         const createdOrder = await order.save();
+
+        // Create notification for seller
+        await createNotification({
+            seller_id: createdOrder.seller_id,
+            title: 'New Order Received',
+            message: `You have a new order: ${createdOrder.order_code}. Check your order center for details.`,
+            type: 'order',
+            link: '/orders'
+        });
 
         // specific logic for order items creation linked to order
         // In a real app, we might loop through orderItems and create OrderItem documents
