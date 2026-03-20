@@ -12,9 +12,14 @@ const APIFeatures = require('../utils/apiFeatures');
  */
 const normalizeImagePath = (imgPath) => {
     if (!imgPath) return imgPath;
-    // Already a full URL (http/https) or a proper path starting with / -> leave alone
+    // Already a full URL (http/https) or proper path starting with / → leave alone
     if (imgPath.startsWith('http') || imgPath.startsWith('/')) return imgPath;
-    // Bare filename -> prepend /uploads/
+    // New-style DB-stored images have filenames like: image-<timestamp>-<name>.ext
+    // or gallery-<timestamp>-<name>.ext → serve via /api/products/image/:filename
+    if (imgPath.startsWith('image-') || imgPath.startsWith('gallery-')) {
+        return `/api/products/image/${imgPath}`;
+    }
+    // Legacy bare filename (e.g. product_395.jpg) → /uploads/<filename>
     return `/uploads/${imgPath}`;
 };
 
