@@ -224,7 +224,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                             >
                                 <Bell className="w-5 h-5 text-gray-600 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
                                 {unreadCount > 0 && (
-                                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-danger-500 rounded-full border-2 border-white dark:border-slate-900 animate-pulse" />
+                                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-danger-500 rounded-full border-2 border-white dark:border-slate-900 animate-bounce shadow-md shadow-danger-500/50" />
                                 )}
                             </button>
 
