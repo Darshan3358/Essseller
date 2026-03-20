@@ -4,6 +4,30 @@ const Product = require('../models/Product');
 const SellerProduct = require('../models/SellerProduct');
 const APIFeatures = require('../utils/apiFeatures');
 
+/**
+ * Normalize legacy image paths stored in the DB.
+ * Old products have bare filenames like "product_395.jpg".
+ * New products have paths like "/api/products/image/image-123.jpg" or full URLs.
+ * This converts bare filenames -> /uploads/<filename> so the browser can find them.
+ */
+const normalizeImagePath = (imgPath) => {
+    if (!imgPath) return imgPath;
+    // Already a full URL (http/https) or a proper path starting with / -> leave alone
+    if (imgPath.startsWith('http') || imgPath.startsWith('/')) return imgPath;
+    // Bare filename -> prepend /uploads/
+    return `/uploads/${imgPath}`;
+};
+
+const normalizeProduct = (product) => {
+    const obj = typeof product.toObject === 'function' ? product.toObject() : { ...product };
+    if (obj.image) obj.image = normalizeImagePath(obj.image);
+    if (Array.isArray(obj.gallery)) {
+        obj.gallery = obj.gallery.map(normalizeImagePath);
+    }
+    return obj;
+};
+
+
 // @desc    Get all products
 // @route   GET /api/products
 // @access  Public
@@ -42,7 +66,7 @@ const getProducts = asyncHandler(async (req, res) => {
         count: products.length,
         totalCount,
         totalPages,
-        data: products,
+        data: products.map(normalizeProduct),
     });
 });
 
@@ -60,7 +84,7 @@ const getFeaturedProducts = asyncHandler(async (req, res) => {
     res.json({
         success: true,
         count: products.length,
-        data: products,
+        data: products.map(normalizeProduct),
     });
 });
 
@@ -71,7 +95,7 @@ const getProductById = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product && !product.isDeleted) {
-        res.json({ success: true, data: product });
+        res.json({ success: true, data: normalizeProduct(product) });
     } else {
         res.status(404);
         throw new Error('Product not found');
@@ -315,7 +339,7 @@ const getSellerProducts = asyncHandler(async (req, res) => {
         totalCount,
         totalPages,
         currentPage: page,
-        data: paginatedProducts
+        data: paginatedProducts.map(normalizeProduct)
     });
 });
 
