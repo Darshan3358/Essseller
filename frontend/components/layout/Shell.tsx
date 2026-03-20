@@ -63,14 +63,22 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const handleMarkAsRead = async (id: string, link?: string) => {
+    const handleMarkAsRead = async (id: string, link?: string, type?: string) => {
         try {
             await api.put(`/notifications/${id}/read`);
             fetchNotifications();
-            if (link) {
-                router.push(link);
-                setIsNotificationOpen(false);
-            }
+            
+            // Navigate to the provided link or determine fallback from type
+            const targetLink = link || (
+                type === 'order' ? '/orders' :
+                type === 'package' ? '/packages' :
+                type === 'wallet' ? '/deposit' :
+                type === 'system' ? '/settings' :
+                '/dashboard'
+            );
+
+            router.push(targetLink);
+            setIsNotificationOpen(false);
         } catch (error) {
             console.error('Error marking as read:', error);
         }
@@ -248,7 +256,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                                             notifications.map((notif) => (
                                                 <div 
                                                     key={notif._id}
-                                                    onClick={() => handleMarkAsRead(notif._id, notif.link)}
+                                                    onClick={() => handleMarkAsRead(notif._id, notif.link, notif.type)}
                                                     className={`p-4 border-b border-gray-50 dark:border-slate-800/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors relative ${!notif.read ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
                                                 >
                                                     {!notif.read && (
