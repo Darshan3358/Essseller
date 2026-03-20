@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { Package, Plus, Edit2, Trash2, Save, X, RefreshCw, CheckCircle2, Star, Zap } from 'lucide-react';
+import { Package, Plus, Edit2, Trash2, Save, X, RefreshCw, CheckCircle2, Zap } from 'lucide-react';
 
 const inputStyle = {
     width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
@@ -41,16 +41,6 @@ export default function AdminPackagePlansPage() {
         return Math.max(0, Math.floor(num)).toString();
     };
 
-    const updateBannerField = (value: string) => {
-        const totalNum = parseFriendlyNumber(value);
-        setPlanBanner({ 
-            ...planBanner, 
-            views_text: value,
-            used_text: '0',
-            remaining_text: formatFriendlyNumber(totalNum)
-        });
-    };
-
     const [showAdd, setShowAdd] = useState(false);
     const [addForm, setAddForm] = useState<any>({
         sku: '',
@@ -67,68 +57,23 @@ export default function AdminPackagePlansPage() {
         order_index: 0
     });
 
-    const [planBanner, setPlanBanner] = useState<any>({
-        plan_title: 'Enterprise Pro',
-        used_text: '0',
-        remaining_text: '0',
-        views_text: '0',
-        features: [
-            { text: '', icon: '' },
-            { text: '', icon: '' },
-            { text: '', icon: '' },
-            { text: '', icon: '' }
-        ]
-    });
-    const [savingBanner, setSavingBanner] = useState(false);
-
     const fetchPlans = useCallback(async () => {
         setLoading(true);
         const token = localStorage.getItem('adminToken');
         try {
-            const [plansRes, bannerRes] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/package-plans`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings/plan-display`)
-            ]);
-
-            const plansData = await plansRes.json();
-            if (plansData.success) setPlans(plansData.data);
-
-            const bannerData = await bannerRes.json();
-            if (bannerData.success && bannerData.data) setPlanBanner(bannerData.data);
-
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/package-plans`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) setPlans(data.data);
         } catch (err) {
-            console.error('Failed to fetch data:', err);
+            console.error('Failed to fetch plans:', err);
         } finally {
             setLoading(false);
         }
     }, []);
 
     useEffect(() => { fetchPlans(); }, [fetchPlans]);
-
-    const handleSaveBanner = async () => {
-        setSavingBanner(true);
-        const token = localStorage.getItem('adminToken');
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings/plan-display`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify(planBanner)
-            });
-            const data = await res.json();
-            if (data.success) {
-                alert('Plan banner updated successfully');
-            }
-        } catch (err) {
-            console.error('Failed to save banner:', err);
-        } finally {
-            setSavingBanner(false);
-        }
-    };
 
     const handleEdit = (plan: any) => {
         setIsEditing(plan._id);
@@ -233,118 +178,6 @@ export default function AdminPackagePlansPage() {
                 </button>
             </div>
 
-            {/* Plan Display Card (New request) */}
-            <div style={{
-                background: 'rgba(255,255,255,0.04)', borderRadius: '24px', padding: '24px',
-                border: '1px solid rgba(255,255,255,0.08)', marginBottom: '40px'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-                    <div>
-                        <h2 style={{ fontSize: '18px', fontWeight: '800', margin: '0 0 4px' }}>Dashboard Plan Banner</h2>
-                        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', margin: 0 }}>Configure the main plan title and feature badges shown on the seller dashboard.</p>
-                    </div>
-                    <button
-                        onClick={handleSaveBanner}
-                        disabled={savingBanner}
-                        style={{ ...btnStyle, background: '#10b981', color: 'white', padding: '8px 24px' }}>
-                        {savingBanner ? <RefreshCw size={16} style={{ animation: 'spin 1.5s linear infinite' }} /> : <Save size={16} />}
-                        Save Banner Data
-                    </button>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '32px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <div>
-                            <label style={labelStyle}>Banner Title</label>
-                            <input
-                                style={inputStyle}
-                                value={planBanner.plan_title}
-                                onChange={e => setPlanBanner({ ...planBanner, plan_title: e.target.value })}
-                                placeholder="e.g. Enterprise Pro"
-                            />
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
-                            <div>
-                                <label style={labelStyle}>Total Views Limit (Set by Admin)</label>
-                                <input 
-                                    style={inputStyle} 
-                                    value={planBanner.views_text} 
-                                    onChange={e => updateBannerField(e.target.value)} 
-                                    placeholder="e.g. 10K" 
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label style={labelStyle}>Feature Badges</label>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                {planBanner.features.map((f: any, i: number) => (
-                                    <div key={i} style={{ display: 'flex', gap: '6px' }}>
-                                        <input
-                                            style={{ ...inputStyle, width: '45px', textAlign: 'center' }}
-                                            value={f.icon}
-                                            onChange={e => {
-                                                const nf = [...planBanner.features];
-                                                nf[i].icon = e.target.value;
-                                                setPlanBanner({ ...planBanner, features: nf });
-                                            }}
-                                            placeholder="⚡"
-                                        />
-                                        <input
-                                            style={inputStyle}
-                                            value={f.text}
-                                            onChange={e => {
-                                                const nf = [...planBanner.features];
-                                                nf[i].text = e.target.value;
-                                                setPlanBanner({ ...planBanner, features: nf });
-                                            }}
-                                            placeholder="Feature"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Live Preview */}
-                    <div style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #60a5fa, #ec4899)',
-                        borderRadius: '20px', display: 'flex', flexDirection: 'column',
-                        alignItems: 'center', justifyContent: 'center', padding: '32px',
-                        color: 'white', position: 'relative', overflow: 'hidden'
-                    }}>
-                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(2px)' }}></div>
-                        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                                <Star size={20} />
-                            </div>
-                            <h3 style={{ fontSize: '28px', fontWeight: '900', margin: '0 0 12px' }}>{planBanner.plan_title}</h3>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px', marginBottom: '24px' }}>
-                                {planBanner.features.map((f: any, i: number) => (
-                                    <span key={i} style={{ background: 'rgba(255,255,255,0.15)', padding: '4px 10px', borderRadius: '8px', fontSize: '10px', fontWeight: '700' }}>
-                                        {f.icon} {f.text}
-                                    </span>
-                                ))}
-                            </div>
-
-                            {/* Views/Used/Rem Preview Section */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', width: '100%', maxWidth: '300px' }}>
-                                <div>
-                                    <p style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: 'white' }}>{planBanner.used_text || '0'}</p>
-                                    <p style={{ margin: 0, fontSize: '9px', fontWeight: '800', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>Used</p>
-                                </div>
-                                <div>
-                                    <p style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: 'white' }}>{planBanner.remaining_text || '0'}</p>
-                                    <p style={{ margin: 0, fontSize: '9px', fontWeight: '800', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>Remaining</p>
-                                </div>
-                                <div>
-                                    <p style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: '#fbcfe8' }}>{planBanner.views_text || '0'}</p>
-                                    <p style={{ margin: 0, fontSize: '9px', fontWeight: '800', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>Views</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div style={{ marginBottom: '20px' }}>
                 <h2 style={{ fontSize: '18px', fontWeight: '800', margin: '0 0 4px' }}>Membership Tiers</h2>

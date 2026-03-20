@@ -188,17 +188,24 @@ const RegCode = require('../models/RegCode');
 const registerSeller = asyncHandler(async (req, res) => {
     const { name, email, password, shop_name, trans_password, cert_type, invitation_code } = req.body;
 
-    // Validate Invitation Code (DISABLED BY USER REQUEST)
-    /*
-    const validCode = await RegCode.findOne();
-    if (!validCode || validCode.code !== invitation_code) {
+    // ── Validate Invitation Code (Single-Use) ──────────────────────────────
+    if (!invitation_code || !invitation_code.trim()) {
         res.status(400);
-        throw new Error('Invalid or expired invitation code.');
+        throw new Error('Invitation code is required to register.');
     }
-    */
+
+    const regCode = await RegCode.findOne({
+        code: invitation_code.trim().toUpperCase(),
+        isUsed: false
+    });
+
+    if (!regCode) {
+        res.status(400);
+        throw new Error('Invalid or already used invitation code. Please contact admin for a new code.');
+    }
+    // ────────────────────────────────────────────────────────────────────────
 
     const sellerExists = await Seller.findOne({ email });
-
     if (sellerExists) {
         res.status(400);
         throw new Error('User already exists');
@@ -237,6 +244,13 @@ const registerSeller = asyncHandler(async (req, res) => {
         });
 
         if (seller) {
+            // ── Mark the invite code as used (single-use enforcement) ──────
+            regCode.isUsed = true;
+            regCode.usedBy = email;
+            regCode.usedAt = new Date();
+            await regCode.save();
+            // ─────────────────────────────────────────────────────────────
+
             res.status(201).json({
                 token: generateToken(seller._id),
                 user: {

@@ -4,6 +4,7 @@ console.log('[Info] settingsRoutes.js loading...');
 
 const {
     getInvitationCode, updateInvitationCode,
+    listInviteCodes, createInviteCode, deleteInviteCode,
     getCryptoSettings, updateCryptoSettings,
     getBankSettings, updateBankSettings,
     getSecuritySettings, updateSecuritySettings,
@@ -12,7 +13,12 @@ const {
 } = require('../controllers/settingsController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// Invite code
+// Single-use invite codes (multi-code system)
+router.get('/invite-codes', protect, admin, listInviteCodes);          // Admin: list all codes
+router.post('/invite-codes', protect, admin, createInviteCode);         // Admin: create a new code
+router.delete('/invite-codes/:id', protect, admin, deleteInviteCode);   // Admin: delete a code
+
+// Legacy single-code endpoints (still used by some frontend)
 router.get('/invite-code', getInvitationCode);
 router.put('/invite-code', protect, admin, updateInvitationCode);
 

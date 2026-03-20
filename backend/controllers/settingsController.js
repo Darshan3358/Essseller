@@ -2,49 +2,92 @@ const asyncHandler = require('express-async-handler');
 const RegCode = require('../models/RegCode');
 const SiteSetting = require('../models/SiteSetting');
 
-// @desc    Get master invitation code
-// @route   GET /api/settings/invite-code
+// @desc    List all invite codes (with used/unused status)
+// @route   GET /api/settings/invite-codes
 // @access  Private/Admin
+const listInviteCodes = asyncHandler(async (req, res) => {
+    const codes = await RegCode.find({}).sort({ createdAt: -1 });
+    res.json({ success: true, codes });
+});
+
+// @desc    Get current (first unused) invite code — kept for legacy frontend
+// @route   GET /api/settings/invite-code
+// @access  Public
 const getInvitationCode = asyncHandler(async (req, res) => {
-    let regCode = await RegCode.findOne();
+    // Return the first unused code (or any code for display)
+    let regCode = await RegCode.findOne({ isUsed: false }).sort({ createdAt: 1 });
+    if (!regCode) regCode = await RegCode.findOne().sort({ createdAt: -1 });
     if (!regCode) {
         regCode = await RegCode.create({ code: 'LKC1523' });
     }
-    res.json({ success: true, code: regCode.code, updatedAt: regCode.updatedAt });
+    res.json({ success: true, code: regCode.code, updatedAt: regCode.updatedAt, isUsed: regCode.isUsed });
 });
 
-// @desc    Update/Regenerate invitation code
+// @desc    Create a new invitation code
+// @route   POST /api/settings/invite-codes
+// @access  Private/Admin
+const createInviteCode = asyncHandler(async (req, res) => {
+    let { code, label } = req.body;
+    if (!code || !code.trim()) {
+        // Auto-generate
+        const prefixes = ['LKC', 'ESS', 'REF', 'ACT', 'VIP'];
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        code = prefix + Math.floor(1000 + Math.random() * 9000);
+    }
+    code = code.trim().toUpperCase();
+
+    // Check duplicate
+    const existing = await RegCode.findOne({ code });
+    if (existing) {
+        res.status(400);
+        throw new Error('A code with that value already exists');
+    }
+
+    const newCode = await RegCode.create({ code, label: label || '' });
+    res.status(201).json({ success: true, message: 'Code created', data: newCode });
+});
+
+// @desc    Update/set a single invite code (legacy — updates or creates the first record)
 // @route   PUT /api/settings/invite-code
 // @access  Private/Admin
 const updateInvitationCode = asyncHandler(async (req, res) => {
     const { code } = req.body;
-    if (!code) {
-        res.status(400);
-        throw new Error('Code is required');
-    }
-    let regCode = await RegCode.findOne();
+    if (!code) { res.status(400); throw new Error('Code is required'); }
+    const upperCode = code.trim().toUpperCase();
+
+    // Upsert: update existing unused code or create new
+    let regCode = await RegCode.findOne({ isUsed: false }).sort({ createdAt: 1 });
     if (regCode) {
-        regCode.code = code;
+        regCode.code = upperCode;
         await regCode.save();
     } else {
-        regCode = await RegCode.create({ code });
+        regCode = await RegCode.create({ code: upperCode });
     }
     res.json({ success: true, code: regCode.code, message: 'Invitation code updated successfully' });
 });
 
-// Internal function to rotate code
+// @desc    Delete a specific invite code
+// @route   DELETE /api/settings/invite-codes/:id
+// @access  Private/Admin
+const deleteInviteCode = asyncHandler(async (req, res) => {
+    const code = await RegCode.findById(req.params.id);
+    if (!code) { res.status(404); throw new Error('Code not found'); }
+    await code.deleteOne();
+    res.json({ success: true, message: 'Code deleted' });
+});
+
+// Internal function to rotate code (kept for server init compat)
 const rotateCode = async () => {
     const newCode = 'LKC' + Math.floor(1000 + Math.random() * 9000);
-    let regCode = await RegCode.findOne();
-    if (regCode) {
-        regCode.code = newCode;
-        await regCode.save();
-    } else {
+    // Only add if no unused codes exist already
+    const unusedCount = await RegCode.countDocuments({ isUsed: false });
+    if (unusedCount === 0) {
         await RegCode.create({ code: newCode });
+        console.log(`[System] New Invitation Code Created: ${newCode}`);
     }
-    console.log(`[System] Invitation Code Rotated: ${newCode}`);
     return newCode;
 };
+
 
 // @desc    Get admin crypto payment details (public - for sellers to see where to send)
 // @route   GET /api/settings/crypto
@@ -207,6 +250,9 @@ const updatePlanDisplaySettings = asyncHandler(async (req, res) => {
 module.exports = {
     getInvitationCode,
     updateInvitationCode,
+    listInviteCodes,
+    createInviteCode,
+    deleteInviteCode,
     rotateCode,
     getCryptoSettings,
     updateCryptoSettings,
