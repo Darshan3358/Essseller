@@ -1,434 +1,206 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import {
-  Database, Users, Wallet, BarChart, CheckCircle2, Shield, Gem,
-  TrendingUp, Package, Box, DollarSign, ClipboardList, Twitter, Linkedin, Instagram, MessageCircle, ArrowRight
-} from 'lucide-react';
-import { Outfit } from 'next/font/google';
-import styles from './landing.module.css';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { ShoppingCart, Star, Sparkles as SparklesIcon, Monitor, Watch, Zap, ShoppingBag as ShoppingBagIcon } from 'lucide-react';
-
-const outfit = Outfit({ subsets: ['latin'], weight: ['400', '500', '700', '800'] });
-
-const NavLinks = [
-  { name: 'Features', href: '#features' },
-  { name: 'How It Works', href: '#how-it-works' },
-  { name: 'Pricing', href: '#pricing' },
-  { name: 'Testimonials', href: '#testimonials' },
-];
+import { ChevronDown, Plus, Minus, Info } from 'lucide-react';
+import styles from './landing.module.css';
 
 export default function LandingPage() {
-  const [scrolled, setScrolled] = useState(false);
-  const router = useRouter();
-  const { user, isLoading } = useAuth();
-  const { scrollY } = useScroll();
-  const opacity = useTransform(scrollY, [0, 300], [1, 0.5]);
-  const scale = useTransform(scrollY, [0, 300], [1, 0.95]);
+    const router = useRouter();
+    const { user, isLoading } = useAuth();
+    const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const handleGetStarted = () => {
+        if (user) {
+            router.push('/dashboard');
+        } else {
+            router.push('/register');
+        }
+    };
 
-  // Use framer motion variants
-  const fadeInUp: any = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
-  };
+    const toggleFaq = (index: number) => {
+        setActiveFaq(activeFaq === index ? null : index);
+    };
 
-  const staggerContainer: any = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
-  };
+    if (isLoading) return <div className="min-h-screen bg-white" />;
 
-  if (isLoading) return <div className={styles.mainContainer} />;
-
-  // If user is logged in and visits root, they should logically see their dashboard or the landing
-  // According to standard SaaS, if already logged in we might either redirect or just let them go to dashboard
-  const handleGetStarted = () => {
-    if (user) {
-      router.push('/dashboard');
-    } else {
-      router.push('/register');
-    }
-  };
-
-  return (
-    <div className={`${styles.body} ${outfit.className}`}>
-      <div className={styles.mainContainer}>
-        {/* Decorative Elements */}
-        <div className={styles.gridOverlay} />
-
-        {/* Animated Blobs */}
-        <div className={styles.blob} style={{ width: '40vw', height: '40vw', background: 'rgba(0, 123, 255, 0.15)', top: '-10%', right: '-5%' }} />
-        <div className={styles.blob} style={{ width: '35vw', height: '35vw', background: 'rgba(0, 180, 216, 0.1)', bottom: '10%', left: '-10%', animationDelay: '-5s' }} />
-        <div className={styles.blob} style={{ width: '25vw', height: '25vw', background: 'rgba(0, 80, 255, 0.08)', top: '40%', left: '40%', animationDelay: '-10s' }} />
-
-        {/* 1. Sticky Header */}
-        <header className={`${styles.nav} ${scrolled ? 'bg-black/90 shadow-2xl backdrop-blur-xl' : 'bg-transparent'}`}>
-          <Link href="/" className={styles.logo}>
-            ESS <span>SmartSeller</span>
-          </Link>
-          <nav className={styles.navLinks}>
-            {NavLinks.map(link => (
-              <Link key={link.name} href={link.href}>{link.name}</Link>
-            ))}
-          </nav>
-          <div className={styles.navActions}>
-            {user ? (
-              <button onClick={() => router.push('/dashboard')} className={styles.btnSecondary}>Dashboard</button>
-            ) : (
-              <Link href="/login" className={styles.btnSecondary}>Log In</Link>
-            )}
-            <button onClick={handleGetStarted} className={styles.btnPrimary}>
-              Get Started
-            </button>
-          </div>
-        </header>
-
-        {/* 2. Hero Section */}
-        <motion.section
-          className={styles.hero}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          style={{ opacity, scale }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full mb-8 backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Global E-Commerce Excellence</span>
-          </div>
-
-          <h1 className={styles.h1}>
-            Your Global Store, <span>Powered by Intelligence.</span>
-          </h1>
-          <p className={styles.heroSubtitle}>
-            The ultimate ecosystem for modern sellers. Discover high-margin products, coordinate with elite suppliers, and scale your brand globally.
-          </p>
-          <div className={styles.heroCtas}>
-            <button onClick={handleGetStarted} className={styles.btnPrimary}>
-              Open Your Store
-            </button>
-            <Link href="#showcase" className={styles.btnSecondary}>
-              Explore Catalog
-            </Link>
-          </div>
-
-          {/* Product Showcase - E-commerce Feel */}
-          <div id="showcase" className={styles.productShowcase}>
-            {[
-              {
-                id: 1,
-                name: 'Audiophile Pro X-1',
-                category: 'Electronics',
-                price: 249,
-                oldPrice: 399,
-                image: '/wireless_headphones_hero_1773860911797.png'
-              },
-              {
-                id: 2,
-                name: 'Zenith Titanium',
-                category: 'Fashion',
-                price: 189,
-                oldPrice: 249,
-                image: '/smart_watch_hero_1773861068085.png'
-              },
-              {
-                id: 3,
-                name: 'Neo-Flow Runners',
-                category: 'Footwear',
-                price: 129,
-                oldPrice: 199,
-                image: '/running_sneakers_hero_1773861091920.png'
-              },
-              {
-                id: 4,
-                name: 'Aura Matte Series',
-                category: 'Lifestyle',
-                price: 45,
-                oldPrice: 89,
-                image: '/eco_water_bottle_hero_1773861108133.png'
-              }
-            ].map((product) => (
-              <motion.div
-                key={product.id}
-                className={styles.productCard}
-                whileHover={{ y: -10 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <div className={styles.productImage}>
-                  <img src={product.image} alt={product.name} />
+    return (
+        <div className={styles.body}>
+            {/* Main Header */}
+            <header className={styles.mainHeader}>
+                <div className={styles.logo}>
+                    <Link href="/" style={{ color: '#111', fontSize: '24px', fontWeight: '800', textDecoration: 'none' }}>
+                        Ess<span>SmartSeller</span>
+                    </Link>
                 </div>
-                <div className={styles.productInfo}>
-                  <p className={styles.productCategory}>{product.category}</p>
-                  <h3 className={styles.productTitle}>{product.name}</h3>
-                  <div className={styles.productPrice}>
-                    ${product.price}
-                    <span>${product.oldPrice}</span>
-                  </div>
+                <div className={styles.rightLinks}>
+                    {user ? (
+                        <Link href="/dashboard" className={styles.btnPrimary}>Dashboard</Link>
+                    ) : (
+                        <Link href="/login" className={styles.btnPrimary}>Login</Link>
+                    )}
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+            </header>
 
-        {/* 3. Trending Categories */}
-        <section className={styles.section}>
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl font-black text-white">Trending Categories</h2>
-            <Link href="/register" className="text-blue-400 font-bold flex items-center gap-2 hover:underline">
-              View All <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className={styles.categoryGrid}>
-            {[
-              { name: 'Electronics', icon: <Monitor className="w-6 h-6" /> },
-              { name: 'Fashion', icon: <Watch className="w-6 h-6" /> },
-              { name: 'Fitness', icon: <Zap className="w-6 h-6" /> },
-              { name: 'Home & Living', icon: <ShoppingBagIcon className="w-6 h-6" /> },
-            ].map((cat, i) => (
-              <div key={i} className={styles.categoryCard}>
-                <div className="p-4 bg-white/5 rounded-2xl text-blue-400">
-                  {cat.icon}
+            {/* Hero Section */}
+            <section className={styles.heroSection}>
+                <div className={styles.heroOverlay}>
+                    <div className={styles.heroCard}>
+                        <h2>Make money selling on ESS</h2>
+                        <p>Sell your items fast—millions of buyers are waiting.</p>
+                        <button onClick={handleGetStarted} className={styles.btnPrimary}>
+                            List an item
+                        </button>
+                    </div>
                 </div>
-                <span>{cat.name}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+            </section>
 
+            {/* Basics Section */}
+            <section className={styles.basicsSection}>
+                <div className={styles.container}>
+                    <h2>Learn the basics</h2>
+                    <p className={styles.subtitle}>Here's what you need to know to start selling.</p>
 
-
-        {/* 4. Features Section */}
-        <section id="features" className={styles.section}>
-          <motion.h2
-            className={styles.sectionTitle}
-            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
-          >
-            Built for Maximum Efficiency
-          </motion.h2>
-
-          <motion.div
-            className={styles.grid}
-            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
-          >
-            {[
-              { icon: <Package className="w-8 h-8 text-blue-400" />, title: 'Product Catalog', desc: 'Browse thousands of products from global suppliers and add them to your store with one click.' },
-              { icon: <Box className="w-8 h-8 text-blue-400" />, title: 'Smart Storehouse', desc: 'Manage your local inventory efficiently with our integrated storage tracking system.' },
-              { icon: <DollarSign className="w-8 h-8 text-blue-400" />, title: 'Wallet & Finance', desc: 'Securely manage your earnings, track commissions, and withdraw profit directly to your preferred account.' },
-              { icon: <ClipboardList className="w-8 h-8 text-blue-400" />, title: 'Order Center', desc: 'Monitor customer orders and track fulfillment status in real-time from a single dashboard.' },
-            ].map((feature, idx) => (
-              <motion.div key={idx} className={styles.card} variants={fadeInUp}>
-                <div className={styles.cardIcon}>{feature.icon}</div>
-                <h3 className={styles.cardTitle}>{feature.title}</h3>
-                <p className={styles.cardText}>{feature.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </section>
-
-        {/* 5. How It Works */}
-        <section id="how-it-works" className={styles.section} style={{ background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <motion.h2
-            className={styles.sectionTitle}
-            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
-          >
-            How It Works
-          </motion.h2>
-
-          <div className={styles.timeline}>
-            <motion.div className={styles.step} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}>
-              <div className={styles.stepNumber}>01</div>
-              <div className={styles.stepContent}>
-                <h3 className="text-xl font-bold mb-4">Account Creation</h3>
-                <p className="text-secondary">Register your seller account and complete your profile to access our global marketplace.</p>
-              </div>
-            </motion.div>
-            <motion.div className={styles.step} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}>
-              <div className={styles.stepNumber}>02</div>
-              <div className={styles.stepContent}>
-                <h3 className="text-xl font-bold mb-4">Package Activation</h3>
-                <p className="text-secondary">Choose a merchant license that fits your scale. A one-time activation unlocks full selling power.</p>
-              </div>
-            </motion.div>
-            <motion.div className={styles.step} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}>
-              <div className={styles.stepNumber}>03</div>
-              <div className={styles.stepContent}>
-                <h3 className="text-xl font-bold mb-4">Start Selling</h3>
-                <p className="text-secondary">Add products to your catalog, manage orders in the center, and withdraw your commissions.</p>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 6. Pricing Section */}
-        <section id="pricing" className={styles.section}>
-          <motion.h2
-            className={styles.sectionTitle}
-            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
-          >
-            Simple, Transparent Pricing
-          </motion.h2>
-
-          <motion.div
-            className={styles.pricingGrid}
-            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
-          >
-            <motion.div className={styles.pricingCard} variants={fadeInUp}>
-              <h3 className={styles.pricingTitle}>Starter Merchant</h3>
-              <p className="text-secondary mb-6 text-sm">Perfect for new sellers starting their journey.</p>
-              <div className="text-4xl font-black text-white mb-2">$50</div>
-              <div className="text-xs text-secondary mb-6 uppercase tracking-widest font-bold">Single Charge</div>
-              <ul className={styles.pricingFeatures}>
-                <li><CheckCircle2 size={16} /><span className="text-sm">5000 Products Limit</span></li>
-                <li><CheckCircle2 size={16} /><span className="text-sm">Basic Analytics</span></li>
-                <li><CheckCircle2 size={16} /><span className="text-sm">Community Support</span></li>
-                <li><CheckCircle2 size={16} /><span className="text-sm">Standard Shipping Rates</span></li>
-              </ul>
-              <button onClick={handleGetStarted} className={styles.btnSecondary} style={{ width: '100%', marginTop: 'auto' }}>Get Started</button>
-            </motion.div>
-
-            <motion.div className={`${styles.pricingCard} ${styles.popular}`} variants={fadeInUp}>
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-teal-400" />
-              <span className={styles.popularBadge}>Most Popular</span>
-              <h3 className={styles.pricingTitle} style={{ marginTop: '1rem' }}>Professional Seller</h3>
-              <p className="text-secondary mb-6 text-sm">Scale your business with advanced tools.</p>
-              <div className="text-5xl font-black text-white mb-2">$150</div>
-              <div className="text-[10px] text-blue-400 mb-8 uppercase tracking-[0.2em] font-black">One-Time Activation</div>
-              <ul className={styles.pricingFeatures} style={{ marginBottom: '3rem' }}>
-                <li><CheckCircle2 size={16} className="text-blue-400" /><span className="text-sm">10,000 Products Limit</span></li>
-                <li><CheckCircle2 size={16} className="text-blue-400" /><span className="text-sm">Order Center Access</span></li>
-                <li><CheckCircle2 size={16} className="text-blue-400" /><span className="text-sm">Priority 24/7 Support</span></li>
-                <li><CheckCircle2 size={16} className="text-blue-400" /><span className="text-sm">Storehouse Analytics</span></li>
-                <li><CheckCircle2 size={16} className="text-blue-400" /><span className="text-sm">Custom Profile Branding</span></li>
-              </ul>
-              <button onClick={handleGetStarted} className={styles.btnPrimary} style={{ width: '100%', padding: '1.25rem' }}>Active License</button>
-            </motion.div>
-
-            <motion.div className={styles.pricingCard} variants={fadeInUp}>
-              <h3 className={styles.pricingTitle}>Enterprise Pro</h3>
-              <p className="text-secondary mb-6 text-sm">Complete solution for large scale operations.</p>
-              <div className="text-4xl font-black text-white mb-2">$450</div>
-              <div className="text-xs text-secondary mb-6 uppercase tracking-widest font-bold">Single Charge</div>
-              <ul className={styles.pricingFeatures}>
-                <li><CheckCircle2 size={16} /><span className="text-sm">18,000 Products Limit</span></li>
-                <li><CheckCircle2 size={16} /><span className="text-sm">Multiple Storefronts</span></li>
-                <li><CheckCircle2 size={16} /><span className="text-sm">Dedicated Account Manager</span></li>
-                <li><CheckCircle2 size={16} /><span className="text-sm">Spread Packages Support</span></li>
-                <li><CheckCircle2 size={16} /><span className="text-sm">Product Query Priority</span></li>
-                <li><CheckCircle2 size={16} /><span className="text-sm">Enterprise Onboarding</span></li>
-              </ul>
-              <button onClick={handleGetStarted} className={styles.btnSecondary} style={{ width: '100%', marginTop: 'auto' }}>Get Started</button>
-            </motion.div>
-          </motion.div>
-        </section>
-
-        {/* 7. Testimonials */}
-        <section id="testimonials" className={styles.section}>
-          <motion.h2
-            className={styles.sectionTitle}
-            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}
-          >
-            What Our Sellers Say
-          </motion.h2>
-
-          <motion.div
-            className={styles.testimonials}
-            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
-          >
-            <motion.div className={styles.testimonialCard} variants={fadeInUp}>
-              <p className={styles.quote}>"Since using this platform, my order processing time has been cut in half. The supplier integration is absolutely flawless! Highly recommended."</p>
-              <div className={styles.author}>
-                <div className={styles.avatar}>SK</div>
-                <div>
-                  <div className={styles.authorName}>Sarah K.</div>
-                  <div className={styles.authorTitle}>Boutique Owner</div>
+                    <div className={styles.steps}>
+                        <div className={styles.step}>
+                            <div className={styles.circle}>1</div>
+                            <h3>Instantly List Winning Products & Launch Your Store</h3>
+                            <p>Access a ready-made catalog of high-demand, proven-to-sell products. Listings come fully optimized with images, descriptions, and pricing — just activate and go live. No inventory, no guesswork.</p>
+                        </div>
+                        <div className={styles.step}>
+                            <div className={styles.circle}>2</div>
+                            <h3>Sell with Built-In Operational Support & Risk Protection</h3>
+                            <p>Focus on scaling — we handle supplier management, fulfillment, and customer inquiries. With real-time monitoring and expert support, your store runs smoothly, 24/7.</p>
+                        </div>
+                        <div className={styles.step}>
+                            <div className={styles.circle}>3</div>
+                            <h3>Get Paid On Your Terms — When You Make a Sale</h3>
+                            <p>Enjoy fast, flexible payouts — choose daily or weekly. Once a product sells, your earnings are automatically deposited. You sell, we fulfill, and you get paid. Simple as that.</p>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </motion.div>
-            <motion.div className={styles.testimonialCard} variants={fadeInUp}>
-              <p className={styles.quote}>"The withdrawal process is so transparent and fast. It feels like a true financial tool built for e-commerce entrepreneurs. Nothing else compares."</p>
-              <div className={styles.author}>
-                <div className={styles.avatar}>MT</div>
-                <div>
-                  <div className={styles.authorName}>Mike T.</div>
-                  <div className={styles.authorTitle}>E-com Entrepreneur</div>
+            </section>
+
+            {/* Business Section */}
+            <section className={styles.businessSection}>
+                <div className={styles.container}>
+                    <div className={styles.businessContent}>
+                        <div className={styles.textContent}>
+                            <h2>Selling as a business? We make it easy</h2>
+                            <p>
+                                We've got powerful tools to help you manage your inventory and orders,
+                                track your sales, and build your brand.
+                            </p>
+                            <button onClick={handleGetStarted} className={styles.btnPrimary} style={{ background: 'transparent', border: '1.5px solid #3665f3', color: '#3665f3' }}>
+                                Get Started Today
+                            </button>
+                        </div>
+                        <div className={styles.imageContent}>
+                            <img src="https://i.ebayimg.com/00/s/NjY3WDE2MDA=/z/wdoAAOSwU3tksa02/$_57.JPG" alt="Merchant packing box" />
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </section>
+            </section>
 
-        {/* 8. Final CTA Section */}
-        <section className={styles.ctaSection}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}>
-            <h2>Ready to scale your e-commerce business?</h2>
-            <p>Join thousands of successful sellers today. Setup takes less than 5 minutes.</p>
-            <button onClick={handleGetStarted} className={styles.btnPrimary} style={{ padding: '1rem 3rem', fontSize: '1.1rem' }}>
-              Create Your Free Account
-            </button>
-          </motion.div>
-        </section>
+            {/* Listing Section */}
+            <section className={styles.listingSection}>
+                <div className={styles.container}>
+                    <div className={styles.listingHeader}>
+                        <h2>Create a great listing</h2>
+                        <p>Here’s six ways to set yourself up for success.</p>
+                    </div>
+                    <div className={styles.cardSlider}>
+                        <div className={styles.card} style={{ backgroundColor: '#fff3e6' }}>
+                            <h3>Use High-Converting Product Titles</h3>
+                            <ul>
+                                <li>We provide data-backed suggestions so you can create titles that attract clicks. </li>
+                                <li>Just tweak the keywords — we've already done the heavy lifting!</li>
+                            </ul>
+                        </div>
+                        <div className={styles.card} style={{ backgroundColor: '#fff9cc' }}>
+                            <h3>Skip the Photo Hassle</h3>
+                            <ul>
+                                <li>No need to shoot your own photos — we supply professional, high-quality images for all products. </li>
+                                <li>Clean, clear, and conversion-optimized.</li>
+                            </ul>
+                        </div>
+                        <div className={styles.card} style={{ backgroundColor: '#e6f0ff' }}>
+                            <h3>Choose the Best Selling Format</h3>
+                            <ul>
+                                <li>We test and optimize the sales formats for you. </li>
+                                <li>Whether it's fixed-price or limited-time offers, your listings are set up to convert fast.</li>
+                            </ul>
+                        </div>
+                        <div className={styles.card} style={{ backgroundColor: '#e6ffe6' }}>
+                            <h3>Set to Sell at the Right Price</h3>
+                            <ul>
+                                <li>We analyze market trends and auto-suggest pricing that stays competitive.</li>
+                                <li>While still giving you great profit margins.</li>
+                            </ul>
+                        </div>
+                        <div className={styles.card} style={{ backgroundColor: '#ffe6f2' }}>
+                            <h3>Reliable, Fast Shipping Options</h3>
+                            <ul>
+                                <li>Products are sourced from trusted suppliers with fast delivery times.</li>
+                                <li>Shipping details are already handled — just list and sell.</li>
+                            </ul>
+                        </div>
+                        <div className={styles.card} style={{ backgroundColor: '#f2e6ff' }}>
+                            <h3>Ready-to-Go Item Details</h3>
+                            <ul>
+                                <li>No guesswork needed — product descriptions, specs, and categories are pre-filled.</li>
+                                <li>Accurate, clear, and optimized for search visibility.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        {/* 9. Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerGrid}>
-            <div className={styles.footerCol}>
-              <Link href="/" className={styles.logo} style={{ marginBottom: '1.5rem', display: 'inline-flex' }}>
-                ESS <span>SmartSeller</span>
-              </Link>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.9rem' }}>
-                The ultimate operating system for modern e-commerce sellers. Manage inventory, suppliers, and finances all in one place.
-              </p>
-              <div className={styles.socialIcons}>
-                <a href="#"><Twitter size={20} /></a>
-                <a href="#"><Linkedin size={20} /></a>
-                <a href="#"><Instagram size={20} /></a>
-                <a href="#"><MessageCircle size={20} /></a>
-              </div>
-            </div>
+            {/* FAQ Section */}
+            <section className={styles.faqSection}>
+                <h2>FAQ</h2>
+                <div className={styles.faqContainer}>
+                    {[
+                        { q: "How much does it cost to sell?", a: "Our platform charges a yearly subscription fee, billed after the first year of service. You only pay once the service has been fully provided, ensuring you have a full year to grow your business risk-free." },
+                        { q: "What’s the best way to ship my item?", a: "We’ve partnered with trusted suppliers who handle fulfillment, so you don’t need to worry about shipping. You get fast, reliable delivery with tracking included." },
+                        { q: "Can I sell locally on my platform?", a: "Yes! We offer location-based sales options, allowing you to target specific regions and cater to local buyers." },
+                        { q: "How much will it cost to ship my item?", a: "Shipping costs are covered by our trusted suppliers, and you can offer competitive rates to your customers. Costs are automatically calculated based on the product's dimensions and destination." },
+                        { q: "Where can I get shipping supplies?", a: "With our DFY platform, no shipping supplies are needed! We take care of fulfillment, including packaging and shipping, through our reliable network of suppliers." },
+                        { q: "How should I choose my listing price?", a: "We’ve optimized product pricing based on market trends and competitor analysis. You can tweak prices, but we suggest following our pre-set guidelines for maximum profitability." },
+                        { q: "How does your platform protect sellers?", a: "We offer comprehensive seller protections, covering everything from returns to payment disputes. Plus, our platform provides 24/7 support to ensure your business runs smoothly." },
+                        { q: "What can I sell on your platform?", a: "Our platform allows you to sell a wide range of products from various categories. We handle sourcing and ensure all products are in high demand — but please review our approved product categories for compliance." }
+                    ].map((faq, i) => (
+                        <div key={i} className={`${styles.faqItem} ${activeFaq === i ? styles.active : ''}`}>
+                            <button className={styles.faqQuestion} onClick={() => toggleFaq(i)}>
+                                {faq.q}
+                                <span><ChevronDown size={18} /></span>
+                            </button>
+                            <div className={styles.faqAnswer}>
+                                {faq.a}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-            <div className={styles.footerCol}>
-              <h4>Product</h4>
-              <ul className={styles.footerLinks}>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#">Updates</a></li>
-              </ul>
-            </div>
+            {/* Final CTA Banner */}
+            <section className={styles.heroBanner}>
+                <div className={styles.heroBannerContent}>
+                    <h1>You've got this.<br />We've got your back.</h1>
+                    <button onClick={handleGetStarted} className={styles.btnPrimary} style={{ borderRadius: '30px', padding: '12px 30px' }}>
+                        List an item
+                    </button>
+                </div>
+            </section>
 
-            <div className={styles.footerCol}>
-              <h4>Company</h4>
-              <ul className={styles.footerLinks}>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Careers</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Contact</a></li>
-              </ul>
-            </div>
-
-            <div className={styles.footerCol}>
-              <h4>Legal</h4>
-              <ul className={styles.footerLinks}>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Return Policy</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className={styles.copyright}>
-            © {new Date().getFullYear()} EssSmartSeller. All systems operational.
-          </div>
-        </footer>
-      </div>
-    </div>
-  );
+            {/* Footer */}
+            <footer className={styles.siteFooter}>
+                <div className={styles.footerBottom}>
+                    <p>Copyright © 1995–2025 ESS Inc. All Rights Reserved.</p>
+                </div>
+            </footer>
+        </div>
+    );
 }
