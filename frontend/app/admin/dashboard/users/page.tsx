@@ -418,7 +418,6 @@ export default function AdminUsersPage() {
                                 { label: 'Store Status', key: 'store_status', type: 'text' },
                                 { label: 'Total Views', key: 'views', type: 'number' },
                                 { label: 'Used Views', key: 'used_views', type: 'number' },
-
                                 {
                                     label: 'Remaining Views (Calculated)',
                                     key: 'remaining_views',

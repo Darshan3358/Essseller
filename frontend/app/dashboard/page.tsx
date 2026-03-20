@@ -40,6 +40,7 @@ export default function DashboardPage() {
         views: 0,
         usedViews: 0,
         remainingViews: 0,
+        planFeatures: [] as string[]
     });
     
     const [planDisplayData, setPlanDisplayData] = useState<any>({
@@ -117,6 +118,7 @@ export default function DashboardPage() {
                         views: dbStats.views || 0,
                         usedViews: dbStats.used_views || 0,
                         remainingViews: dbStats.remaining_views || 0,
+                        planFeatures: dbStats.planFeatures || [],
                     }));
                     if (dbStats.chartData) {
                         setChartData(dbStats.chartData);
@@ -129,11 +131,7 @@ export default function DashboardPage() {
                     setFeaturedProducts(productsRes.data || []);
                 }
                 
-                // Fetch Plan Display Settings
-                const planRes = await api.get('/settings/plan-display');
-                if (planRes.success && planRes.data) {
-                    setPlanDisplayData(planRes.data);
-                }
+/* Removed redundant planRes fetching as features are now in stats */
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             } finally {
@@ -340,13 +338,19 @@ export default function DashboardPage() {
                                     <h3 className="text-5xl font-black text-white tracking-tight drop-shadow-md text-center">{stats.planName}</h3>
                                 </div>
 
-                                {/* Features Pills - Dynamic from Settings */}
+                                {/* Features Pills - Dynamic from Stats */}
                                 <div className="flex flex-wrap justify-center gap-3 mb-10">
-                                    {planDisplayData.features.map((f: any, i: number) => (
-                                        <span key={i} className="px-5 py-2.5 bg-white/10 border border-white/20 rounded-2xl text-xs font-bold text-white backdrop-blur-md flex items-center gap-2">
-                                            <span>{f.icon}</span> {f.text}
+                                    {stats.planFeatures && stats.planFeatures.length > 0 ? (
+                                        stats.planFeatures.map((f: string, i: number) => (
+                                            <span key={i} className="px-5 py-2.5 bg-white/10 border border-white/20 rounded-2xl text-xs font-bold text-white backdrop-blur-md flex items-center gap-2">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-blue-200" /> {f}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="px-5 py-2.5 bg-white/10 border border-white/20 rounded-2xl text-xs font-bold text-white backdrop-blur-md">
+                                            Standard Selling Features
                                         </span>
-                                    ))}
+                                    )}
                                 </div>
 
                                 {/* UI Elements from Image */}

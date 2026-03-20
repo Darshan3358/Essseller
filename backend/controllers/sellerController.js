@@ -8,6 +8,7 @@ const GuaranteeMoney = require('../models/GuaranteeMoney');
 const SellerProduct = require('../models/SellerProduct');
 const ShopProfile = require('../models/ShopProfile');
 const Package = require('../models/Package');
+const PackagePlan = require('../models/PackagePlan');
 const { getAvailableBalance } = require('../utils/wallet');
 
 // @desc    Get seller dashboard statistics
@@ -75,7 +76,19 @@ exports.getDashboardStats = async (req, res) => {
         const guaranteeMoney = guaranteeResult.length > 0 ? (guaranteeResult[0].total || 0) : 0;
 
         // 5. Package & Product Limits
-        const activePackage = await Package.findOne({ seller_id: seller._id, status: 1 }).sort({ created_at: -1 });
+        // Find ALL active packages and pick the one with the HIGHEST product_limit
+        const activePackages = await Package.find({ seller_id: seller._id, status: 1 }).sort({ product_limit: -1 });
+        const activePackage = activePackages[0] || null;
+        
+        // Find corresponding PackagePlan to get features
+        let planFeatures = [];
+        if (activePackage) {
+            const plan = await PackagePlan.findOne({ name: activePackage.type });
+            if (plan) {
+                planFeatures = plan.features || [];
+            }
+        }
+
         const productLimit = activePackage ? activePackage.product_limit : 0;
         const remainingProducts = Math.max(0, productLimit - totalProducts);
 
@@ -206,9 +219,10 @@ exports.getDashboardStats = async (req, res) => {
                 productLimit,
                 remainingProducts,
                 planName: activePackage ? activePackage.type : 'N/A',
+                planFeatures, // New field for frontend
                 views: seller.views || productLimit || 0,
-                used_views: totalProducts,
-                remaining_views: Math.max(0, (seller.views || productLimit || 0) - totalProducts),
+                used_views: seller.used_views || totalProducts,
+                remaining_views: Math.max(0, (seller.views || productLimit || 0) - (seller.used_views || totalProducts)),
                 categoryCounts,
                 chartData,
                 shopLogo: shopProfile ? shopProfile.shop_logo : ''

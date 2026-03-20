@@ -127,6 +127,14 @@ const sellerSchema = mongoose.Schema({
     store_health_updated_at: {
         type: Date,
         default: Date.now,
+    },
+    views: {
+        type: Number,
+        default: 0
+    },
+    used_views: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true,
