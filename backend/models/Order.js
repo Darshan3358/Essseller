@@ -52,6 +52,13 @@ const orderSchema = mongoose.Schema({
         type: String,
         default: 'unpaid',
     },
+    deliveredAt: {
+        type: Date,
+    },
+    supplier_name: {
+        type: String,
+        // default: 'EssSmart Storehouse',
+    },
 }, {
     timestamps: true,
 });

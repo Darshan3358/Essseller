@@ -302,13 +302,8 @@ export default function DashboardPage() {
                     </div>
                 </section>
 
-                {/* Analytics Split */}
-                {/* Performance & Analytics Section - Full Width */}
-                <section className="animate-slide-up stagger-3">
-                    <UserPerformanceChart data={chartData} onRangeChange={refetchChartData} />
-                </section>
-
-                <div className="max-w-4xl mx-auto w-full animate-slide-up stagger-4">
+                {/* Premium Plan Card - Moved Above Analytics */}
+                <div className="w-full animate-slide-up stagger-3">
                     <section className="text-left">
                         <div className="relative overflow-hidden rounded-[2.5rem] shadow-[0_25px_60px_rgba(0,0,0,0.2)] transition-all duration-500" style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 50%, #EC4899 100%)' }}>
                             <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
@@ -384,6 +379,12 @@ export default function DashboardPage() {
                         </div>
                     </section>
                 </div>
+
+                {/* Analytics Split */}
+                {/* Performance & Analytics Section - Full Width */}
+                <section className="animate-slide-up stagger-4">
+                    <UserPerformanceChart data={chartData} onRangeChange={refetchChartData} />
+                </section>
 
                 {/* New Storehouse Discovery Carousel */}
                 <section className="animate-slide-up stagger-5">

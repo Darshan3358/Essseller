@@ -9,6 +9,7 @@ const Seller = require('../models/Seller');
 const Recharge = require('../models/Recharge');
 const SiteSetting = require('../models/SiteSetting');
 const createNotification = require('../utils/notifications');
+const Supplier = require('../models/Supplier');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -54,6 +55,12 @@ const addOrderItems = asyncHandler(async (req, res) => {
             status: 'pending',
             payment_status: 'unpaid'
         });
+
+        // Set supplier if available
+        const bestSupplier = await Supplier.findOne({ status: 'active' }).sort({ rating: -1 });
+        if (bestSupplier) {
+            order.supplier_name = bestSupplier.name;
+        }
 
         const createdOrder = await order.save();
 
@@ -277,7 +284,7 @@ const getMyOrders = asyncHandler(async (req, res) => {
         counts: {
             all: allOrders.length,
             pending: allOrders.filter(o => o.status === 'pending').length,
-            completed: allOrders.filter(o => o.status === 'completed' || o.status === 'delivered').length,
+            delivered: allOrders.filter(o => (o.status || '').toLowerCase() === 'delivered').length,
             cancelled: allOrders.filter(o => o.status === 'cancelled').length
         }
     };
@@ -370,6 +377,7 @@ const updateOrder = asyncHandler(async (req, res) => {
             if (seller) {
                 seller.wallet_balance = (seller.wallet_balance || 0) + (parseFloat(order.order_total) || 0);
                 await seller.save();
+                order.deliveredAt = Date.now();
             }
         }
 

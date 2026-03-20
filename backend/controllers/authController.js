@@ -57,11 +57,8 @@ const authUser = asyncHandler(async (req, res) => {
         const seller = await Seller.findOne({ email });
 
         if (seller) {
-            // Check if seller account is frozen
-            if (seller.freeze === 1) {
-                res.status(403);
-                throw new Error('Your account is currently frozen. Please contact administration.');
-            }
+            // Allow login even if frozen, we'll handle it on the frontend
+            const isFrozen = seller.freeze === 1;
 
             // Support both hashed and plain text passwords (for seeded data)
             const isMatch = await seller.matchPassword(password) || seller.password === password;
@@ -119,6 +116,7 @@ const authUser = asyncHandler(async (req, res) => {
                         store_performance: seller.store_performance,
                         store_status: seller.store_status,
                         store_health_updated_at: seller.store_health_updated_at,
+                        freeze: seller.freeze,
                         diagnostics,
                     }
                 });
@@ -169,6 +167,7 @@ const verifyOtp = asyncHandler(async (req, res) => {
             store_performance: seller.store_performance,
             store_status: seller.store_status,
             store_health_updated_at: seller.store_health_updated_at,
+            freeze: seller.freeze,
             diagnostics: await getSellerDiagnostics(seller),
             token: generateToken(seller._id),
         });
@@ -252,6 +251,7 @@ const registerSeller = asyncHandler(async (req, res) => {
                     store_performance: seller.store_performance,
                     store_status: seller.store_status,
                     store_health_updated_at: seller.store_health_updated_at,
+                    freeze: seller.freeze,
                     diagnostics: await getSellerDiagnostics(seller),
                 }
             });
@@ -270,10 +270,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
     const seller = await Seller.findById(req.user._id);
 
     if (seller) {
-        if (seller.freeze === 1) {
-            res.status(403);
-            throw new Error('Your account is currently frozen. Please contact administration.');
-        }
+        // No longer throwing 403 here, let frontend decide how to show it
         res.json({
             _id: seller._id,
             name: seller.name,
@@ -286,6 +283,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
             store_performance: seller.store_performance,
             store_status: seller.store_status,
             store_health_updated_at: seller.store_health_updated_at,
+            freeze: seller.freeze,
             diagnostics: await getSellerDiagnostics(seller),
         });
     } else {
@@ -324,6 +322,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             store_performance: updatedSeller.store_performance,
             store_status: updatedSeller.store_status,
             store_health_updated_at: updatedSeller.store_health_updated_at,
+            freeze: updatedSeller.freeze,
             diagnostics: await getSellerDiagnostics(updatedSeller),
             token: generateToken(updatedSeller._id),
         });

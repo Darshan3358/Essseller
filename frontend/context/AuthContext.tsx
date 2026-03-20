@@ -1,8 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { api } from '@/lib/api';
+import FrozenAccountModal from '@/components/modals/FrozenAccountModal';
 
 interface User {
     _id: string;
@@ -48,6 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
@@ -68,10 +70,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     }
                 }).catch(err => {
                     console.error('Initial profile sync failed:', err.message);
-                    if (err.message && err.message.toLowerCase().includes('frozen')) {
-                        logout();
-                        alert('Your account is currently frozen. Please contact administration.');
-                    }
                 });
             } catch (error) {
                 console.error('Failed to parse stored user:', error);
@@ -189,6 +187,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return (
         <AuthContext.Provider value={{ user, token, isLoading, login, verify2FA, updateUser, register, logout }}>
             {children}
+            <FrozenAccountModal isOpen={user?.role === 'seller' && user?.freeze === 1 && pathname !== '/support'} />
         </AuthContext.Provider>
     );
 }

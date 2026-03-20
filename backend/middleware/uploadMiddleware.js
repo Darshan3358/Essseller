@@ -33,17 +33,7 @@ if (process.env.CLOUDINARY_URL || (process.env.CLOUDINARY_CLOUD_NAME && process.
         fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    storage = multer.diskStorage({
-        destination(req, file, cb) {
-            cb(null, 'uploads/');
-        },
-        filename(req, file, cb) {
-            cb(
-                null,
-                `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-            );
-        },
-    });
+    storage = multer.memoryStorage();
 }
 
 const checkFileType = (file, cb) => {

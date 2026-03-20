@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import {
     LayoutDashboard,
     Box,
@@ -15,7 +16,8 @@ import {
     Lock,
     ChevronRight,
     Circle,
-    DollarSign
+    DollarSign,
+    Bell
 } from 'lucide-react';
 
 const groups = [
@@ -54,6 +56,7 @@ const groups = [
         name: 'Support & Media',
         items: [
             { name: 'Conversations', href: '/conversations', icon: Users },
+            { name: 'Notifications', href: '/notifications', icon: Bell },
             { name: 'Support Ticket', href: '/support', icon: FileText },
             { name: 'Uploaded Files', href: '/uploads', icon: Box },
         ]
@@ -66,6 +69,42 @@ import { TranslationKey } from '@/lib/translations';
 export default function Navigation() {
     const pathname = usePathname();
     const { t } = useTranslate();
+    const [pendingCount, setPendingCount] = useState(0);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        const fetchPendingCount = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+
+                const [orderRes, notifRes] = await Promise.all([
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/myorders?status=pending&limit=1`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL}/notifications`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    })
+                ]);
+
+                const orderData = await orderRes.json();
+                const notifData = await notifRes.json();
+
+                if (orderData.success) {
+                    setPendingCount(orderData.stats.counts.pending || 0);
+                }
+                if (notifData.success) {
+                    setUnreadCount(notifData.unreadCount || 0);
+                }
+            } catch (error) {
+                console.error('Error fetching sidebar counts:', error);
+            }
+        };
+
+        fetchPendingCount();
+        const interval = setInterval(fetchPendingCount, 30000); // Update every 30s
+        return () => clearInterval(interval);
+    }, []);
 
     // Mapping for translation keys
     const getTKey = (name: string): TranslationKey => {
@@ -105,6 +144,16 @@ export default function Navigation() {
                                             <Icon className={`w-4.5 h-4.5 ${isActive ? 'text-white' : 'text-gray-400 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'}`} />
                                         </div>
                                         <span className={`text-sm tracking-tight ${isActive ? 'text-white' : 'dark:text-slate-300'}`}>{t(item.name as TranslationKey)}</span>
+                                        {item.name === 'Order' && pendingCount > 0 && (
+                                            <div className="flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full border-2 border-white dark:border-slate-900 group-hover:scale-110 transition-transform">
+                                                {pendingCount > 99 ? '99+' : pendingCount}
+                                            </div>
+                                        )}
+                                        {item.name === 'Notifications' && unreadCount > 0 && (
+                                            <div className="flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-blue-500 text-white text-[10px] font-bold rounded-full border-2 border-white dark:border-slate-900 group-hover:scale-110 transition-transform">
+                                                {unreadCount > 99 ? '99+' : unreadCount}
+                                            </div>
+                                        )}
                                     </div>
 
                                     {isActive && (

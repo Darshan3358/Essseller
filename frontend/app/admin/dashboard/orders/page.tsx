@@ -1,22 +1,22 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Search, Trash2, Edit2, RefreshCw, X, Check, Plus, ShoppingCart, TrendingUp, Package, ChevronDown, Loader2, Minus, Eye } from 'lucide-react';
+import { Search, Trash2, Edit2, RefreshCw, X, Check, Plus, ShoppingCart, TrendingUp, Package, ChevronDown, Loader2, Minus, Eye, Warehouse } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
-const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'completed', 'cancelled'];
+const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
 const STATUS_COLORS: any = {
     pending: { color: '#fbbf24', bg: 'rgba(251,191,36,0.15)', border: 'rgba(251,191,36,0.3)' },
     processing: { color: '#60a5fa', bg: 'rgba(96,165,250,0.15)', border: 'rgba(96,165,250,0.3)' },
     shipped: { color: '#93c5fd', bg: 'rgba(129,140,248,0.15)', border: 'rgba(129,140,248,0.3)' },
     delivered: { color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.3)' },
-    completed: { color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.3)' },
     cancelled: { color: '#f87171', bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.3)' },
 };
 const PAYMENT_METHODS = [
     { id: 'UPI', label: 'UPI', icon: '📱', color: '#f59e0b' },
     { id: 'Card', label: 'Card', icon: '💳', color: '#60a5fa' },
     { id: 'Crypto', label: 'Crypto', icon: '₿', color: '#f97316' },
+    { id: 'COD', label: 'COD', icon: '💵', color: '#10b981' },
 ];
 
 type ProductItem = { product_id: string; qty: number; name?: string; selling_price?: number };
@@ -68,7 +68,7 @@ export default function AdminOrdersPage() {
     const [productItems, setProductItems] = useState<ProductItem[]>([{ product_id: '', qty: 1 }]);
     const [orderForm, setOrderForm] = useState({
         customer_name: '', customer_email: '', customer_phone: '',
-        customer_address: '', payment_method: 'Cash on Delivery'
+        customer_address: '', payment_method: 'COD'
     });
     const [submitting, setSubmitting] = useState(false);
     const [formError, setFormError] = useState('');
@@ -195,14 +195,26 @@ export default function AdminOrdersPage() {
     const handleUpdateStatus = async () => {
         if (!editModal) return;
         setActionLoading(editModal._id);
-        await fetch(`${API}/admin/orders/${editModal._id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-            body: JSON.stringify({ status: editStatus, pick_up_status: editPickUpStatus })
-        });
-        setEditModal(null);
-        await fetchOrders();
-        setActionLoading(null);
+        try {
+            const res = await fetch(`${API}/admin/orders/${editModal._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+                body: JSON.stringify({ status: editStatus, pick_up_status: editPickUpStatus })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setEditModal(null);
+                await fetchOrders();
+                alert('Order status updated successfully!');
+            } else {
+                alert(data.message || 'Failed to update order status');
+            }
+        } catch (error: any) {
+            console.error('Update status error:', error);
+            alert('Error updating status: ' + error.message);
+        } finally {
+            setActionLoading(null);
+        }
     };
 
     const inputStyle: React.CSSProperties = {
@@ -311,7 +323,7 @@ export default function AdminOrdersPage() {
                         <thead>
                             <tr style={{ background: 'rgba(59,130,246,0.08)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                                 <th className="res-show-mobile" style={{ padding: '13px 14px', width: '40px' }}></th>
-                                {['Order Code', 'Customer', 'Seller / Shop', 'Total', 'Cost', 'Status', 'Pick up', 'Payment', 'Date', 'Actions'].map((h, i) => (
+                                {['Order Code', 'Customer', 'Seller / Shop', 'Total', 'Cost', 'Supplier', 'Status', 'Pick up', 'Payment', 'Date / Delivery Time', 'Actions'].map((h, i) => (
                                     <th key={h} className={i > 1 && i < 9 ? 'res-hide-mobile' : ''} style={{
                                         padding: '13px 14px', textAlign: 'left', fontSize: '10px',
                                         fontWeight: '700', color: 'rgba(255,255,255,0.4)',
@@ -362,6 +374,12 @@ export default function AdminOrdersPage() {
                                                 ₹{(o.cost_amount || 0).toFixed(2)}
                                             </td>
                                             <td className="res-hide-mobile" style={{ padding: '13px 14px' }}>
+                                                <div style={{ fontSize: '13px', fontWeight: '800', color: '#10b981', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <Warehouse size={13} className="opacity-50" />
+                                                    {o.supplier_name || 'EssSmart Store'}
+                                                </div>
+                                            </td>
+                                            <td className="res-hide-mobile" style={{ padding: '13px 14px' }}>
                                                 <span style={{
                                                     padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: '700',
                                                     background: sc.bg, border: `1px solid ${sc.border}`, color: sc.color,
@@ -386,12 +404,25 @@ export default function AdminOrdersPage() {
                                                 }}>{o.payment_status}</span>
                                             </td>
                                             <td className="res-hide-mobile" style={{ padding: '13px 14px', whiteSpace: 'nowrap' }}>
-                                                <div style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255,255,255,0.7)' }}>
-                                                    {o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
-                                                </div>
-                                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', marginTop: '3px' }}>
-                                                    {o.createdAt ? new Date(o.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : ''}
-                                                </div>
+                                                {o.status === 'delivered' && o.deliveredAt ? (
+                                                    <>
+                                                        <div style={{ fontSize: '12px', fontWeight: '800', color: '#10b981' }}>
+                                                            Delivered at {new Date(o.deliveredAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                        </div>
+                                                        <div style={{ fontSize: '10px', color: '#34d399', marginTop: '3px', fontWeight: 'bold' }}>
+                                                            {new Date(o.deliveredAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255,255,255,0.7)' }}>
+                                                            {o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                                                        </div>
+                                                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', marginTop: '3px' }}>
+                                                            {o.createdAt ? new Date(o.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : ''}
+                                                        </div>
+                                                    </>
+                                                )}
                                             </td>
                                             <td style={{ padding: '13px 14px' }}>
                                                 <div style={{ display: 'flex', gap: '6px' }}>
@@ -449,6 +480,7 @@ export default function AdminOrdersPage() {
                                                                 padding: '2px 8px', borderRadius: '10px', fontSize: '10px', fontWeight: '800',
                                                                 background: (o.pick_up_status?.toLowerCase().includes('picked') && !o.pick_up_status?.toLowerCase().includes('unpicked')) ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)',
                                                                 color: (o.pick_up_status?.toLowerCase().includes('picked') && !o.pick_up_status?.toLowerCase().includes('unpicked')) ? '#10b981' : '#f87171',
+                                                                whiteSpace: 'nowrap'
                                                             }}>{o.pick_up_status || 'Unpicked-Up'}</span>
                                                         </div>
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
@@ -765,7 +797,7 @@ export default function AdminOrdersPage() {
                                 { label: 'Customer', value: viewModal.order.customer_name },
                                 { label: 'Total', value: `₹${parseFloat(viewModal.order.order_total || '0').toFixed(2)}` },
                                 { label: 'Status', value: viewModal.order.status },
-                                { label: 'Payment', value: viewModal.order.payment_status },
+                                { label: 'Payment', value: `${viewModal.order.payment_status} (${viewModal.order.payment_method || 'N/A'})` },
                             ].map((m, idx) => (
                                 <div key={idx} style={{
                                     flex: 1, padding: '12px 16px',
@@ -938,12 +970,15 @@ export default function AdminOrdersPage() {
                                 border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px',
                                 color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontWeight: '700'
                             }}>Cancel</button>
-                            <button onClick={handleUpdateStatus} style={{
+                            <button onClick={handleUpdateStatus} disabled={actionLoading === editModal._id} style={{
                                 flex: 1, padding: '12px', background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
-                                border: 'none', borderRadius: '12px', color: 'white', cursor: 'pointer', fontWeight: '800',
+                                border: 'none', borderRadius: '12px', color: 'white', cursor: actionLoading === editModal._id ? 'not-allowed' : 'pointer', fontWeight: '800',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                boxShadow: '0 4px 14px rgba(59,130,246,0.4)'
-                            }}><Check size={15} /> Update</button>
+                                boxShadow: '0 4px 14px rgba(59,130,246,0.4)', opacity: actionLoading === editModal._id ? 0.7 : 1
+                            }}>
+                                {actionLoading === editModal._id ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
+                                {actionLoading === editModal._id ? 'Updating...' : 'Update'}
+                            </button>
                         </div>
                     </div>
                 </div>

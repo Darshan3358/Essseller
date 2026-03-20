@@ -6,6 +6,7 @@ import { LayoutDashboard, Menu, Bell, Search, LogOut, ChevronDown, Wallet, PlusC
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { api, getFullImageUrl } from '@/lib/api';
+import FrozenAccountModal from '../modals/FrozenAccountModal';
 
 export default function Shell({ children }: { children: React.ReactNode }) {
     const { user, logout } = useAuth();
@@ -95,6 +96,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative">
+            <FrozenAccountModal isOpen={user?.freeze === 1} />
             {/* Ambient Background Elements - Simplified */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
                 <div className="absolute top-[-10%] left-[-10%] w-[25%] h-[40%] bg-blue-500/5 rounded-full blur-[80px]" />
@@ -118,8 +120,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-col h-full relative z-10">
                     <div className="p-8">
                         <div className="flex items-center gap-4">
-                            <div className="relative p-3 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-lg">
-                                <LayoutDashboard className="w-7 h-7 text-white" />
+                            <div className="relative w-14 h-14 bg-white/5 dark:bg-slate-800/50 rounded-2xl shadow-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer" onClick={() => router.push('/dashboard')}>
+                                <img src="/logo.png" alt="ESS Logo" className="w-full h-full object-cover" />
                             </div>
                             <div>
                                 <h1 className="text-2xl font-black tracking-tighter text-blue-600 dark:text-blue-500">SmartSeller</h1>
@@ -196,8 +198,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
                         {/* ESS Logo - Responsive */}
                         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => router.push('/dashboard')}>
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-                                <span className="text-white font-black text-xs">ESS</span>
+                            <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform overflow-hidden">
+                                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
                             </div>
                             <span className="hidden sm:block font-black text-lg tracking-tighter text-gray-900 dark:text-slate-100 ml-1">SmartSeller</span>
                         </div>
@@ -232,7 +234,9 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                             >
                                 <Bell className="w-5 h-5 text-gray-600 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
                                 {unreadCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-danger-500 rounded-full border-2 border-white dark:border-slate-900 animate-bounce shadow-md shadow-danger-500/50" />
+                                    <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-black rounded-full border-2 border-white dark:border-slate-900 animate-bounce shadow-lg shadow-red-500/40 select-none">
+                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    </div>
                                 )}
                             </button>
 
@@ -281,7 +285,16 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                                         )}
                                     </div>
                                     {notifications.length > 0 && (
-                                        <div className="p-3 bg-gray-50/50 dark:bg-slate-800/50 text-center border-t border-gray-100 dark:border-slate-800">
+                                        <div className="p-3 bg-gray-50/50 dark:bg-slate-800/50 text-center border-t border-gray-100 dark:border-slate-800 flex flex-col gap-2">
+                                            <button 
+                                                onClick={() => {
+                                                    router.push('/notifications');
+                                                    setIsNotificationOpen(false);
+                                                }}
+                                                className="w-full py-2 bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 dark:text-blue-400 text-xs font-black rounded-lg transition-all"
+                                            >
+                                                View All Notifications
+                                            </button>
                                             <p className="text-[10px] text-gray-400 dark:text-slate-500 font-bold uppercase tracking-wider">Stay updated with your store activity</p>
                                         </div>
                                     )}

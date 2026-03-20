@@ -77,10 +77,10 @@ export default function RegisterPage() {
 
             <div className="w-full max-w-xl relative z-10">
                 <div className="text-center mb-10">
-                    <div className="inline-flex p-4 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-xl mb-6 animate-bounce-slow">
-                        <Store className="w-10 h-10 text-white" />
+                    <div className="inline-flex w-20 h-20 bg-white/50 dark:bg-slate-900/50 rounded-2xl shadow-xl mb-6 animate-bounce-slow overflow-hidden">
+                        <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
                     </div>
-                    <h1 className="text-2xl md:text-4xl font-black tracking-tighter text-blue-600 dark:text-blue-500 mb-2">Setup Your Store</h1>
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-blue-600 dark:text-blue-500 mb-2 mt-4">Setup Your Store</h1>
                     <p className="text-gray-500 dark:text-slate-400 font-medium">Join thousands of smart sellers today</p>
                 </div>
 

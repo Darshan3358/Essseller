@@ -49,7 +49,7 @@ exports.getDashboardStats = async (req, res) => {
             {
                 $match: {
                     seller_id: { $in: sellerIdFilter },
-                    status: { $regex: 'processing|shipped|completed|delivered', $options: 'i' }
+                    status: { $regex: 'pending|processing|delivered|shipped', $options: 'i' }
                 }
             },
             {
@@ -123,7 +123,7 @@ exports.getDashboardStats = async (req, res) => {
         const getSalesForPeriod = async (start, end) => {
             const query = {
                 seller_id: { $in: sellerIdFilter },
-                status: { $regex: 'processing|shipped|completed|delivered', $options: 'i' },
+                status: { $regex: 'pending|processing|shipped|completed|delivered', $options: 'i' },
                 createdAt: { $gte: start }
             };
             if (end) query.createdAt.$lt = end;
@@ -166,40 +166,74 @@ exports.getDashboardStats = async (req, res) => {
         const netProfit = Math.max(0, allTimeSales - allTimeCost);
         const netProfitMargin = allTimeSales > 0 ? ((netProfit / allTimeSales) * 100).toFixed(1) : 0;
 
-        // 7. Last 7 Days Chart Data
+        // 7. Dynamic Chart Data (Last X Days)
+        const days = parseInt(req.query.days) || 7;
         const chartData = [];
-        for (let i = 6; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            d.setHours(0, 0, 0, 0);
-            const nextD = new Date(d);
-            nextD.setDate(d.getDate() + 1);
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - (days - 1));
+        startDate.setHours(0, 0, 0, 0);
 
-            const dayStats = await Order.aggregate([
-                {
-                    $match: {
-                        seller_id: { $in: sellerIdFilter },
-                        status: { $regex: 'processing|shipped|completed|delivered', $options: 'i' },
-                        createdAt: { $gte: d, $lt: nextD }
-                    }
-                },
-                {
-                    $group: {
-                        _id: null,
-                        sales: { $sum: { $toDouble: "$order_total" } },
-                        profit: { $sum: { $subtract: [{ $toDouble: "$order_total" }, { $toDouble: "$cost_amount" }] } },
-                        orders: { $sum: 1 }
-                    }
+        // Fetch all stats for the period in one go
+        const rawStatsResult = await Order.aggregate([
+            {
+                $match: {
+                    seller_id: { $in: sellerIdFilter },
+                    status: { $regex: 'pending|processing|shipped|completed|delivered', $options: 'i' },
+                    createdAt: { $gte: startDate }
                 }
-            ]);
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    sales: { $sum: { $toDouble: { $ifNull: ["$order_total", 0] } } },
+                    profit: { $sum: { $subtract: [{ $toDouble: { $ifNull: ["$order_total", 0] } }, { $toDouble: { $ifNull: ["$cost_amount", 0] } }] } },
+                    orders: { $sum: 1 }
+                }
+            }
+        ]);
 
-            const item = dayStats[0] || { sales: 0, profit: 0, orders: 0 };
+        const statsMap = {};
+        rawStatsResult.forEach(item => { statsMap[item._id] = item; });
+
+        // Decide grouping interval
+        const interval = days > 30 ? (days === 180 ? 7 : 30) : 1;
+        const loops = Math.ceil(days / interval);
+
+        for (let i = loops - 1; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - (i * interval));
+            date.setHours(0, 0, 0, 0);
+
+            let daySales = 0, dayProfit = 0, dayOrders = 0;
+            
+            // Sum up stats for the interval block
+            for (let j = 0; j < interval; j++) {
+                const d = new Date(date);
+                d.setDate(d.getDate() + j);
+                const dateStr = d.toISOString().split('T')[0];
+                const item = statsMap[dateStr];
+                if (item) {
+                    daySales += item.sales;
+                    dayProfit += item.profit;
+                    dayOrders += item.orders;
+                }
+            }
+
+            let label = '';
+            if (days <= 7) {
+                label = date.toLocaleDateString('en-US', { weekday: 'short' });
+            } else if (days <= 30) {
+                label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            } else {
+                label = date.toLocaleDateString('en-US', { month: 'short', year: days > 180 ? '2-digit' : undefined });
+            }
+            
             chartData.push({
-                date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                sales: item.sales,
-                profit: Math.max(0, item.profit),
-                orders: item.orders,
-                aov: item.orders > 0 ? Math.round(item.sales / item.orders) : 0
+                date: label,
+                sales: Math.round(daySales),
+                profit: Math.max(0, Math.round(dayProfit)),
+                orders: dayOrders,
+                aov: dayOrders > 0 ? Math.round(daySales / dayOrders) : 0
             });
         }
 

@@ -17,7 +17,7 @@ export default function OrdersPage() {
         counts: {
             all: 0,
             pending: 0,
-            completed: 0,
+            delivered: 0,
             cancelled: 0
         }
     });
@@ -49,7 +49,7 @@ export default function OrdersPage() {
                 const response = await api.get(url);
                 if (response.success) {
                     setOrders(response.orders || []);
-                    setStats(response.stats || { counts: { all: 0, pending: 0, completed: 0, cancelled: 0 } });
+                    setStats(response.stats || { counts: { all: 0, pending: 0, delivered: 0, cancelled: 0 } });
                 }
             } catch (error) {
                 console.error('Error fetching orders:', error);
@@ -79,7 +79,7 @@ export default function OrdersPage() {
                     {[
                         { label: t('All Orders'), count: stats?.counts?.all || 0, icon: ShoppingCart, color: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-900/20' },
                         { label: t('Pending'), count: stats?.counts?.pending || 0, icon: Clock, color: 'text-warning-600 dark:text-warning-400', bg: 'bg-warning-50 dark:bg-warning-900/20' },
-                        { label: t('Completed'), count: (stats?.counts?.completed || 0) + (stats?.counts?.delivered || 0), icon: CheckCircle, color: 'text-success-600 dark:text-success-400', bg: 'bg-success-50 dark:bg-success-900/20' },
+                        { label: t('Delivered'), count: stats?.counts?.delivered || 0, icon: CheckCircle, color: 'text-success-600 dark:text-success-400', bg: 'bg-success-50 dark:bg-success-900/20' },
                         { label: t('Cancelled'), count: stats?.counts?.cancelled || 0, icon: XCircle, color: 'text-danger-600 dark:text-danger-400', bg: 'bg-danger-50 dark:bg-danger-900/20' },
                     ].map((stat, idx) => (
                         <div key={idx} className="glass-card p-4 flex items-center gap-4 !bg-white/60 dark:!bg-slate-900/60 transition-colors">
@@ -107,7 +107,7 @@ export default function OrdersPage() {
                             />
                         </div>
                         <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-                            {['all', 'pending', 'processing', 'completed', 'cancelled'].map((status) => (
+                            {['all', 'pending', 'processing', 'delivered', 'cancelled'].map((status) => (
                                 <button
                                     key={status}
                                     onClick={() => setStatusFilter(status)}
@@ -142,7 +142,7 @@ export default function OrdersPage() {
                                     (orders || []).map((order) => {
                                         const isExpanded = expandedRows.has(order._id);
                                         const last4 = (order.order_code || '').slice(-4);
-                                        const statusColor = order.status === 'completed' || order.status === 'delivered'
+                                        const statusColor = order.status === 'delivered'
                                             ? 'badge-success' : order.status === 'pending' || order.status === 'processing'
                                                 ? 'badge-warning' : 'badge-danger';
                                         return (
@@ -156,7 +156,7 @@ export default function OrdersPage() {
                                                         <p className="text-[10px] text-gray-400 dark:text-slate-500">{order.customer_email}</p>
                                                     </td>
                                                     <td className="px-4 py-3">
-                                                        <span className={`text-[10px] px-2 py-0.5 rounded-lg ${order.pick_up_status === 'Picked-Up' ? 'bg-gray-100 text-black dark:bg-slate-800 dark:text-black' : 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400'}`}>
+                                                        <span className={`text-[10px] px-2 py-0.5 rounded-lg whitespace-nowrap font-bold uppercase tracking-wider ${order.pick_up_status === 'Picked-Up' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400'}`}>
                                                             {order.pick_up_status === 'Unpicked-Up' ? t('Unpicked') : (order.pick_up_status || t('Unpicked'))}
                                                         </span>
                                                     </td>
@@ -196,9 +196,13 @@ export default function OrdersPage() {
                                                                 </div>
                                                                 <div className="text-left">
                                                                     <span className="text-gray-400 dark:text-slate-500 font-semibold uppercase tracking-wide">{t('Pickup')}</span>
-                                                                    <p className={`${order.pick_up_status === 'Picked-Up' ? 'text-gray-900 dark:text-slate-200' : 'text-red-600'}`}>
+                                                                    <p className={`font-bold ${order.pick_up_status === 'Picked-Up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                                                                         {order.pick_up_status === 'Unpicked-Up' ? t('Unpicked') : (order.pick_up_status || t('Unpicked'))}
                                                                     </p>
+                                                                </div>
+                                                                <div className="text-left">
+                                                                    <span className="text-gray-400 dark:text-slate-500 font-semibold uppercase tracking-wide">{t('Supplier')}</span>
+                                                                    <p className="font-bold text-gray-800 dark:text-slate-200">{order.supplier_name || 'EssSmart Storehouse'}</p>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -221,6 +225,7 @@ export default function OrdersPage() {
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-slate-400">{t('Customer')}</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-slate-400">{t('Date')}</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-slate-400">{t('Total')}</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-slate-400">{t('Supplier')}</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-slate-400">{t('Status')}</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-slate-400">{t('Pickup Status')}</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-700 dark:text-slate-400 text-right">{t('Actions')}</th>
@@ -255,16 +260,19 @@ export default function OrdersPage() {
                                                 <span className="font-bold text-gray-900 dark:text-slate-100">${parseFloat(order.order_total).toLocaleString()}</span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`badge ${order.status === 'completed' || order.status === 'delivered' ? 'badge-success' :
+                                                <span className="text-sm text-gray-600 dark:text-slate-400">{order.supplier_name || 'EssSmart Storehouse'}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`badge ${order.status === 'delivered' ? 'badge-success' :
                                                     order.status === 'pending' || order.status === 'processing' ? 'badge-warning' : 'badge-danger'
                                                     }`}>
                                                     {t(order.status)}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`text-xs uppercase tracking-wider px-3 py-1 rounded-full ${order.pick_up_status === 'Picked-Up'
-                                                    ? 'bg-gray-100 text-black dark:bg-slate-800 dark:text-black'
-                                                    : 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400'
+                                                <span className={`text-xs uppercase tracking-wider px-3 py-1 rounded-full whitespace-nowrap font-bold ${order.pick_up_status === 'Picked-Up'
+                                                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'
+                                                    : 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400'
                                                     }`}>
                                                     {order.pick_up_status === 'Unpicked-Up' ? t('Unpicked') : (order.pick_up_status || t('Unpicked'))}
                                                 </span>

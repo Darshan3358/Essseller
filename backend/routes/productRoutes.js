@@ -10,6 +10,7 @@ const {
     addToMyStore,
     removeFromStore,
     getFeaturedProducts,
+    serveProductImage
 } = require('../controllers/productController');
 const { protect } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
@@ -23,6 +24,7 @@ router.route('/')
 
 router.route('/my-products').get(protect, getSellerProducts);
 router.route('/featured').get(getFeaturedProducts);
+router.route('/image/:filename').get(serveProductImage);
 router.route('/add-to-store').post(protect, addToMyStore);
 router.route('/from-store/:productId').delete(protect, removeFromStore);
 

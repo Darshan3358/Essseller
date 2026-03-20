@@ -4,12 +4,22 @@ const productImageSchema = mongoose.Schema({
     product_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
-        required: true,
+        required: false,
     },
-    image: {
+    filename: {
         type: String,
         required: true,
+        unique: true
     },
+    imageData: {
+        type: String, // Base64
+        required: true,
+    },
+    contentType: {
+        type: String,
+        required: true,
+        default: 'image/jpeg'
+    }
 }, {
     timestamps: true,
 });

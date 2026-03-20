@@ -95,17 +95,33 @@ const createProduct = asyncHandler(async (req, res) => {
         brand
     };
 
+    const ProductImage = require('../models/ProductImage');
+
     // Handle single image
     if (req.files && req.files.image) {
         const file = req.files.image[0];
-        productData.image = file.path.startsWith('http') ? file.path : `/uploads/${file.filename}`;
+        const filename = `image-${Date.now()}-${file.originalname}`;
+        await ProductImage.create({
+            filename,
+            imageData: file.buffer.toString('base64'),
+            contentType: file.mimetype
+        });
+        productData.image = `/api/products/image/${filename}`;
     }
 
     // Handle gallery images
     if (req.files && req.files.gallery) {
-        productData.gallery = req.files.gallery.map(file => 
-            file.path.startsWith('http') ? file.path : `/uploads/${file.filename}`
-        );
+        const galleryUrls = [];
+        for (const file of req.files.gallery) {
+            const filename = `gallery-${Date.now()}-${file.originalname}`;
+            await ProductImage.create({
+                filename,
+                imageData: file.buffer.toString('base64'),
+                contentType: file.mimetype
+            });
+            galleryUrls.push(`/api/products/image/${filename}`);
+        }
+        productData.gallery = galleryUrls;
     }
 
     const product = await Product.create(productData);
@@ -131,6 +147,34 @@ const updateProduct = asyncHandler(async (req, res) => {
     if (product.seller_id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
         res.status(401);
         throw new Error('User not authorized to update this product');
+    }
+
+    // Handle image updates in updateProduct if files are provided
+    if (req.files) {
+        const ProductImage = require('../models/ProductImage');
+        if (req.files.image) {
+            const file = req.files.image[0];
+            const filename = `image-${Date.now()}-${file.originalname}`;
+            await ProductImage.create({
+                filename,
+                imageData: file.buffer.toString('base64'),
+                contentType: file.mimetype
+            });
+            req.body.image = `/api/products/image/${filename}`;
+        }
+        if (req.files.gallery) {
+            const galleryUrls = [];
+            for (const file of req.files.gallery) {
+                const filename = `gallery-${Date.now()}-${file.originalname}`;
+                await ProductImage.create({
+                    filename,
+                    imageData: file.buffer.toString('base64'),
+                    contentType: file.mimetype
+                });
+                galleryUrls.push(`/api/products/image/${filename}`);
+            }
+            req.body.gallery = galleryUrls;
+        }
     }
 
     product = await Product.findByIdAndUpdate(req.params.id, req.body, {
@@ -379,6 +423,24 @@ const removeFromStore = asyncHandler(async (req, res) => {
     res.json({ success: true, message: 'Product removed from your store' });
 });
 
+// @desc    Serve product image from database
+// @route   GET /api/products/image/:filename
+// @access  Public
+const serveProductImage = asyncHandler(async (req, res) => {
+    const filename = req.params.filename;
+    const ProductImage = require('../models/ProductImage');
+    const image = await ProductImage.findOne({ filename });
+
+    if (!image) {
+        res.status(404);
+        throw new Error('Image not found');
+    }
+
+    const buffer = Buffer.from(image.imageData, 'base64');
+    res.set('Content-Type', image.contentType);
+    res.send(buffer);
+});
+
 module.exports = {
     getProducts,
     getProductById,
@@ -389,5 +451,6 @@ module.exports = {
     addToMyStore,
     removeFromStore,
     getFeaturedProducts,
+    serveProductImage
 };
 

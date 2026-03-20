@@ -13,6 +13,7 @@ const SupportTicket = require('../models/SupportTicket');
 const PackagePlan = require('../models/PackagePlan');
 const bcrypt = require('bcryptjs');
 const createNotification = require('../utils/notifications');
+const Supplier = require('../models/Supplier');
 
 // ===================== SUPPORT MANAGEMENT ====================
 
@@ -98,7 +99,7 @@ const deletePackagePlan = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getDashboardStats = asyncHandler(async (req, res) => {
     const range = req.query.range || '7days';
-    
+
     const totalUsers = await Seller.countDocuments({ role: 'seller' });
     const totalProducts = await Product.countDocuments({ isDeleted: { $ne: true } });
     const totalOrders = await Order.countDocuments({});
@@ -126,46 +127,49 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     const newSellers = await Seller.countDocuments({ role: 'seller', createdAt: { $gte: startOfMonth } });
 
     // Chart data based on range
-    let days = 7;
-    if (range === '30days') days = 30;
-    else if (range === '6months') days = 180;
-    else if (range === '12months') days = 365;
-
+    // Chart data based on range
+    const days = range === '30days' ? 30 : (range === '6months' ? 180 : (range === '12months' ? 365 : 7));
     const chartData = [];
-    // If range is long, we might want to aggregate by month/week, 
-    // but for now let's do daily or a subset to avoid too many points if needed.
-    // For 180/365 days, we'll aggregate by 5-day blocks or months? 
-    // Let's stick to daily for 30, and maybe weekly for 180/365.
-    
-    const interval = days > 30 ? (days === 180 ? 7 : 30) : 1; 
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - (days - 1));
+    startDate.setHours(0, 0, 0, 0);
+
+    const rawStatsResult = await Order.aggregate([
+        { $match: { createdAt: { $gte: startDate } } },
+        {
+            $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                sales: { $sum: { $toDouble: { $ifNull: ["$order_total", 0] } } },
+                profit: { $sum: { $subtract: [{ $toDouble: { $ifNull: ["$order_total", 0] } }, { $toDouble: { $ifNull: ["$cost_amount", 0] } }] } },
+                orders: { $sum: 1 }
+            }
+        }
+    ]);
+
+    const statsMap = {};
+    rawStatsResult.forEach(item => { statsMap[item._id] = item; });
+
+    const interval = days > 30 ? (days === 180 ? 7 : 30) : 1;
     const loops = Math.ceil(days / interval);
 
     for (let i = loops - 1; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - (i * interval));
         date.setHours(0, 0, 0, 0);
-        
-        const nextDate = new Date(date);
-        nextDate.setDate(nextDate.getDate() + interval);
 
-        const dayStats = await Order.aggregate([
-            {
-                $match: {
-                    createdAt: { $gte: date, $lt: nextDate }
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    sales: { $sum: { $toDouble: '$order_total' } },
-                    cost: { $sum: { $toDouble: '$cost_amount' } },
-                    count: { $sum: 1 }
-                }
+        let daySales = 0, dayProfit = 0, dayOrders = 0;
+        for (let j = 0; j < interval; j++) {
+            const d = new Date(date);
+            d.setDate(d.getDate() + j);
+            const dateStr = d.toISOString().split('T')[0];
+            const item = statsMap[dateStr];
+            if (item) {
+                daySales += item.sales;
+                dayProfit += item.profit;
+                dayOrders += item.orders;
             }
-        ]);
+        }
 
-        const dayData = dayStats[0] || { sales: 0, cost: 0, count: 0 };
-        
         let label = '';
         if (days <= 7) {
             label = date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -174,14 +178,13 @@ const getDashboardStats = asyncHandler(async (req, res) => {
         } else {
             label = date.toLocaleDateString('en-US', { month: 'short', year: days > 180 ? '2-digit' : undefined });
         }
-        
+
         chartData.push({
             date: label,
-            fullDate: date.toISOString().split('T')[0],
-            sales: Math.round(dayData.sales),
-            profit: Math.round(dayData.sales - dayData.cost),
-            orders: dayData.count,
-            aov: dayData.count > 0 ? Math.round(dayData.sales / dayData.count) : 0
+            sales: Math.round(daySales),
+            profit: Math.max(0, Math.round(dayProfit)),
+            orders: dayOrders,
+            aov: dayOrders > 0 ? Math.round(daySales / dayOrders) : 0
         });
     }
 
@@ -272,14 +275,14 @@ const updateUser = asyncHandler(async (req, res) => {
     if (req.body.freeze !== undefined) {
         const oldFreeze = user.freeze;
         user.freeze = Number(req.body.freeze);
-        
+
         // Notify user about account status change
         if (oldFreeze !== user.freeze) {
             await createNotification({
                 seller_id: user._id,
                 title: user.freeze === 1 ? 'Account Suspended' : 'Account Re-activated',
-                message: user.freeze === 1 
-                    ? 'Your account has been frozen by the administration. Please contact support for more details.' 
+                message: user.freeze === 1
+                    ? 'Your account has been frozen by the administration. Please contact support for more details.'
                     : 'Your account has been un-frozen. You can now resume your sales activities.',
                 type: 'system'
             });
@@ -417,7 +420,7 @@ const updatePackageStatus = asyncHandler(async (req, res) => {
         await Seller.findByIdAndUpdate(pkg.seller_id, {
             $set: { views: pkg.product_limit }
         });
-        
+
         await createNotification({
             seller_id: pkg.seller_id,
             title: 'Package Approved',
@@ -482,8 +485,8 @@ const updateRechargeStatus = asyncHandler(async (req, res) => {
     await createNotification({
         seller_id: recharge.seller_id,
         title: status == 1 ? 'Recharge Approved' : 'Recharge Rejected',
-        message: status == 1 
-            ? `Your recharge of $${recharge.amount} has been approved.` 
+        message: status == 1
+            ? `Your recharge of $${recharge.amount} has been approved.`
             : `Your recharge of $${recharge.amount} was rejected. Reason: ${reason || 'N/A'}.`,
         type: 'wallet'
     });
@@ -575,8 +578,8 @@ const updateWithdrawalStatus = asyncHandler(async (req, res) => {
     await createNotification({
         seller_id: withdrawal.seller_id,
         title: newStatus === 1 ? 'Withdrawal Approved' : 'Withdrawal Rejected',
-        message: newStatus === 1 
-            ? `Your withdrawal of $${withdrawal.amount} has been approved.` 
+        message: newStatus === 1
+            ? `Your withdrawal of $${withdrawal.amount} has been approved.`
             : `Your withdrawal of $${withdrawal.amount} was rejected. Reason: ${reason || 'N/A'}.`,
         type: 'wallet'
     });
@@ -710,6 +713,13 @@ const createOrder = asyncHandler(async (req, res) => {
         payment_status: 'unpaid'
     });
 
+    // Set supplier if available
+    const bestSupplier = await Supplier.findOne({ status: 'active' }).sort({ rating: -1 });
+    if (bestSupplier) {
+        newOrder.supplier_name = bestSupplier.name;
+        await newOrder.save();
+    }
+
     // Create one OrderItem per product — all linked to the SAME order
     for (const item of productDetails) {
         await OrderItem.create({
@@ -729,8 +739,8 @@ const createOrder = asyncHandler(async (req, res) => {
     // Notify seller
     await createNotification({
         seller_id: seller._id,
-        title: 'New Order Created',
-        message: `Admin has created a new order for you: ${order_code}. Check your order center.`,
+        title: 'You have received a new order',
+        message: `A new order has been received: ${order_code}. Check your order center.`,
         type: 'order',
         link: '/orders'
     });
@@ -739,11 +749,45 @@ const createOrder = asyncHandler(async (req, res) => {
 // @desc    Update order status
 // @route   PUT /api/admin/orders/:id
 // @access  Private/Admin
+// @route   PUT /api/admin/orders/:id
+// @access  Private/Admin
 const updateOrderStatus = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (!order) {
         res.status(404);
         throw new Error('Order not found');
+    }
+
+    // Credit seller wallet if status hits 'delivered' for the first time
+    const newStatus = req.body.status?.toLowerCase();
+    const oldStatus = order.status?.toLowerCase();
+
+    if (newStatus === 'delivered' && oldStatus !== 'delivered') {
+        const sellerId = order.seller_id;
+        
+        // Build query variants safely to avoid "Cast to Number failed for NaN"
+        const queryVariants = [];
+        if (mongoose.isValidObjectId(sellerId)) {
+            queryVariants.push({ _id: new mongoose.Types.ObjectId(String(sellerId)) });
+        }
+        
+        // Only add numeric id variant if sellerId is a valid number or numeric string
+        const numericId = Number(sellerId);
+        if (!isNaN(numericId)) {
+            queryVariants.push({ id: numericId });
+        } else if (typeof sellerId === 'string' && sellerId.length > 0) {
+            // If it's a string, still try if it happens to be the ID field (though usually numeric)
+            queryVariants.push({ id: sellerId }); 
+        }
+
+        const seller = await Seller.findOne({ $or: queryVariants.length > 0 ? queryVariants : [{ _id: null }] });
+
+        if (seller) {
+            const amount = parseFloat(order.order_total) || 0;
+            seller.wallet_balance = (seller.wallet_balance || 0) + amount;
+            await seller.save();
+            order.deliveredAt = Date.now();
+        }
     }
 
     if (req.body.status) order.status = req.body.status;
@@ -910,6 +954,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
     const { name, description, price, selling_price, profit, category, brand } = req.body;
+    const ProductImage = require('../models/ProductImage');
 
     if (!name || !description || !price || !selling_price || !category) {
         res.status(400);
@@ -918,7 +963,14 @@ const createProduct = asyncHandler(async (req, res) => {
 
     let image = '';
     if (req.files && req.files.image) {
-        image = `/uploads/${req.files.image[0].filename}`;
+        const file = req.files.image[0];
+        const filename = `image-${Date.now()}-${file.originalname}`;
+        await ProductImage.create({
+            filename,
+            imageData: file.buffer.toString('base64'),
+            contentType: file.mimetype
+        });
+        image = `/api/products/image/${filename}`;
     } else if (req.body.image) {
         image = req.body.image;
     }
@@ -956,7 +1008,15 @@ const updateProduct = asyncHandler(async (req, res) => {
 
     const updates = { ...req.body };
     if (req.files && req.files.image) {
-        updates.image = `/uploads/${req.files.image[0].filename}`;
+        const ProductImage = require('../models/ProductImage');
+        const file = req.files.image[0];
+        const filename = `image-${Date.now()}-${file.originalname}`;
+        await ProductImage.create({
+            filename,
+            imageData: file.buffer.toString('base64'),
+            contentType: file.mimetype
+        });
+        updates.image = `/api/products/image/${filename}`;
     }
 
     const updated = await Product.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });

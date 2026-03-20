@@ -31,8 +31,11 @@ export default function LandingPage() {
             {/* Main Header */}
             <header className={styles.mainHeader}>
                 <div className={styles.logo}>
-                    <Link href="/" style={{ color: '#111', fontSize: '24px', fontWeight: '800', textDecoration: 'none' }}>
-                        Ess<span>SmartSeller</span>
+                    <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '10px', overflow: 'hidden' }}>
+                            <img src="/logo.png" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        <span style={{ color: '#111', fontSize: '22px', fontWeight: '900', letterSpacing: '-0.02em' }}>SmartSeller</span>
                     </Link>
                 </div>
                 <div className={styles.rightLinks}>

@@ -121,15 +121,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     gap: '12px', borderBottom: '1px solid rgba(255,255,255,0.08)'
                 }}>
                     <div style={{
-                        width: '36px', height: '36px', flexShrink: 0,
-                        background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
-                        borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        width: '38px', height: '38px', flexShrink: 0,
+                        background: 'rgba(255,255,255,0.04)',
+                        borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        overflow: 'hidden'
                     }}>
-                        <Shield size={18} color="white" />
+                        <img src="/logo.png" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                     <div>
                         <div style={{ color: 'white', fontWeight: '800', fontSize: '14px', lineHeight: 1 }}>Admin Panel</div>
-                        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', marginTop: '2px' }}>ESSmartseller</div>
+                        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', marginTop: '2px' }}>SmartSeller</div>
                     </div>
                     <button
                         onClick={() => setSidebarOpen(false)}
