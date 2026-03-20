@@ -28,9 +28,17 @@ if (process.env.CLOUDINARY_URL || (process.env.CLOUDINARY_CLOUD_NAME && process.
     });
 } else {
     // Ensure uploads directory exists for local fallback
-    const uploadDir = path.join(__dirname, '../uploads');
-    if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
+    // Use /tmp in production (Vercel read-only FS), local uploads dir in dev
+    const IS_SERVERLESS = process.env.NODE_ENV === 'production';
+    const uploadDir = IS_SERVERLESS
+        ? path.join('/tmp', 'uploads')
+        : path.join(__dirname, '../uploads');
+    try {
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+    } catch (err) {
+        console.warn('Could not create local uploads dir:', err.message);
     }
 
     storage = multer.memoryStorage();
