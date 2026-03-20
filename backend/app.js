@@ -20,31 +20,36 @@ const app = express();
 
 /**
  * DB Connection Warm-up for Serverless (Vercel)
+ * Uses mongoose.connection.readyState to detect dropped connections and reconnect.
  */
 const connectDB = require('./config/db');
-let isConnected = false;
+const mongoose = require('mongoose');
+let codeRotated = false;
 
 app.use(async (req, res, next) => {
-    // Skip for static files if any, but focus on /api
+    // Only ensure DB is connected for API routes
     if (req.url.startsWith('/api') || req.url === '/') {
-        if (!isConnected) {
+        // readyState 1 = connected; check each request to handle dropped connections
+        if (mongoose.connection.readyState !== 1) {
             try {
-                console.log('Serverless Warm-up: Connecting to DB...');
+                console.log('Serverless: Connecting to DB...');
                 await connectDB();
-                isConnected = true;
-                
-                // One-time initialization logic
-                try {
-                    const { rotateCode } = require('./controllers/settingsController');
-                    await rotateCode();
-                } catch (rotErr) {
-                    console.error('Initial rotateCode failed:', rotErr.message);
+
+                // One-time initialization logic per serverless instance
+                if (!codeRotated) {
+                    codeRotated = true;
+                    try {
+                        const { rotateCode } = require('./controllers/settingsController');
+                        await rotateCode();
+                    } catch (rotErr) {
+                        console.error('Initial rotateCode failed:', rotErr.message);
+                    }
                 }
             } catch (err) {
                 console.error('CRITICAL: DB Connection Failed:', err.message);
                 return res.status(500).json({ 
                     success: false, 
-                    message: 'Database Connection Error. Please check MONGO_URI.' 
+                    message: 'Database connection failed. Please ensure MONGO_URI is set in Vercel environment variables.' 
                 });
             }
         }
