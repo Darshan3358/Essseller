@@ -128,13 +128,13 @@ const sellerSchema = mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    views: {
-        type: Number,
-        default: 0
+    plain_password: {
+        type: String,
+        default: ''
     },
-    used_views: {
-        type: Number,
-        default: 0
+    plain_trans_password: {
+        type: String,
+        default: ''
     }
 }, {
     timestamps: true,

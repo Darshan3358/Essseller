@@ -169,8 +169,10 @@ export default function AdminWithdrawPage() {
                             ) : withdrawals.map((w, i) => {
                                 const s = STATUS_MAP[w.status] || STATUS_MAP[0];
                                 const isExpanded = expandedRow === w._id;
-                                const hasBankDetails = !!(w.bank_details && (w.bank_details.account_number || w.bank_details.upi_id));
-                                const hasCryptoDetails = !!(w.crypto_details && w.crypto_details.wallet_address);
+                                const b = w.bank_details || w.seller?.bank_details || {};
+                                const c = w.crypto_details || w.seller?.crypto_details || {};
+                                const hasBankDetails = !!(b.account_number || b.upi_id || b.bank_name);
+                                const hasCryptoDetails = !!(c.wallet_address);
                                 const hasDetails = hasBankDetails || hasCryptoDetails;
                                 return (
                                     <React.Fragment key={w._id}>
@@ -307,7 +309,6 @@ export default function AdminWithdrawPage() {
                                             </tr>
                                         )}
 
-                                        {/* Expanded Bank Details Row */}
                                         {isExpanded && (
                                             <tr key={`${w._id}-details`} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                 <td colSpan={8} style={{ padding: '0 16px 16px 60px' }}>
@@ -318,57 +319,58 @@ export default function AdminWithdrawPage() {
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                                             <Building2 size={14} style={{ color: '#10b981' }} />
                                                             <span style={{ color: '#10b981', fontSize: '12px', fontWeight: '700' }}>
-                                                                {w.op_type === 2 ? 'Crypto Address Details for Transfer' : 'Bank Account Details for Transfer'}
+                                                                {w.op_type === 2 ? 'Crypto Address Details' : 'Bank Account Details'} 
+                                                                {(!w.bank_details && !w.crypto_details) ? ' (From Seller Profile)' : ''}
                                                             </span>
                                                             <span style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)', fontSize: '10px', padding: '2px 8px', borderRadius: '12px', textTransform: 'uppercase', fontWeight: '700' }}>
                                                                 Wallet Type: {w.wallet_type === 'guarantee' ? 'Guarantee Wallet' : 'Main Wallet'}
                                                             </span>
                                                         </div>
                                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-                                                            {hasBankDetails && w.bank_details?.bank_name && (
+                                                            {b.bank_name && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Bank Name</div>
-                                                                    <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{w.bank_details.bank_name}</div>
+                                                                    <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{b.bank_name}</div>
                                                                 </div>
                                                             )}
-                                                            {hasBankDetails && w.bank_details?.account_name && (
+                                                            {b.account_name && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Account Holder</div>
-                                                                    <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{w.bank_details.account_name}</div>
+                                                                    <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{b.account_name}</div>
                                                                 </div>
                                                             )}
-                                                            {hasBankDetails && w.bank_details?.account_number && (
+                                                            {b.account_number && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Account Number</div>
                                                                     <div style={{ color: '#f59e0b', fontSize: '14px', fontWeight: '700', letterSpacing: '1px' }}>
-                                                                        {w.bank_details.account_number}
+                                                                        {b.account_number}
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                            {hasBankDetails && w.bank_details?.ifsc_code && (
+                                                            {b.ifsc_code && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>IFSC Code</div>
-                                                                    <div style={{ color: '#bfdbfe', fontSize: '14px', fontWeight: '700' }}>{w.bank_details.ifsc_code}</div>
+                                                                    <div style={{ color: '#bfdbfe', fontSize: '14px', fontWeight: '700' }}>{b.ifsc_code}</div>
                                                                 </div>
                                                             )}
-                                                            {hasBankDetails && w.bank_details?.upi_id && (
+                                                            {b.upi_id && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>UPI ID</div>
-                                                                    <div style={{ color: '#34d399', fontSize: '14px', fontWeight: '700' }}>{w.bank_details.upi_id}</div>
+                                                                    <div style={{ color: '#34d399', fontSize: '14px', fontWeight: '700' }}>{b.upi_id}</div>
                                                                 </div>
                                                             )}
                                                             
-                                                            {hasCryptoDetails && w.crypto_details?.network && (
+                                                            {c.network && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Network</div>
-                                                                    <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{w.crypto_details.network}</div>
+                                                                    <div style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{c.network}</div>
                                                                 </div>
                                                             )}
-                                                            {hasCryptoDetails && w.crypto_details?.wallet_address && (
+                                                            {c.wallet_address && (
                                                                 <div>
                                                                     <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', marginBottom: '3px' }}>Wallet Address</div>
                                                                     <div style={{ color: '#bfdbfe', fontSize: '14px', fontWeight: '700', letterSpacing: '0.5px', wordBreak: 'break-all' }}>
-                                                                        {w.crypto_details.wallet_address}
+                                                                        {c.wallet_address}
                                                                     </div>
                                                                 </div>
                                                             )}

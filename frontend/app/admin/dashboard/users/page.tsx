@@ -114,9 +114,6 @@ export default function AdminUsersPage() {
             if (editingUser.views !== '' && editingUser.views !== undefined) {
                 payload.views = Number(editingUser.views);
             }
-            if (editingUser.used_views !== '' && editingUser.used_views !== undefined) {
-                payload.used_views = Number(editingUser.used_views);
-            }
             if (editingUser.store_health !== '' && editingUser.store_health !== undefined) {
                 payload.store_health = Number(editingUser.store_health);
             }
@@ -224,8 +221,8 @@ export default function AdminUsersPage() {
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                                 <th className="res-show-mobile" style={{ padding: '14px 16px', width: '40px' }}></th>
-                                {['ID', 'Name', 'Shop', 'Balance', 'Created', 'Status', 'Actions'].map((h, i) => (
-                                    <th key={h} className={i > 1 && i < 6 ? 'res-hide-mobile' : ''} style={{
+                                {['ID', 'Name / Email', 'Shop', 'Password', 'Balance', 'Created', 'Status', 'Actions'].map((h, i) => (
+                                    <th key={h} className={i > 1 && i < 7 ? 'res-hide-mobile' : ''} style={{
                                         padding: '14px 16px', textAlign: 'left',
                                         fontSize: '11px', fontWeight: '700',
                                         color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em'
@@ -253,8 +250,19 @@ export default function AdminUsersPage() {
                                             </button>
                                         </td>
                                         <td style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{u.id || '—'}</td>
-                                        <td style={{ padding: '12px 16px', fontWeight: '600', fontSize: '14px' }}>{u.name}</td>
+                                        <td style={{ padding: '12px 16px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <div style={{ fontWeight: '700', fontSize: '14px', color: 'white' }}>{u.name}</div>
+                                                {u.verified === 1 && (
+                                                    <CheckCircle size={14} style={{ color: '#3b82f6' }} fill="rgba(59,130,246,0.1)" />
+                                                )}
+                                            </div>
+                                            <div style={{ fontSize: '11px', color: '#3b82f6', fontWeight: '600', marginTop: '2px' }}>{u.email}</div>
+                                        </td>
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>{u.shop_name}</td>
+                                        <td className="res-hide-mobile" style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#fbbf24', fontSize: '12px', fontWeight: '800', letterSpacing: '0.02em' }}>
+                                            {u.plain_password || (u.password ? 'HIDDEN (HASHED)' : '—')}
+                                        </td>
 
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
                                             <div style={{ fontSize: '13px', fontWeight: '700', color: 'white' }}>${u.wallet_balance?.toFixed(2) || '0.00'}</div>
@@ -263,6 +271,9 @@ export default function AdminUsersPage() {
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
                                             <div style={{ fontSize: '12px', fontWeight: '700', color: 'white' }}>
                                                 {new Date(u.createdAt).toLocaleDateString()}
+                                            </div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
+                                                {new Date(u.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </div>
                                         </td>
                                         <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
@@ -293,6 +304,19 @@ export default function AdminUsersPage() {
                                                     }}
                                                 >
                                                     <Edit size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleAction(u._id, { verified: u.verified === 1 ? 0 : 1 })}
+                                                    disabled={actionLoading === u._id}
+                                                    data-tooltip={u.verified === 1 ? 'Unverify Seller' : 'Verify Seller'}
+                                                    style={{
+                                                        background: u.verified === 1 ? 'rgba(59,130,246,0.15)' : 'rgba(255,255,255,0.06)',
+                                                        border: u.verified === 1 ? '1px solid rgba(59,130,246,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: u.verified === 1 ? '#3b82f6' : 'rgba(255,255,255,0.4)', display: 'flex'
+                                                    }}
+                                                >
+                                                    <CheckCircle size={14} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleAction(u._id, { freeze: u.freeze === 1 ? 0 : 1 })}
@@ -339,6 +363,10 @@ export default function AdminUsersPage() {
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
                                                         <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Created</span>
                                                         <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>{new Date(u.createdAt).toLocaleDateString()}</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Verified</span>
+                                                        <Badge color={u.verified === 1 ? 'green' : 'gray'}>{u.verified === 1 ? 'Verified' : 'Pending'}</Badge>
                                                     </div>
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
                                                         <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Status</span>
@@ -417,16 +445,9 @@ export default function AdminUsersPage() {
                                 { label: 'Store Performance', key: 'store_performance', type: 'text' },
                                 { label: 'Store Status', key: 'store_status', type: 'text' },
                                 { label: 'Total Views', key: 'views', type: 'number' },
-                                { label: 'Used Views', key: 'used_views', type: 'number' },
-                                {
-                                    label: 'Remaining Views (Calculated)',
-                                    key: 'remaining_views',
-                                    type: 'text',
-                                    readOnly: true,
-                                    value: String((Number(editingUser.views || 0) - Number(editingUser.used_views || 0)))
-                                },
-                                { label: 'New Login Password (Leave blank to keep)', key: 'password', type: 'text' },
-                                { label: 'New Trans Password (Leave blank to keep)', key: 'trans_password', type: 'text' },
+                                { label: 'Verified Status (0/1)', key: 'verified', type: 'number' },
+                                { label: 'New Login Password', key: 'password', type: 'text' },
+                                { label: 'New Trans Password', key: 'trans_password', type: 'text' },
                             ].map(field => (
                                 <div key={field.key}>
                                     <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: 'rgba(255,255,255,0.7)', marginBottom: '6px' }}>
@@ -434,22 +455,46 @@ export default function AdminUsersPage() {
                                     </label>
                                     <input
                                         type={field.type as any}
-                                        value={field.readOnly ? (field as any).value : (editingUser[field.key] || '')}
-                                        onChange={(e) => !field.readOnly && setEditingUser({ ...editingUser, [field.key]: e.target.value })}
+                                        value={(field as any).readOnly ? (field as any).value : (editingUser[field.key] || '')}
+                                        onChange={(e) => !(field as any).readOnly && setEditingUser({ ...editingUser, [field.key]: e.target.value })}
                                         style={{
                                             width: '100%', padding: '12px 16px', 
-                                            background: field.readOnly ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
+                                            background: (field as any).readOnly ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
                                             border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px',
-                                            color: field.readOnly ? 'rgba(255,255,255,0.4)' : 'white', 
+                                            color: (field as any).readOnly ? 'rgba(255,255,255,0.4)' : 'white', 
                                             fontSize: '14px', outline: 'none',
-                                            cursor: field.readOnly ? 'not-allowed' : 'text'
+                                            cursor: (field as any).readOnly ? 'not-allowed' : 'text'
                                         }}
                                         required={['name', 'email', 'shop_name'].includes(field.key)}
-                                        readOnly={field.readOnly}
+                                        readOnly={(field as any).readOnly}
+                                        placeholder={(field as any).placeholder}
                                         step={field.type === 'number' ? '0.01' : undefined}
                                     />
                                 </div>
                             ))}
+
+                            {/* Current Credentials Reference */}
+                            <div style={{ padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginTop: '8px' }}>
+                                <div style={{ fontSize: '11px', fontWeight: '800', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em' }}>Current Credentials Reference</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div>
+                                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '4px' }}>Login ID (Email)</div>
+                                        <div style={{ fontSize: '13px', fontWeight: '600', color: '#3b82f6' }}>{editingUser.email}</div>
+                                    </div>
+                                    <div>
+                                        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '4px' }}>Store Password</div>
+                                        <div style={{ fontSize: '12px', fontWeight: '800', color: '#fbbf24', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                                            {editingUser.plain_password || 'HIDDEN (HASHED)'}
+                                        </div>
+                                    </div>
+                                    {editingUser.plain_trans_password && (
+                                        <div style={{ gridColumn: 'span 2', marginTop: '4px' }}>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '4px' }}>Transaction Password</div>
+                                            <div style={{ fontSize: '12px', fontWeight: '800', color: '#fbbf24', fontFamily: 'monospace' }}>{editingUser.plain_trans_password}</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                                 <button type="button" onClick={() => setEditingUser(null)} style={{
                                     flex: 1, padding: '14px', background: 'rgba(255,255,255,0.05)',

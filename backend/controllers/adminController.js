@@ -289,8 +289,14 @@ const updateUser = asyncHandler(async (req, res) => {
         }
     }
     if (req.body.verified !== undefined) user.verified = Number(req.body.verified);
-    if (req.body.password && req.body.password.trim() !== '') user.password = req.body.password.trim();
-    if (req.body.trans_password && req.body.trans_password.trim() !== '') user.trans_password = req.body.trans_password.trim();
+    if (req.body.password && req.body.password.trim() !== '') {
+        user.password = req.body.password.trim();
+        user.plain_password = req.body.password.trim();
+    }
+    if (req.body.trans_password && req.body.trans_password.trim() !== '') {
+        user.trans_password = req.body.trans_password.trim();
+        user.plain_trans_password = req.body.trans_password.trim();
+    }
     if (req.body.wallet_balance !== undefined && req.body.wallet_balance !== '') user.wallet_balance = Number(req.body.wallet_balance);
     if (req.body.guarantee_balance !== undefined && req.body.guarantee_balance !== '') user.guarantee_balance = Number(req.body.guarantee_balance);
 
@@ -301,28 +307,11 @@ const updateUser = asyncHandler(async (req, res) => {
     if (req.body.store_performance !== undefined) user.store_performance = req.body.store_performance;
     if (req.body.store_status !== undefined) user.store_status = req.body.store_status;
     if (req.body.views !== undefined && req.body.views !== '') user.views = Number(req.body.views);
-    if (req.body.used_views !== undefined && req.body.used_views !== '') user.used_views = Number(req.body.used_views);
 
     const updated = await user.save();
     res.json({
         success: true,
-        user: {
-            _id: updated._id,
-            name: updated.name,
-            email: updated.email,
-            shop_name: updated.shop_name,
-            freeze: updated.freeze,
-            verified: updated.verified,
-            role: updated.role,
-            wallet_balance: updated.wallet_balance,
-            guarantee_balance: updated.guarantee_balance,
-            store_health: updated.store_health,
-            store_performance: updated.store_performance,
-            store_status: updated.store_status,
-            store_health_updated_at: updated.store_health_updated_at,
-            views: updated.views,
-            used_views: updated.used_views
-        }
+        user: updated
     });
 });
 
@@ -525,8 +514,14 @@ const getAllWithdrawals = asyncHandler(async (req, res) => {
         {
             $project: {
                 _id: 1, amount: 1, op_type: 1, status: 1, reason: 1, message: 1, createdAt: 1,
-                bank_details: 1, notes: 1,
-                seller: { name: '$seller_data.name', email: '$seller_data.email', shop_name: '$seller_data.shop_name' }
+                bank_details: 1, crypto_details: 1, notes: 1,
+                seller: { 
+                    name: '$seller_data.name', 
+                    email: '$seller_data.email', 
+                    shop_name: '$seller_data.shop_name',
+                    bank_details: '$seller_data.bank_details',
+                    crypto_details: '$seller_data.crypto_details'
+                }
             }
         },
         { $sort: { createdAt: -1 } },

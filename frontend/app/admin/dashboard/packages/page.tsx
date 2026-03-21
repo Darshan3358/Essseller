@@ -166,10 +166,17 @@ export default function AdminPackagesPage() {
                                                     {pkg.status === 1 ? <><CheckCircle2 size={10} /> Active</> : 'Inactive'}
                                                 </span>
                                             </td>
-                                            <td className="res-hide-mobile" style={{ padding: '14px 16px', color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
-                                                {pkg.created_at || pkg.createdAt
-                                                    ? new Date(pkg.created_at || pkg.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                                                    : '—'}
+                                            <td className="res-hide-mobile" style={{ padding: '14px 16px' }}>
+                                                <div style={{ color: 'white', fontWeight: '700', fontSize: '13px' }}>
+                                                    {pkg.created_at || pkg.createdAt
+                                                        ? new Date(pkg.created_at || pkg.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                                                        : '—'}
+                                                </div>
+                                                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '10px', marginTop: '2px' }}>
+                                                    {pkg.created_at || pkg.createdAt
+                                                        ? new Date(pkg.created_at || pkg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                        : ''}
+                                                </div>
                                             </td>
                                         </tr>
 
@@ -194,8 +201,10 @@ export default function AdminPackagesPage() {
                                                         </div>
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
                                                             <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Date</span>
-                                                            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-                                                                {pkg.created_at || pkg.createdAt ? new Date(pkg.created_at || pkg.createdAt).toLocaleDateString() : '—'}
+                                                            <span style={{ fontSize: '12px', color: 'white', textAlign: 'right' }}>
+                                                                {pkg.created_at || pkg.createdAt 
+                                                                    ? `${new Date(pkg.created_at || pkg.createdAt).toLocaleDateString()} ${new Date(pkg.created_at || pkg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` 
+                                                                    : '—'}
                                                             </span>
                                                         </div>
                                                     </div>
