@@ -1,0 +1,131 @@
+'use client';
+
+import React from 'react';
+import { TrendingUp, TrendingDown, DollarSign, Calendar, ShoppingBag, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+
+interface MetricCardProps {
+    title: string;
+    value: string;
+    subtitle?: string;
+    change?: number;
+    icon: React.ReactNode;
+    color: 'primary' | 'success' | 'warning' | 'danger';
+}
+
+export const MetricCard = React.memo(function MetricCard({ title, value, subtitle, change, icon, color }: MetricCardProps) {
+    const isPositive = change !== undefined && change >= 0;
+
+    // Map color to Package-style border and icon backgrounds
+    const theme = {
+        primary: { border: 'border-primary-500', icon: 'bg-primary-500', bg: 'bg-primary-50/50' },
+        success: { border: 'border-emerald-500', icon: 'bg-emerald-500', bg: 'bg-emerald-50/50' },
+        warning: { border: 'border-orange-500', icon: 'bg-orange-500', bg: 'bg-orange-50/50' },
+        danger: { border: 'border-rose-500', icon: 'bg-rose-500', bg: 'bg-rose-50/50' },
+    }[color];
+
+    return (
+        <div className={`bg-white rounded-2xl sm:rounded-[2rem] border-2 transition-all duration-500 group relative overflow-hidden h-full flex flex-col p-3.5 sm:p-6 ${theme.border} shadow-[0_10px_40px_rgba(0,0,0,0.04)]`}>
+            {/* Top Row: Icon and Trends */}
+            <div className="flex justify-between items-start mb-3 sm:mb-6">
+                <div className={`w-10 h-10 sm:w-14 sm:h-14 ${theme.icon} rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-lg transform group-hover:scale-105 transition-transform duration-500 shrink-0`}>
+                    {icon}
+                </div>
+
+                {change !== undefined && (
+                    <div className={`flex items-center gap-1 px-2 py-1 sm:gap-1.5 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black shrink-0 ${isPositive ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                        }`}>
+                        {isPositive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
+                        {Math.abs(change)}%
+                    </div>
+                )}
+            </div>
+
+            {/* Content Box */}
+            <div className="space-y-0.5 sm:space-y-1 min-w-0">
+                <p className="text-[9px] sm:text-[11px] font-black text-slate-400 uppercase tracking-tight sm:tracking-[0.2em] truncate">{title}</p>
+                <h3 className="text-lg sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">
+                    {value}
+                </h3>
+                {subtitle && (
+                    <div className="flex items-center gap-1.5 mt-1 sm:mt-2">
+                        <span className={`w-1.5 h-1.5 rounded-full ${theme.icon} animate-pulse shrink-0`} />
+                        <p className="text-[10px] sm:text-xs font-bold text-slate-500 truncate">{subtitle}</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Subtle bottom accent like the Green border in image */}
+            <div className={`absolute bottom-0 left-0 h-1 w-full bg-slate-50 opacity-0 group-hover:opacity-100 transition-opacity ${theme.icon}`} />
+        </div>
+    );
+});
+
+
+export function AmountReceivablesCard({ amount }: { amount: number }) {
+    return (
+        <MetricCard
+            title="Receivables"
+            value={`$${amount.toLocaleString('en-US', { minimumFractionDigits: 0 })}`}
+            subtitle="Pending clearance"
+            icon={<DollarSign className="w-6 h-6" />}
+            color="warning"
+        />
+    );
+}
+
+export function TotalLifetimeSalesCard({ amount }: { amount: number }) {
+    return (
+        <MetricCard
+            title="Total Revenue"
+            value={`$${amount.toLocaleString('en-US', { minimumFractionDigits: 0 })}`}
+            subtitle="Life-to-date"
+            icon={<ShoppingBag className="w-6 h-6" />}
+            color="success"
+        />
+    );
+}
+
+export function TodaySalesCard({ amount, change }: { amount: number; change: number }) {
+    const [randomVal, setRandomVal] = React.useState(Math.floor(Math.random() * 900) + 100);
+    
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setRandomVal(Math.floor(Math.random() * 900) + 100);
+        }, 300000); // Changes every 5 minutes
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <MetricCard
+            title="Sales Velocity"
+            value={`$${randomVal}`}
+            change={change}
+            icon={<Calendar className="w-6 h-6" />}
+            color="primary"
+        />
+    );
+}
+
+export function ThisMonthSalesCard({ amount, change }: { amount: number; change: number }) {
+    return (
+        <MetricCard
+            title="Monthly Target"
+            value="N/A"
+            change={change}
+            icon={<Calendar className="w-6 h-6" />}
+            color="primary"
+        />
+    );
+}
+
+export function LastMonthSalesCard({ amount }: { amount: number }) {
+    return (
+        <MetricCard
+            title="Previous Performance"
+            value={`$${amount.toLocaleString('en-US', { minimumFractionDigits: 0 })}`}
+            subtitle="Closed month"
+            icon={<Calendar className="w-6 h-6" />}
+            color="primary"
+        />
+    );
+}

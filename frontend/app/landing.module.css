@@ -1,0 +1,375 @@
+/* eBay-like Landing Page Styles */
+
+.body {
+  margin: 0;
+  font-family: 'DM Sans', Arial, sans-serif;
+  background: #fff;
+  color: #111;
+  overflow-x: hidden;
+}
+
+.topLinks a {
+  text-decoration: none;
+  color: #0066c0;
+  margin-left: 15px;
+}
+
+.mainHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  gap: 15px;
+  border-bottom: 1px solid #ddd;
+  flex-wrap: wrap;
+  background: #fff;
+}
+
+.logo img {
+  width: 150px;
+  height: auto;
+}
+
+@media only screen and (max-width: 600px) {
+  .logo img {
+    width: 100px;
+  }
+}
+
+.rightLinks {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btnPrimary {
+  display: inline-block;
+  background-color: #3665f3;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 25px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.btnPrimary:hover {
+  background-color: #2548c0;
+}
+
+.heroSection {
+  background-image: url('https://i.ebayimg.com/00/s/NDk2WDE0NDA=/z/hcQAAOSwg2dj6n~7/$_57.JPG');
+  background-size: cover;
+  background-position: center;
+  min-height: 500px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 40px 5%;
+}
+
+.heroOverlay {
+  max-width: 400px;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.heroCard h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  color: #111;
+}
+
+.heroCard p {
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+.basicsSection {
+  padding: 80px 5%;
+  background: #fff;
+  text-align: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.basicsSection h2 {
+  font-size: 2.2rem;
+  margin-bottom: 15px;
+  font-weight: 800;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 50px;
+}
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+}
+
+.step {
+  flex: 1;
+  min-width: 280px;
+  max-width: 350px;
+  text-align: center;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  margin: 0 auto 20px auto;
+  font-size: 20px;
+  color: #3665f3;
+}
+
+.step h3 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.step p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.businessSection {
+  background: #f8f9fa;
+  padding: 80px 5%;
+}
+
+.businessContent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 60px;
+  justify-content: space-between;
+}
+
+.textContent {
+  flex: 1;
+  min-width: 300px;
+}
+
+.textContent h2 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  font-weight: 800;
+}
+
+.textContent p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.imageContent {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.imageContent img {
+  width: 100%;
+  max-width: 550px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.listingSection {
+  padding: 80px 5%;
+  background: #fff;
+}
+
+.listingHeader {
+  margin-bottom: 40px;
+}
+
+.listingHeader h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.listingHeader p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.cardSlider {
+  display: flex;
+  overflow-x: auto;
+  gap: 24px;
+  padding: 20px 0 40px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+.cardSlider::-webkit-scrollbar {
+  height: 6px;
+}
+
+.cardSlider::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+.card {
+  flex: 0 0 320px;
+  border-radius: 16px;
+  padding: 28px;
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  font-weight: 800;
+  color: #111;
+}
+
+.card ul {
+  padding-left: 20px;
+  color: #444;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.card ul li {
+  margin-bottom: 10px;
+}
+
+.faqSection {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 0 5%;
+}
+
+.faqSection h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.faqItem {
+  border-bottom: 1px solid #eee;
+}
+
+.faqQuestion {
+  width: 100%;
+  text-align: left;
+  padding: 20px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #111;
+}
+
+.faqQuestion span {
+  transition: transform 0.3s;
+}
+
+.faqAnswer {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.faqItem.active .faqAnswer {
+  max-height: 500px;
+  padding-bottom: 20px;
+}
+
+.faqItem.active .faqQuestion span {
+  transform: rotate(180deg);
+}
+
+.heroBanner {
+  position: relative;
+  background-image: url('https://i.pinimg.com/736x/01/6c/56/016c561c570aa2ca9106acaba6b80773.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 8%;
+}
+
+.heroBannerContent {
+  background-color: white;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 400px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+.heroBannerContent h1 {
+  font-size: 2.5rem;
+  color: #111;
+  margin-bottom: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.siteFooter {
+  background-color: #fff;
+  padding: 60px 5%;
+  font-size: 14px;
+  color: #111;
+  border-top: 1px solid #eee;
+}
+
+.footerBottom {
+  border-top: 1px solid #eee;
+  padding-top: 30px;
+  font-size: 13px;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footerBottom p {
+  margin: 0;
+}

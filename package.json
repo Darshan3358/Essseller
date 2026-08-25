@@ -1,0 +1,12 @@
+{
+  "name": "essmartseller-monorepo",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "install-all": "npm install --prefix frontend && npm install --prefix backend",
+    "build-frontend": "npm run build --prefix frontend"
+  }
+}

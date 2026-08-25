@@ -1,0 +1,762 @@
+'use client';
+
+import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search, Trash2, Shield, ShieldOff, ShieldCheck, CheckCircle, XCircle, RefreshCw, Package, Edit, X, Plus, Minus, Edit2, Activity, BarChart3 } from 'lucide-react';
+import { getFullImageUrl } from '@/lib/api';
+import React from 'react';
+
+function Badge({ children, color }: any) {
+    const colors: any = {
+        green: { bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.3)', text: '#10b981' },
+        red: { bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.3)', text: '#f87171' },
+        yellow: { bg: 'rgba(251,191,36,0.15)', border: 'rgba(251,191,36,0.3)', text: '#fbbf24' },
+        gray: { bg: 'rgba(255,255,255,0.08)', border: 'rgba(255,255,255,0.15)', text: 'rgba(255,255,255,0.5)' },
+    };
+    const c = colors[color] || colors.gray;
+    return (
+        <span style={{
+            padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '600',
+            background: c.bg, border: `1px solid ${c.border}`, color: c.text
+        }}>{children}</span>
+    );
+}
+
+export default function AdminUsersPage() {
+    const router = useRouter();
+    const [users, setUsers] = useState<any[]>([]);
+    const [total, setTotal] = useState(0);
+    const [page, setPage] = useState(1);
+    const [pages, setPages] = useState(1);
+    const [keyword, setKeyword] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [editingUser, setEditingUser] = useState<any>(null);
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [saveError, setSaveError] = useState('');
+    const [saveSuccess, setSaveSuccess] = useState('');
+    const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+    const [isHealthMode, setIsHealthMode] = useState(false);
+    const [verifyingUser, setVerifyingUser] = useState<any>(null);
+    const [rejectionReason, setRejectionReason] = useState('');
+
+    const handleVerifyDocument = async (userId: string, status: 'verified' | 'rejected') => {
+        setActionLoading(userId);
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    verification_status: status,
+                    verified: status === 'verified' ? 1 : 2,
+                    rejection_reason: status === 'rejected' ? rejectionReason : ''
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setSaveSuccess(`User document ${status} successfully!`);
+                await fetchUsers();
+                setTimeout(() => { setVerifyingUser(null); setSaveSuccess(''); setRejectionReason(''); }, 1200);
+            } else {
+                alert('Verification failed: ' + (data.message || 'Error'));
+            }
+        } catch (e: any) {
+            alert('Network error: ' + e.message);
+        }
+        setActionLoading(null);
+    };
+
+    const toggleRow = (id: string) => {
+        const newExpanded = new Set(expandedRows);
+        if (newExpanded.has(id)) newExpanded.delete(id);
+        else newExpanded.add(id);
+        setExpandedRows(newExpanded);
+    };
+
+    const fetchUsers = useCallback(async () => {
+        setLoading(true);
+        const token = sessionStorage.getItem('adminToken');
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/users?page=${page}&keyword=${keyword}&status=${statusFilter}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.json();
+        if (data.success) {
+            setUsers(data.users);
+            setTotal(data.total);
+            setPages(data.pages);
+        }
+        setLoading(false);
+    }, [page, keyword, statusFilter]);
+
+    useEffect(() => { fetchUsers(); }, [fetchUsers]);
+
+    const handleAction = async (id: string, updates: any) => {
+        setActionLoading(id);
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify(updates)
+            });
+            const data = await res.json();
+            if (!data.success) {
+                alert('Action failed: ' + (data.message || 'Unknown error'));
+            }
+        } catch (e: any) {
+            alert('Network error: ' + e.message);
+        }
+        await fetchUsers();
+        setActionLoading(null);
+    };
+
+    const handleDelete = async (id: string, name: string) => {
+        if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
+        setActionLoading(id);
+        const token = sessionStorage.getItem('adminToken');
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}`, {
+            method: 'DELETE', headers: { Authorization: `Bearer ${token}` }
+        });
+        await fetchUsers();
+        setActionLoading(null);
+    };
+
+    const handleSaveEdit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaveError('');
+        setSaveSuccess('');
+        setActionLoading(editingUser._id);
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            const payload: any = {
+                name: editingUser.name,
+                email: editingUser.email,
+                mobile_number: editingUser.mobile_number,
+                shop_name: editingUser.shop_name,
+            };
+            // Only send balance if it was provided
+            if (editingUser.wallet_balance !== '' && editingUser.wallet_balance !== undefined) {
+                payload.wallet_balance = Number(editingUser.wallet_balance);
+            }
+            if (editingUser.guarantee_balance !== '' && editingUser.guarantee_balance !== undefined) {
+                payload.guarantee_balance = Number(editingUser.guarantee_balance);
+            }
+            if (editingUser.views !== '' && editingUser.views !== undefined) {
+                payload.views = Number(editingUser.views);
+            }
+            if (editingUser.store_health !== '' && editingUser.store_health !== undefined) {
+                payload.store_health = Number(editingUser.store_health);
+            }
+            if (editingUser.store_performance !== undefined) {
+                payload.store_performance = editingUser.store_performance;
+            }
+            if (editingUser.store_status !== undefined) {
+                payload.store_status = editingUser.store_status;
+            }
+            if (editingUser.store_diagnostics !== undefined) {
+                payload.store_diagnostics = editingUser.store_diagnostics;
+            }
+            if (editingUser.verified !== undefined) {
+                payload.verified = Number(editingUser.verified);
+            }
+            // Only send passwords if admin filled them in
+            if (editingUser.password && editingUser.password.trim() !== '') {
+                payload.password = editingUser.password.trim();
+            }
+            if (editingUser.trans_password && editingUser.trans_password.trim() !== '') {
+                payload.trans_password = editingUser.trans_password.trim();
+            }
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${editingUser._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.success) {
+                setSaveSuccess('User updated successfully!');
+                await fetchUsers();
+                setTimeout(() => {
+                    setEditingUser(null);
+                    setSaveSuccess('');
+                }, 1200);
+            } else {
+                setSaveError(data.message || 'Failed to update user');
+            }
+        } catch (e: any) {
+            setSaveError('Network error: ' + e.message);
+        }
+        setActionLoading(null);
+    };
+
+    return (
+        <div style={{ padding: '32px', color: 'white' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <div>
+                    <h1 style={{ fontSize: '24px', fontWeight: '800', margin: '0 0 4px' }}>Manage Users</h1>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>{total} total sellers</p>
+                </div>
+                <button onClick={fetchUsers} style={{
+                    background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)',
+                    borderRadius: '10px', color: '#93c5fd', padding: '8px 12px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '600'
+                }}>
+                    <RefreshCw size={15} /> Refresh
+                </button>
+            </div>
+
+            {/* Search & Filter */}
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
+                <div style={{ position: 'relative', width: '300px' }}>
+                    <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} />
+                    <input
+                        value={keyword}
+                        onChange={e => { setKeyword(e.target.value); setPage(1); }}
+                        placeholder="Search by name, email, shop..."
+                        style={{
+                            width: '100%', padding: '10px 10px 10px 36px',
+                            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '10px', color: 'white', fontSize: '14px', outline: 'none',
+                            boxSizing: 'border-box'
+                        }}
+                    />
+                </div>
+                <div style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.06)', padding: '4px', borderRadius: '10px' }}>
+                    {[
+                        { label: 'All Users', value: 'all' },
+                        { label: 'Active', value: '0' },
+                        { label: 'Frozen', value: '1' }
+                    ].map(st => (
+                        <button
+                            key={st.value}
+                            onClick={() => { setStatusFilter(st.value); setPage(1); }}
+                            style={{
+                                padding: '6px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: '600',
+                                border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+                                background: statusFilter === st.value ? '#3b82f6' : 'transparent',
+                                color: statusFilter === st.value ? 'white' : 'rgba(255,255,255,0.6)'
+                            }}
+                        >
+                            {st.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+
+            {/* Table */}
+            <div style={{
+                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '16px', overflow: 'hidden'
+            }}>
+                <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '0' }}>
+                        <thead>
+                            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                                <th className="res-show-mobile" style={{ padding: '14px 16px', width: '40px' }}></th>
+                                {['ID', 'Name / Email', 'Shop', 'Credentials', 'Balance', 'Created', 'Status', 'Actions'].map((h, i) => (
+                                    <th key={h} className={i > 1 && i < 7 ? 'res-hide-mobile' : ''} style={{
+                                        padding: '14px 16px', textAlign: 'left',
+                                        fontSize: '11px', fontWeight: '700',
+                                        color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em'
+                                    }}>{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr><td colSpan={11} style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Loading...</td></tr>
+                            ) : users.filter(u => u.role === 'seller').length === 0 ? (
+                                <tr><td colSpan={11} style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>No users found</td></tr>
+                            ) : users.filter(u => u.role === 'seller').map(u => (
+                                <React.Fragment key={u._id}>
+                                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                    >
+                                        <td className="res-show-mobile" style={{ padding: '12px 16px' }}>
+                                            <button
+                                                onClick={() => toggleRow(u._id)}
+                                                style={{ border: 'none', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', borderRadius: '4px', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            >
+                                                {expandedRows.has(u._id) ? <Minus size={14} /> : <Plus size={14} />}
+                                            </button>
+                                        </td>
+                                        <td style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{u.id || '—'}</td>
+                                        <td style={{ padding: '12px 16px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <div style={{ fontWeight: '700', fontSize: '14px', color: 'white' }}>{u.name}</div>
+                                                {u.verified === 1 && (
+                                                    <CheckCircle size={14} style={{ color: '#3b82f6' }} fill="rgba(59,130,246,0.1)" />
+                                                )}
+                                            </div>
+                                            <div style={{ fontSize: '11px', color: '#3b82f6', fontWeight: '600', marginTop: '2px' }}>{u.email}</div>
+                                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>{u.mobile_number || '—'}</div>
+                                        </td>
+                                        <td className="res-hide-mobile" style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.6)', fontSize: '13px' }}>{u.shop_name}</td>
+                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
+                                            <div style={{ fontFamily: 'monospace', fontWeight: '800', fontSize: '12px', letterSpacing: '0.02em' }}>
+                                                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '9px', marginRight: '4px' }}>L:</span>
+                                                <span style={{ color: '#fbbf24' }}>{u.plain_password || '—'}</span>
+                                            </div>
+                                            <div style={{ fontFamily: 'monospace', fontWeight: '800', fontSize: '12px', letterSpacing: '0.02em', marginTop: '4px' }}>
+                                                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '9px', marginRight: '4px' }}>T:</span>
+                                                <span style={{ color: '#a78bfa' }}>{u.plain_trans_password || '—'}</span>
+                                            </div>
+                                        </td>
+
+                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
+                                            <div style={{ fontSize: '13px', fontWeight: '700', color: 'white' }}>${u.wallet_balance?.toFixed(2) || '0.00'}</div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>G: ${u.guarantee_balance?.toFixed(2) || '0.00'}</div>
+                                        </td>
+                                        <td className="res-hide-mobile" style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+                                            <div style={{ fontSize: '12px', fontWeight: '700', color: 'white' }}>
+                                                {new Date(u.createdAt).toLocaleDateString()}
+                                            </div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
+                                                {new Date(u.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                        </td>
+                                        <td className="res-hide-mobile" style={{ padding: '12px 16px' }}>
+                                            <Badge color={u.freeze === 1 ? 'red' : 'green'}>{u.freeze === 1 ? 'Frozen' : 'Active'}</Badge>
+                                        </td>
+
+                                        <td style={{ padding: '12px 16px' }}>
+                                            <div style={{ display: 'flex', gap: '6px' }}>
+                                                <button
+                                                    onClick={() => router.push(`/admin/dashboard/products?seller_id=${u._id}&seller_name=${encodeURIComponent(u.name || u.shop_name || 'Seller')}`)}
+                                                    data-tooltip="View Products"
+                                                    style={{
+                                                        background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: '#10b981', display: 'flex'
+                                                    }}
+                                                >
+                                                    <Package size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => { setIsHealthMode(false); setEditingUser({ ...u, password: '', trans_password: '' }); }}
+                                                    disabled={actionLoading === u._id}
+                                                    data-tooltip="Edit User"
+                                                    style={{
+                                                        background: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: '#38bdf8', display: 'flex'
+                                                    }}
+                                                >
+                                                    <Edit size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleAction(u._id, { verified: u.verified === 1 ? 0 : 1 })}
+                                                    disabled={actionLoading === u._id}
+                                                    data-tooltip={u.verified === 1 ? 'Unverify Seller' : 'Verify Seller'}
+                                                    style={{
+                                                        background: u.verified === 1 ? 'rgba(59,130,246,0.15)' : 'rgba(255,255,255,0.06)',
+                                                        border: u.verified === 1 ? '1px solid rgba(59,130,246,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: u.verified === 1 ? '#3b82f6' : 'rgba(255,255,255,0.4)', display: 'flex'
+                                                    }}
+                                                >
+                                                    <CheckCircle size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleAction(u._id, { freeze: u.freeze === 1 ? 0 : 1 })}
+                                                    disabled={actionLoading === u._id}
+                                                    data-tooltip={u.freeze === 1 ? 'Unfreeze Account' : 'Freeze Account'}
+                                                    style={{
+                                                        background: u.freeze === 1 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+                                                        border: u.freeze === 1 ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(239,68,68,0.3)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: u.freeze === 1 ? '#10b981' : '#f87171', display: 'flex'
+                                                    }}
+                                                >
+                                                    <Shield size={14} />
+                                                </button>
+
+                                                <button
+                                                    onClick={() => { 
+                                                        setIsHealthMode(true); 
+                                                        setEditingUser({ 
+                                                            ...u, 
+                                                            password: '', 
+                                                            trans_password: '',
+                                                            store_diagnostics: u.store_diagnostics || {
+                                                                fulfillment: '100%',
+                                                                rating: '4.9/5',
+                                                                responseTime: '< 2 Hours',
+                                                                qualityScore: '98%'
+                                                            }
+                                                        }); 
+                                                    }}
+                                                    data-tooltip="Shop Health Setup"
+                                                    style={{
+                                                        background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: '#10b981', display: 'flex'
+                                                    }}
+                                                >
+                                                    <Activity size={14} />
+                                                </button>
+
+                                                <button
+                                                    onClick={() => { setVerifyingUser(u); setRejectionReason(u.rejection_reason || ''); }}
+                                                    data-tooltip="Review Client ID"
+                                                    style={{
+                                                        background: u.verified === 1 ? 'rgba(16,185,129,0.15)' : u.verified === 2 ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
+                                                        border: u.verified === 1 ? '1px solid rgba(16,185,129,0.3)' : u.verified === 2 ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(245,158,11,0.3)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: u.verified === 1 ? '#10b981' : u.verified === 2 ? '#f87171' : '#f59e0b', display: 'flex'
+                                                    }}
+                                                >
+                                                    <ShieldCheck size={14} />
+                                                </button>
+
+                                                <button
+                                                    onClick={() => router.push(`/admin/dashboard/reports?seller_id=${u._id}`)}
+                                                    data-tooltip="View Reports"
+                                                    style={{
+                                                        background: 'rgba(167,139,250,0.15)', border: '1px solid rgba(167,139,250,0.3)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: '#a78bfa', display: 'flex'
+                                                    }}
+                                                >
+                                                    <BarChart3 size={14} />
+                                                </button>
+
+                                                <button
+                                                    onClick={() => handleDelete(u._id, u.name)}
+                                                    disabled={actionLoading === u._id}
+                                                    data-tooltip="Delete User Permanently"
+                                                    style={{
+                                                        background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
+                                                        borderRadius: '8px', padding: '6px 8px', cursor: 'pointer',
+                                                        color: '#f87171', display: 'flex'
+                                                    }}
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {/* Expanded Row for Mobile */}
+                                    {expandedRows.has(u._id) && (
+                                        <tr className="res-show-mobile" style={{ background: 'rgba(59,130,246,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                            <td colSpan={11} style={{ padding: '16px' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '12px' }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Email</span>
+                                                        <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>{u.email}</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Mobile</span>
+                                                        <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>{u.mobile_number || '—'}</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Shop</span>
+                                                        <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>{u.shop_name}</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Created</span>
+                                                        <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>{new Date(u.createdAt).toLocaleDateString()}</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Password</span>
+                                                        <span style={{ fontSize: '13px', fontFamily: 'monospace', color: '#fbbf24', fontWeight: '800' }}>{u.plain_password || '—'}</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Trans Password</span>
+                                                        <span style={{ fontSize: '13px', fontFamily: 'monospace', color: '#a78bfa', fontWeight: '800' }}>{u.plain_trans_password || '—'}</span>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Verified</span>
+                                                        <Badge color={u.verified === 1 ? 'green' : 'gray'}>{u.verified === 1 ? 'Verified' : 'Pending'}</Badge>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Status</span>
+                                                        <Badge color={u.freeze === 1 ? 'red' : 'green'}>{u.freeze === 1 ? 'Frozen' : 'Active'}</Badge>
+                                                    </div>
+
+                                                    {(u.cert_front || u.cert_back) && (
+                                                        <div style={{ marginTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px' }}>
+                                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em' }}>
+                                                                Identity Documents ({u.cert_type || 'General'})
+                                                            </div>
+                                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                                                {u.cert_front && (
+                                                                    <div style={{ background: 'rgba(0,0,0,0.2)', padding: '6px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                                                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', marginBottom: '4px', textAlign: 'center' }}>FRONT</div>
+                                                                        <img
+                                                                            src={getFullImageUrl(u.cert_front)}
+                                                                            alt="Front"
+                                                                            style={{ width: '100%', borderRadius: '8px', cursor: 'zoom-in' }}
+                                                                            onClick={() => window.open(getFullImageUrl(u.cert_front))}
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                                {u.cert_back && (
+                                                                    <div style={{ background: 'rgba(0,0,0,0.2)', padding: '6px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                                                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', marginBottom: '4px', textAlign: 'center' }}>BACK</div>
+                                                                        <img
+                                                                            src={getFullImageUrl(u.cert_back)}
+                                                                            alt="Back"
+                                                                            style={{ width: '100%', borderRadius: '8px', cursor: 'zoom-in' }}
+                                                                            onClick={() => window.open(getFullImageUrl(u.cert_back))}
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination */}
+                {pages > 1 && (
+                    <div style={{
+                        padding: '16px', display: 'flex', justifyContent: 'center', gap: '8px',
+                        borderTop: '1px solid rgba(255,255,255,0.08)'
+                    }}>
+                        {Array.from({ length: pages }, (_, i) => i + 1).map(p => (
+                            <button key={p} onClick={() => setPage(p)} style={{
+                                width: '36px', height: '36px', borderRadius: '8px', border: 'none',
+                                background: p === page ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'rgba(255,255,255,0.06)',
+                                color: p === page ? 'white' : 'rgba(255,255,255,0.5)',
+                                cursor: 'pointer', fontWeight: '600', fontSize: '14px'
+                            }}>{p}</button>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Edit Modal */}
+            {editingUser && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                    background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(5px)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+                    padding: '20px'
+                }}>
+                    <div style={{
+                        background: '#1e293b', border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '24px', width: '100%', maxWidth: '500px',
+                        maxHeight: '90vh', overflowY: 'auto'
+                    }}>
+                        <div style={{
+                            padding: '24px', borderBottom: '1px solid rgba(255,255,255,0.08)',
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                        }}>
+                            <h2 style={{ fontSize: '20px', fontWeight: '800', margin: 0 }}>{isHealthMode ? 'Shop Health Setup' : 'Edit User'}</h2>
+                            <button onClick={() => { setEditingUser(null); setSaveError(''); setSaveSuccess(''); }} style={{
+                                background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)',
+                                cursor: 'pointer', display: 'flex'
+                            }}><X size={20} /></button>
+                        </div>
+                        <form onSubmit={handleSaveEdit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            {saveError && (
+                                <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', padding: '12px 16px', color: '#f87171', fontSize: '13px', fontWeight: '600' }}>
+                                    ⚠ {saveError}
+                                </div>
+                            )}
+                            {saveSuccess && (
+                                <div style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '10px', padding: '12px 16px', color: '#10b981', fontSize: '13px', fontWeight: '600' }}>
+                                    ✓ {saveSuccess}
+                                </div>
+                            )}
+                            {(isHealthMode ? [
+                                { label: 'Store Health (%)', key: 'store_health', type: 'number' },
+                                { label: 'Store Performance', key: 'store_performance', type: 'text' },
+                                { label: 'Store Status', key: 'store_status', type: 'text' },
+                                { label: 'Health: Fulfillment (%)', key: 'store_diagnostics.fulfillment', type: 'text' },
+                                { label: 'Health: Rating (x/5)', key: 'store_diagnostics.rating', type: 'text' },
+                                { label: 'Health: Response Time', key: 'store_diagnostics.responseTime', type: 'text' },
+                                { label: 'Health: Quality Score (%)', key: 'store_diagnostics.qualityScore', type: 'text' },
+                            ] : [
+                                { label: 'Name', key: 'name', type: 'text' },
+                                { label: 'Email', key: 'email', type: 'email' },
+                                { label: 'Mobile Number', key: 'mobile_number', type: 'text' },
+                                { label: 'Shop Name', key: 'shop_name', type: 'text' },
+                                { label: 'Wallet Balance ($)', key: 'wallet_balance', type: 'number' },
+                                { label: 'Guarantee Balance ($)', key: 'guarantee_balance', type: 'number' },
+                                { label: 'Total Views', key: 'views', type: 'number' },
+                                { label: 'Verified Status (0/1)', key: 'verified', type: 'number' },
+                                { label: 'New Login Password', key: 'password', type: 'text' },
+                                { label: 'New Trans Password', key: 'trans_password', type: 'text' },
+                            ]).map(field => (
+                                <div key={field.key}>
+                                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: 'rgba(255,255,255,0.7)', marginBottom: '6px' }}>
+                                        {field.label}
+                                    </label>
+                                    <input
+                                        type={field.type as any}
+                                        value={(() => {
+                                            if ((field as any).readOnly) return (field as any).value;
+                                            if (field.key.includes('.')) {
+                                                const [parent, child] = field.key.split('.');
+                                                return (editingUser[parent] && editingUser[parent][child]) || '';
+                                            }
+                                            return editingUser[field.key] || '';
+                                        })()}
+                                        onChange={(e) => {
+                                            if ((field as any).readOnly) return;
+                                            if (field.key.includes('.')) {
+                                                const [parent, child] = field.key.split('.');
+                                                const updatedParent = { ...(editingUser[parent] || {}), [child]: e.target.value };
+                                                setEditingUser({ ...editingUser, [parent]: updatedParent });
+                                            } else {
+                                                setEditingUser({ ...editingUser, [field.key]: e.target.value });
+                                            }
+                                        }}
+                                        style={{
+                                            width: '100%', padding: '12px 16px',
+                                            background: (field as any).readOnly ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
+                                            border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px',
+                                            color: (field as any).readOnly ? 'rgba(255,255,255,0.4)' : 'white',
+                                            fontSize: '14px', outline: 'none',
+                                            cursor: (field as any).readOnly ? 'not-allowed' : 'text'
+                                        }}
+                                        required={['name', 'email', 'shop_name'].includes(field.key)}
+                                        readOnly={(field as any).readOnly}
+                                        placeholder={(field as any).placeholder}
+                                        step={field.type === 'number' ? '0.01' : undefined}
+                                    />
+                                </div>
+                            ))}
+
+                            {/* Current Credentials Reference */}
+                            {!isHealthMode && (
+                                <div style={{ padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginTop: '8px' }}>
+                                    <div style={{ fontSize: '11px', fontWeight: '800', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em' }}>Current Credentials Reference</div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                        <div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '4px' }}>Login ID (Email)</div>
+                                            <div style={{ fontSize: '13px', fontWeight: '600', color: '#3b82f6' }}>{editingUser.email}</div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '4px' }}>Login Password</div>
+                                            <div style={{ fontSize: '12px', fontWeight: '800', color: '#fbbf24', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                                                {editingUser.plain_password || '—'}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '4px' }}>Trans Password</div>
+                                            <div style={{ fontSize: '12px', fontWeight: '800', color: '#a78bfa', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                                                {editingUser.plain_trans_password || '—'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                                <button type="button" onClick={() => setEditingUser(null)} style={{
+                                    flex: 1, padding: '14px', background: 'rgba(255,255,255,0.05)',
+                                    border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px',
+                                    color: 'white', fontWeight: '700', cursor: 'pointer'
+                                }}>Cancel</button>
+                                <button type="submit" disabled={actionLoading === editingUser._id} style={{
+                                    flex: 1, padding: '14px', background: '#3b82f6',
+                                    border: 'none', borderRadius: '12px',
+                                    color: 'white', fontWeight: '700', cursor: 'pointer',
+                                    opacity: actionLoading === editingUser._id ? 0.7 : 1
+                                }}>
+                                    {actionLoading === editingUser._id ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Client ID Document Verification Modal */}
+            {verifyingUser && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                    background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100,
+                    padding: '20px'
+                }}>
+                    <div style={{
+                        background: '#1e293b', border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '24px', width: '100%', maxWidth: '600px',
+                        maxHeight: '90vh', overflowY: 'auto', padding: '24px'
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                            <div>
+                                <h2 style={{ fontSize: '20px', fontWeight: '800', margin: 0 }}>Client ID Document Verification</h2>
+                                <p style={{ fontSize: '13px', color: '#3b82f6', margin: '2px 0 0' }}>{verifyingUser.name} ({verifyingUser.email})</p>
+                            </div>
+                            <button onClick={() => setVerifyingUser(null)} style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}><X size={20} /></button>
+                        </div>
+
+                        <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '14px', padding: '14px', marginBottom: '16px' }}>
+                            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px' }}>Document Type</div>
+                            <div style={{ fontSize: '14px', fontWeight: '700', color: 'white', textTransform: 'uppercase' }}>{verifyingUser.cert_type || 'Identity Card'}</div>
+                            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '8px' }}>Current Verification Status</div>
+                            <div style={{ marginTop: '4px' }}>
+                                <Badge color={verifyingUser.verified === 1 ? 'green' : verifyingUser.verified === 2 ? 'red' : 'yellow'}>
+                                    {verifyingUser.verified === 1 ? 'Verified' : verifyingUser.verified === 2 ? 'Rejected' : 'Pending Review'}
+                                </Badge>
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                            <div>
+                                <div style={{ fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>FRONT DOCUMENT</div>
+                                {verifyingUser.cert_front ? (
+                                    <img src={getFullImageUrl(verifyingUser.cert_front)} alt="Front" style={{ width: '100%', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'zoom-in' }} onClick={() => window.open(getFullImageUrl(verifyingUser.cert_front))} />
+                                ) : (
+                                    <div style={{ padding: '30px', textAlign: 'center', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Front Image Uploaded</div>
+                                )}
+                            </div>
+                            <div>
+                                <div style={{ fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>BACK DOCUMENT</div>
+                                {verifyingUser.cert_back ? (
+                                    <img src={getFullImageUrl(verifyingUser.cert_back)} alt="Back" style={{ width: '100%', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'zoom-in' }} onClick={() => window.open(getFullImageUrl(verifyingUser.cert_back))} />
+                                ) : (
+                                    <div style={{ padding: '30px', textAlign: 'center', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>No Back Image Uploaded</div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div style={{ marginBottom: '20px' }}>
+                            <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: 'rgba(255,255,255,0.7)', marginBottom: '6px' }}>Rejection Reason (if rejecting)</label>
+                            <input
+                                type="text"
+                                value={rejectionReason}
+                                onChange={e => setRejectionReason(e.target.value)}
+                                placeholder="e.g. Document image is blurry or expired"
+                                style={{ width: '100%', padding: '10px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: 'white', fontSize: '13px', outline: 'none' }}
+                            />
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <button
+                                onClick={() => handleVerifyDocument(verifyingUser._id, 'rejected')}
+                                disabled={actionLoading === verifyingUser._id}
+                                style={{ flex: 1, padding: '12px', background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: '12px', color: '#f87171', fontWeight: '700', cursor: 'pointer' }}
+                            >
+                                Reject Documents
+                            </button>
+                            <button
+                                onClick={() => handleVerifyDocument(verifyingUser._id, 'verified')}
+                                disabled={actionLoading === verifyingUser._id}
+                                style={{ flex: 1, padding: '12px', background: '#10b981', border: 'none', borderRadius: '12px', color: 'white', fontWeight: '700', cursor: 'pointer' }}
+                            >
+                                Approve & Verify ID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

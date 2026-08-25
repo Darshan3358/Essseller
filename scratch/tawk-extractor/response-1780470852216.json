@@ -1,0 +1,286 @@
+{
+  "url": "https://proxy.tawk.to/v2/feed?v=3",
+  "status": 200,
+  "data": [
+    {
+      "title": "New Integration: Telegram is here!",
+      "link": "https://www.tawk.to/tawk_to_academy/connect-telegram-to-your-tawk-to-inbox",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2026/04/Dashboard.jpg",
+      "date": "2026-04-02T00:00:00.000Z",
+      "description": "Telegram is now a fully supported channel in your tawk.to inbox. Manage your messages directly from one central hub, meet your customers where they are, and keep your workflow seamless without switching apps."
+    },
+    {
+      "title": "2025 EOY update: WhatsApp, Dark Mode + more",
+      "link": "https://www.tawk.to/updates/2025-eoy-update-whatsapp-dark-mode-more/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2025/12/Dashboard.jpg",
+      "date": "2025-12-04T19:00:00.000Z",
+      "description": "Customer messaging just got a big upgrade. WhatsApp is now a fully supported channel in your tawk.to inbox, with template sync, voice notes and AI Agents that can reply across WhatsApp, SMS, Messenger and live chat. You’ll also see a new vertical navigation, a redesigned cross-channel inbox, Dark Mode, rebuilt Integrations and smoother Contacts management, plus a sneak peek at what’s coming in 2026, including more channels, smarter AI Agents and the new Pipeline product."
+    },
+    {
+      "title": "AI Assist now integrates with BigCommerce",
+      "link": "https://www.tawk.to/ai-assist-videos/ai-assist-integrates-with-bigcommerce",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2025/09/BigCommerce-Dashboard.jpg",
+      "date": "2025-09-08T06:00:00.000Z",
+      "description": "AI Assist just levelled up.\nNow it connects with BigCommerce, giving your customers instant access to product availability and order tracking info, directly from your tawk.to inbox."
+    },
+    {
+      "title": "SMS is now in your tawk.to inbox",
+      "link": "https://help.tawk.to/article/connecting-twilio-sms-to-your-tawkto-inbox",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2025/08/IMG_0497.jpeg",
+      "date": "2025-08-27T11:32:00.000Z",
+      "description": "Send and receive SMS directly inside your tawk.to inbox - no need to switch tools. Connect your Twilio account to start texting your customers alongside live chat, Messenger and tickets."
+    },
+    {
+      "title": "Boost Security with MFA",
+      "link": "https://youtu.be/EPATBIlVY7Q",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2025/03/MFA-Dashboard-Release.jpg",
+      "date": "2025-03-07T10:41:00.000Z",
+      "description": "Your tawk.to account is now fortified with Multi-Factor Authentication, offering an extra layer of protection for your data. Enjoy enhanced security and peace of mind with every login."
+    },
+    {
+      "title": "Deploy multiple AI Agents across various channels",
+      "link": "https://www.tawk.to/ai-assist/deploy-multiple-ai-agents-across-various-channels/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2024/10/AI-Agents-Dashboard-Blog.png",
+      "date": "2024-10-29T04:00:00.000Z",
+      "description": "Introducing tawk.to’s AI Agent! Create and manage multiple AI Agents to streamline your customer support, each tailored for specific tasks and channels. "
+    },
+    {
+      "title": "Streamline Your Inbox: How to Use Split-View Effectively",
+      "link": "https://www.tawk.to/dashboard-101/using-your-inboxs-split-view-feature/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2024/10/Split-Screen-blog.png",
+      "date": "2024-10-10T11:08:00.000Z",
+      "description": "Learn how to use your inbox’s split-view feature to manage conversations more efficiently."
+    },
+    {
+      "title": "Help us translate tawk.to",
+      "link": "https://www.tawk.to/translate/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2024/07/Dashboard.png",
+      "date": "2024-07-25T20:00:00.000Z",
+      "description": "Our editorial team is seeking assistance with the translation of our dashboard for the web and mobile apps.\n"
+    },
+    {
+      "title": "My wife ate a Fish Hook",
+      "link": "https://www.tawk.to/customer-happiness/my-wife-ate-a-fish-hook/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2024/04/fish-hook-100.jpg",
+      "date": "2024-04-05T21:25:00.000Z",
+      "description": "How my wife ate a Fish Hook in a Michelin guide rated restaurant and how the restaurant responded."
+    },
+    {
+      "title": "Increase your productivity in 2023: Time-saving strategies for entrepreneurs",
+      "link": "https://www.tawk.to/business-strategy/time-saving-strategies-for-entrepreneurs/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2023/06/productivity-dashboard2.png",
+      "date": "2023-02-08T20:00:00.000Z",
+      "description": "When you’re an entrepreneur, time is often in short supply. We hear you. To make 2023 your best year yet, test these tried and true time-saving strategies."
+    },
+    {
+      "title": "Resolve support tickets fast with these strategies",
+      "link": "https://www.tawk.to/business-strategy/resolve-support-tickets-fast-with-these-strategies/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2023/06/productivity-dashboard.png",
+      "date": "2023-02-08T19:00:00.000Z",
+      "description": "Use these ticketing strategies from tawk.to to speed up help desk responses, win underserved customers, and better serve the customers you have."
+    },
+    {
+      "title": "Customer service KPIs to increase loyalty in 2023 ",
+      "link": "https://www.tawk.to/customer-happiness/customer-service-kpis-to-increase-loyalty/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2023/06/kpi-dashboard.png",
+      "date": "2023-01-05T23:00:00.000Z",
+      "description": "To help you plan for 2023, we've gathered some of the top customer service KPIs to track for increased customer loyalty, satisfaction, and sales."
+    },
+    {
+      "title": "How to deliver exceptional customer service this holiday season",
+      "link": "https://www.tawk.to/business-strategy/how-to-deliver-exceptional-customer-service-this-holiday-season/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2023/06/christmas-dashboard.png",
+      "date": "2022-12-14T23:31:00.000Z",
+      "description": "With the holidays just around the corner, here are a few tips to give you a boost in preparation for shoppers coming your way.\n"
+    },
+    {
+      "title": "221 tasks you can assign to a Virtual Assistant",
+      "link": "https://www.tawk.to/business-strategy/221-tasks-you-can-assign-to-a-virtual-assistant/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/09/201-tasks-for-Virtual-Assistant_Dashoard.jpg",
+      "date": "2022-11-14T19:00:00.000Z",
+      "description": "What can you take off of your daily to-do list? The answer may surprise you. Here’s a checklist with 221 tasks you can assign to a Virtual Assistant — so you don’t have to add another desk to the office, create a new position, or give up your weekend figuring out how to do something you never wanted to do in the first place."
+    },
+    {
+      "title": "Announcing the release of Contacts — a free CRM",
+      "link": "https://www.tawk.to/updates/crm-beta-release-contacts/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2023/06/contacts-dashboard.png",
+      "date": "2022-11-07T15:00:00.000Z",
+      "description": "We’re excited to announce the Beta release of tawk.to Contacts, a feature-rich and easy-to-use CRM. With Contacts, you can manage all of your conversations and customer activity across multiple channels from the inside of the tawk.to Dashboard. And it’s 100% free! "
+    },
+    {
+      "title": "How to onboard your Virtual Assistant for success",
+      "link": "https://www.tawk.to/business-strategy/how-to-onboard-your-virtual-assistant-for-success/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/06/How-to-onboard-your-Virtual-Assistant-for-success_Dashoard.png",
+      "date": "2022-06-20T12:00:00.000Z",
+      "description": "How can your new Virtual Assistant start strong?  Watch our interview with the tawk.to HR team to hear what they've learned after onboarding hundreds of VAs. "
+    },
+    {
+      "title": "Respond effortlessly with these easy email templates",
+      "link": "https://www.tawk.to/business-strategy/respond-effortlessly-with-easy-email-templates/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/05/Email-Templates-Blog_Dashoard.jpg",
+      "date": "2022-06-02T23:00:00.000Z",
+      "description": "Some customers need a little nudge and a great email template is the easiest way to follow up. We've put together a collection of templates that may be just what you need to get that long-awaited response from a potential client."
+    },
+    {
+      "title": "Communicating effectively with your virtual assistant",
+      "link": "https://www.tawk.to/digital-communication/communicating-effectively-with-your-virtual-assistant/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/05/Communicating-with-your-Virtual-Assistant_Dashoard.jpg",
+      "date": "2022-05-24T02:54:00.000Z",
+      "description": "Working with a Virtual Assistant? Use these strategies for clear and effective communication to get the most out of working with your VA."
+    },
+    {
+      "title": "The End of Day Report: Meet our new tool for improving remote team management ",
+      "link": "https://www.tawk.to/business-strategy/end-of-day-report-remote-team-management/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/05/End-of-day-report.png",
+      "date": "2022-05-08T23:47:00.000Z",
+      "description": "Now it’s easy to track your remote team members’ performance. Our new End of Day Report gives you a summary of the completed tasks that matter most to you."
+    },
+    {
+      "title": "Respond to chats quickly with these shortcuts",
+      "link": "https://www.tawk.to/business-strategy/respond-to-chats-quickly-with-these-shortcuts/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/04/Shortcuts_Dashoard.jpg",
+      "date": "2022-04-06T02:11:00.000Z",
+      "description": "Shortcuts give you an easy way to speed up your responses by using templated answers, here are some examples to get you started."
+    },
+    {
+      "title": "A brand new look for mobile chat",
+      "link": "https://www.tawk.to/updates/a-brand-new-look-for-mobile-chat/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/04/a-brand-new-look-for-mobile-chat_dashboard.jpg",
+      "date": "2022-04-03T17:04:00.000Z",
+      "description": "Now it’s even easier to stay close to your customers on mobile with our new updates for Android and iOS. "
+    },
+    {
+      "title": "The tawk.to complete guide to hiring a Virtual Assistant",
+      "link": "https://www.tawk.to/business-strategy/complete-guide-to-hiring-a-virtual-assistant/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/02/The-tawk.to-guide-to-hiring-a-VA_Dashoard.jpg",
+      "date": "2022-02-23T12:00:00.000Z",
+      "description": "Thinking about hiring a VA? Our new complete guide to hiring a Virtual Assistant will get you started and on your way to reclaiming your time."
+    },
+    {
+      "title": "New release: Add tawk.to to your app with plugins for Vue.js and React.js",
+      "link": "https://www.tawk.to/updates/new-release-tawk-to-plugins-for-vue-js-and-react-js/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/02/Add-tawkto-to-your-app-with-plugins-for-Vuejs-and-Reactjs_Dashoard.jpg",
+      "date": "2022-02-23T02:00:00.000Z",
+      "description": "Our new Vue.js and React.js plugins provide seamless integration, connecting app users directly to your support team. "
+    },
+    {
+      "title": "How to set your customer service team up for success",
+      "link": "https://www.tawk.to/customer-happiness/how-to-set-your-customer-service-team-up-for-success/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2022/02/How-to-set-your-customer-service-team-up-for-success_Dashoard.jpeg",
+      "date": "2022-02-22T16:00:00.000Z",
+      "description": "Learn how to use the widget to elevate your customer service to new heights.\n"
+    },
+    {
+      "title": "New Chat Widget",
+      "link": "https://www.tawk.to/updates/widget-cards/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2021/05/Announcing-Widget-Cards_DASHBOARD.jpg",
+      "date": "2021-05-22T07:55:00.000Z",
+      "description": "Now you can share a video, qualify leads or offer a search bar in your widget with tawk.to’s newest feature — Widget Cards! \n"
+    },
+    {
+      "title": "New feature: Support emails now automatically customized for you",
+      "link": "https://www.tawk.to/updates/support-emails-now-customized/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2021/05/ticket-forward-email.png",
+      "date": "2021-05-03T15:00:00.000Z",
+      "description": "We're excited to announce a new email update at tawk.to — now available for every subscriber: a default Ticketing Email address automatically customized for the name of your chat property ..."
+    },
+    {
+      "title": "White label your Knowledge Base",
+      "link": "https://www.tawk.to/updates/white-label-knowledge-base/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2021/02/KBRebrand100.jpg",
+      "date": "2021-02-21T06:05:00.000Z",
+      "description": "Announcing our new Knowledge Base white label feature, brought to you by popular request. Now you can make your Knowledge Base truly your own — and it’s 100% included in this Add-on ..."
+    },
+    {
+      "title": "Why is tawk.to FREE?",
+      "link": "https://www.tawk.to/why-free",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2020/08/why-free-100x100-1.jpg",
+      "date": "2020-08-27T05:33:00.000Z",
+      "description": "The #1 question that people ask us is: \"Why is tawk.to FREE?\" The answer is probably not what you think."
+    },
+    {
+      "title": "Hire a Virtual Assistant",
+      "link": "https://www.tawk.to/services/hire-virtual-assistant/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2020/08/hire-va-2020.png",
+      "date": "2020-08-05T07:07:00.000Z",
+      "description": "Free up your time, get organized, and simplify your work day. Forget about recruiting, screening resumes, interviews and managing schedules or payroll, we'll do it for you."
+    },
+    {
+      "title": "Looking for a career change? We're hiring!",
+      "link": "https://www.tawk.to/jobs-at-tawk-to/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2020/06/job100x100.png",
+      "date": "2020-06-13T17:10:00.000Z",
+      "description": "At tawk.to, we help millions of businesses, help billions of customers. Join us, and together, let's help, learn and grow."
+    },
+    {
+      "title": "Adopt a customer-first approach and other takeaways from NRF 2020",
+      "link": "https://www.tawk.to/events/adopt-a-customer-first-approach-and-other-takeaways-from-nrf-2020/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2020/01/NRF100.png",
+      "date": "2020-01-17T16:09:00.000Z",
+      "description": "Startup founders, tech innovators, e-commerce executives and retail advocates shared their insights at NRF 2020. If you missed it, here are our top takeaways from the event."
+    },
+    {
+      "title": "How to communicate with customers online",
+      "link": "https://www.tawk.to/customer-happiness/how-to-communicate-with-customers-online/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/12/Communicate100.png",
+      "date": "2020-01-06T16:00:00.000Z",
+      "description": "Speaking with customers is crucial for brand loyalty and making sure you're making the right moves with your business. Great communication takes practice but it's a skill you can learn."
+    },
+    {
+      "title": "The road to young entrepreneurship",
+      "link": "https://www.tawk.to/business-strategy/the-road-to-young-entrepreneurship/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/12/YoungEntrepreneur100.png",
+      "date": "2019-12-30T05:00:00.000Z",
+      "description": "Starting a business isn't easy but it can be very rewarding personally and financially. If you’re thinking about launching a business, there are a few questions you should ask yourself."
+    },
+    {
+      "title": "Digital web trends and how to implement them",
+      "link": "https://www.tawk.to/business-strategy/digital-web-trends-and-how-to-implement-them/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/12/DigitalWebTrends100.png",
+      "date": "2019-12-21T16:00:00.000Z",
+      "description": "We're excited to feature a guest blog by Gareth Tait, a Web Coordinator at TourismTiger. Check out Gareth's top 5 digital web trends for 2020."
+    },
+    {
+      "title": "How experiential marketing can benefit your business",
+      "link": "https://www.tawk.to/business-strategy/how-experiential-marketing-can-benefit-your-business/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/12/ExperientialMarketing100.png",
+      "date": "2019-12-20T17:00:00.000Z",
+      "description": "Creating a shareable experience is becoming the best way to market to your audience. Do something people will remember, make them smile and they'll do the marketing for you."
+    },
+    {
+      "title": "Free up more time with process automation",
+      "link": "https://www.tawk.to/business-strategy/free-up-more-time-with-process-automation/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/12/Automation100.png",
+      "date": "2019-12-19T11:00:00.000Z",
+      "description": "Process automation can ensure you provide market-leading customer service, improve productivity, lift employee morale and strengthen your business, all while reducing errors."
+    },
+    {
+      "title": "8 tips to help you find great talent for your business",
+      "link": "https://www.tawk.to/business-strategy/8-tips-to-help-you-find-great-talent-for-your-business/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/12/Hiring100.png",
+      "date": "2019-12-18T11:00:00.000Z",
+      "description": "Getting terrific talent doesn’t have to be overwhelming. With the right preparation, you'll give yourself the best possible chance of finding your next star employee."
+    },
+    {
+      "title": "Implementing the right level of process in your business",
+      "link": "https://www.tawk.to/business-strategy/implementing-the-right-level-of-process-in-your-business/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/12/Process100.png",
+      "date": "2019-12-17T11:00:00.000Z",
+      "description": "Reaching the perfect amount of processes for your business can be tough. Not enough and you're forever chasing your tail. Too much and you'll slow to a standstill."
+    },
+    {
+      "title": "The lost art of real talk in business",
+      "link": "https://www.tawk.to/business-strategy/the-lost-art-of-real-talk-in-business/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/12/RealTalk100.png",
+      "date": "2019-12-16T11:00:00.000Z",
+      "description": "Being authentic with customers builds trust and creates lasting relationships. Having in-depth conversations can be a challenge with current technology, here are some tips to make it easier."
+    },
+    {
+      "title": "Here’s why tawk.to is Free – (it’s probably not what you think)",
+      "link": "https://www.tawk.to/blurts/heres-why-tawk-to-is-free-its-probably-not-what-you-think/",
+      "image_link": "https://www.tawk.to/wp-content/uploads/2019/04/whytawkfree.png",
+      "date": "2018-11-11T10:00:25.000Z",
+      "description": "Why is tawk.to Free? To which we reply:"
+    }
+  ]
+}
