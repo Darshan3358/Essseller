@@ -93,8 +93,33 @@ exports.getDashboardStats = async (req, res) => {
             Promise.resolve(seller.wallet_balance || 0)
         ]);
 
+        // Aggregate receivables (orders in pending/processing/shipped status, pending clearance)
+        const receivablesResult = await Order.aggregate([
+            {
+                $match: {
+                    seller_id: { $in: sellerIdFilter },
+                    status: { $in: ['pending', 'processing', 'shipped', 'Pending', 'Processing', 'Shipped'] }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: {
+                        $sum: {
+                            $cond: {
+                                if: { $and: [{ $ne: ["$order_total", ""] }, { $ne: ["$order_total", null] }] },
+                                then: { $toDouble: "$order_total" },
+                                else: 0
+                            }
+                        }
+                    }
+                }
+            }
+        ]);
+        const receivables = receivablesResult.length > 0 ? (receivablesResult[0].total || 0) : 0;
+
         const totalSales = salesResult.length > 0 ? salesResult[0].total : 0;
-        const guaranteeMoney = guaranteeResult.length > 0 ? (guaranteeResult[0].total || 0) : 0;
+        const guaranteeMoney = seller.guarantee_balance || (guaranteeResult.length > 0 ? (guaranteeResult[0].total || 0) : 0);
         const activePackage = activePackages[0] || null;
         
         // Find corresponding PackagePlan to get features
@@ -301,7 +326,8 @@ exports.getDashboardStats = async (req, res) => {
             lastMonthSales: lastMonthData.sales,
             netProfit,
             netProfitMargin,
-            guaranteeMoney: seller.guarantee_balance || guaranteeMoney,
+            receivables,
+            guaranteeMoney,
             mainWallet: availableBalance,
             productLimit,
             remainingProducts,

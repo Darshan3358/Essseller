@@ -50,10 +50,11 @@ export default function WithdrawPage() {
 
             if (walletRes.success) {
                 const realBalance = statsRes?.success ? (statsRes.stats?.mainWallet ?? walletRes.data.balance) : walletRes.data.balance;
+                const realGuarantee = statsRes?.success ? (statsRes.stats?.guaranteeMoney || walletRes.data.guaranteeMoney || 0) : (walletRes.data.guaranteeMoney || 0);
                 setWalletData({
                     ...walletRes.data,
                     balance: realBalance,
-                    guaranteeMoney: statsRes?.success ? (statsRes.stats?.guaranteeMoney || 0) : 0
+                    guaranteeMoney: realGuarantee
                 });
                 if (walletRes.data.bank_details) {
                     const bd = walletRes.data.bank_details;

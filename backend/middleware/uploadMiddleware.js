@@ -31,7 +31,7 @@ if (process.env.CLOUDINARY_URL || (process.env.CLOUDINARY_CLOUD_NAME && process.
     const IS_SERVERLESS = process.env.NODE_ENV === 'production';
     const uploadDir = IS_SERVERLESS
         ? path.join('/tmp', 'uploads')
-        : path.join(__dirname, '../../uploads');
+        : path.join(__dirname, '../uploads');
 
     try {
         if (!fs.existsSync(uploadDir)) {

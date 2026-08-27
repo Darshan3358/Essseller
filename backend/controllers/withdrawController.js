@@ -213,6 +213,7 @@ const getWalletDetails = asyncHandler(async (req, res) => {
         success: true,
         data: {
             balance: walletBalance,
+            guaranteeMoney: seller.guarantee_balance || 0,
             rechargeMoney,
             packageMoney,
             storehouseTotalPayment,

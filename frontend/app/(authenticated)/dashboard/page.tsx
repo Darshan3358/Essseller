@@ -61,7 +61,7 @@ export default function DashboardPage() {
 
 const mapStats = (dbStats: any) => ({
     totalLifetimeSales: dbStats.totalSales || 0,
-    amountReceivables: dbStats.guaranteeMoney || 0,
+    amountReceivables: dbStats.receivables || 0,
     todaySales: dbStats.todaySales || 0,
     thisMonthSales: dbStats.thisMonthSales || 0,
     lastMonthSales: dbStats.lastMonthSales || 0,
@@ -224,44 +224,34 @@ const refetchChartData = async (range: DateRange) => {
                                     </div>
                                 </div>
 
-                                {/* Views Metric Display inside First Card */}
-                                <div className="relative z-10 pt-2 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-2 text-center w-full">
-                                    <div>
-                                        <p className="text-sm font-black text-slate-800 dark:text-slate-100">{stats.usedViews.toLocaleString()}</p>
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Used</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-black text-slate-800 dark:text-slate-100">{stats.remainingViews.toLocaleString()}</p>
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Remaining</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-black text-emerald-600 dark:text-emerald-400">{stats.views.toLocaleString()}</p>
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Views</p>
-                                    </div>
-                                </div>
+                                 {/* Views Metric Display inside First Card */}
+                                 <div className="relative z-10 pt-2 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-2 text-center w-full">
+                                     <div>
+                                         <p className="text-sm font-black text-slate-800 dark:text-slate-100">{stats.usedViews.toLocaleString()}</p>
+                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Used</p>
+                                     </div>
+                                     <div>
+                                         <p className="text-sm font-black text-slate-800 dark:text-slate-100">{stats.remainingViews.toLocaleString()}</p>
+                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Remaining</p>
+                                     </div>
+                                     <div>
+                                         <p className="text-sm font-black text-emerald-600 dark:text-emerald-400">{stats.views.toLocaleString()}</p>
+                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Views</p>
+                                     </div>
+                                 </div>
 
-                                {/* Bottom Info */}
-                                <div className="relative z-10 mt-1 flex flex-col items-start gap-[12px] w-full">
-                                    {/* Last Updated */}
-                                    <p className="text-[12px] text-[#9ca3af] flex items-center gap-[6px]">
-                                        <CheckCircle2 className="w-3.5 h-3.5 text-[#22c55e] shadow-sm" />
-                                        Last Updated: <span className="text-slate-600 dark:text-slate-300 font-bold">
-                                            {user.store_health_updated_at 
-                                                ? new Date(user.store_health_updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) 
-                                                : 'Today'}
-                                        </span>
-                                    </p>
-
-                                    {/* Show Detail Button — visible to all (admin can control via backend) */}
-                                    <button
-                                        onClick={() => setShowHealthModal(true)}
-                                        className="w-full flex items-center justify-center gap-2 p-[10px] border border-[#22c55e] text-[#22c55e] bg-transparent hover:bg-green-50 dark:hover:bg-green-900/20 rounded-[10px] font-bold text-xs transition-all active:scale-95"
-                                    >
-                                        <Eye className="w-3.5 h-3.5" />
-                                        Show Detail
-                                    </button>
-                                </div>
-                            </div>
+                                 {/* Bottom Info */}
+                                 <div className="relative z-10 mt-1 flex flex-col items-start gap-[12px] w-full">
+                                     {/* Show Detail Button */}
+                                     <button
+                                         onClick={() => setShowHealthModal(true)}
+                                         className="w-full flex items-center justify-center gap-2 p-[10px] border border-[#22c55e] text-[#22c55e] bg-transparent hover:bg-green-50 dark:hover:bg-green-900/20 rounded-[10px] font-bold text-xs transition-all active:scale-95"
+                                     >
+                                         <Eye className="w-3.5 h-3.5" />
+                                         Show Detail
+                                     </button>
+                                 </div>
+                             </div>
                         </div>
                     </div>
                 </section>
@@ -374,26 +364,20 @@ const refetchChartData = async (range: DateRange) => {
                                         Upgrade Level <ArrowRight className="w-4 h-4" />
                                     </button>
 
-                                    <div className="grid grid-cols-3 gap-4 text-center pt-4 border-t border-white/10">
-                                        <div>
-                                            <p className="text-lg font-black text-white">
-                                                {stats.usedViews.toLocaleString()}
-                                            </p>
-                                            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">Used</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-lg font-black text-white">
-                                                {stats.remainingViews.toLocaleString()}
-                                            </p>
-                                            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">Remaining</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-lg font-black text-yellow-300">
-                                                {stats.views.toLocaleString()}
-                                            </p>
-                                            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">Views</p>
-                                        </div>
-                                    </div>
+                                     <div className="grid grid-cols-2 gap-4 text-center pt-4 border-t border-white/10">
+                                         <div>
+                                             <p className="text-lg font-black text-white">
+                                                 {stats.usedViews.toLocaleString()}
+                                             </p>
+                                             <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">Total Product Use</p>
+                                         </div>
+                                         <div>
+                                             <p className="text-lg font-black text-white">
+                                                 {stats.remainingViews.toLocaleString()}
+                                             </p>
+                                             <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-0.5">Remaining</p>
+                                         </div>
+                                     </div>
                                 </div>
                             </div>
                         </div>
