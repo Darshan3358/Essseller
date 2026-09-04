@@ -209,7 +209,7 @@ export default function ProductsPage() {
                                             </td>
                                             <td className="px-6 py-6">
                                                 <p className="text-xs text-gray-500 dark:text-slate-400 font-medium line-clamp-2 leading-relaxed" title={product.description || 'No description'}>
-                                                    {product.description || t('No description')}
+                                                    {(product.description || t('No description')).replace(/^Premium quality\s*/i, '')}
                                                 </p>
                                             </td>
                                             <td className="px-6 py-6 text-right">

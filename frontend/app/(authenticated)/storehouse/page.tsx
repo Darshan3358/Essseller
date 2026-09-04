@@ -20,6 +20,7 @@ function StorehousePageInner() {
     const [products, setProducts] = useState<any[]>([]);
     const [addedProductIds, setAddedProductIds] = useState<Set<string>>(new Set());
     const [isLoading, setIsLoading] = useState(true);
+    const [isPageLoading, setIsPageLoading] = useState(false);
     const [addingId, setAddingId] = useState<string | null>(null);
     const [addError, setAddError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
@@ -61,6 +62,7 @@ function StorehousePageInner() {
     };
 
     const fetchProducts = async (page: number) => {
+        setIsPageLoading(true);
         try {
             let url = `/products?page=${page}&limit=${PRODUCTS_PER_PAGE}`;
             if (selectedCategory !== 'All') url += `&category=${encodeURIComponent(selectedCategory)}`;
@@ -69,12 +71,18 @@ function StorehousePageInner() {
             const res = await api.get(url);
             if (res.success) {
                 setProducts(res.data || []);
-                // If the backend doesn't return totalCount, we fallback to a reasonable number or handle it
-                setTotalProducts(res.totalCount || res.count || (res.data.length * 10)); // Adjust based on API
+                setTotalProducts(res.totalCount !== undefined ? res.totalCount : (res.count || 0));
             }
         } catch (error) {
             console.error('Error fetching products:', error);
+        } finally {
+            setIsPageLoading(false);
         }
+    };
+
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+        window.scrollTo({ top: 250, behavior: 'smooth' });
     };
 
     useEffect(() => {
@@ -233,12 +241,11 @@ function StorehousePageInner() {
                             </div>
                         ) : (
                             <div className="space-y-8">
-                                <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 md:gap-6">
+                                <div className={`grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 md:gap-6 transition-opacity duration-200 ${isPageLoading ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
                                     {paginatedProducts.map(product => {
                                     const isAdded = addedProductIds.has(String(product._id));
                                     const isAdding = addingId === product._id;
                                     const imgSrc = getFullImageUrl(product.image);
-
 
                                     return (
                                         <div
@@ -252,11 +259,11 @@ function StorehousePageInner() {
                                                         src={imgSrc} 
                                                         alt={product.name} 
                                                         fill 
+                                                        unoptimized
                                                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" 
                                                         className="object-contain group-hover/img:scale-110 transition-transform duration-700"
                                                         onError={(e) => {
-                                                            (e.target as HTMLImageElement).srcset = '';
-                                                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop';
+                                                            (e.target as HTMLImageElement).style.opacity = '0';
                                                         }}
                                                     />
                                                 ) : (
@@ -315,11 +322,11 @@ function StorehousePageInner() {
 
                                 {/* Pagination Controls */}
                                 {totalPages > 1 && (
-                                    <div className="flex items-center justify-center gap-2 mt-8">
+                                    <div className="flex items-center justify-center gap-2 mt-8 relative z-20 pb-12">
                                         <button
-                                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                                            disabled={currentPage === 1}
-                                            className="p-2 sm:p-3 rounded-xl border border-gray-100 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-gray-600 dark:text-slate-400 disabled:opacity-30 transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                                            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                                            disabled={currentPage === 1 || isPageLoading}
+                                            className="p-2 sm:p-3 rounded-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-400 disabled:opacity-30 transition-all hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer"
                                         >
                                             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                                         </button>
@@ -336,10 +343,11 @@ function StorehousePageInner() {
                                                     return (
                                                         <button
                                                             key={pageNum}
-                                                            onClick={() => setCurrentPage(pageNum)}
-                                                            className={`w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-[10px] sm:text-sm font-black transition-all ${currentPage === pageNum
-                                                                ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20'
-                                                                : 'text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-800'
+                                                            onClick={() => handlePageChange(pageNum)}
+                                                            disabled={isPageLoading}
+                                                            className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-black transition-all cursor-pointer ${currentPage === pageNum
+                                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 ring-2 ring-blue-600'
+                                                                : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800'
                                                                 }`}
                                                         >
                                                             {pageNum}
@@ -350,7 +358,7 @@ function StorehousePageInner() {
                                                     pageNum === currentPage + 2
                                                 ) {
                                                     return (
-                                                        <span key={pageNum} className="text-gray-400 dark:text-slate-600 font-black">...</span>
+                                                        <span key={pageNum} className="text-gray-400 dark:text-slate-600 font-black px-1">...</span>
                                                     );
                                                 }
                                                 return null;
@@ -358,9 +366,9 @@ function StorehousePageInner() {
                                         </div>
 
                                         <button
-                                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                                            disabled={currentPage === totalPages}
-                                            className="p-2 sm:p-3 rounded-xl border border-gray-100 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 text-gray-600 dark:text-slate-400 disabled:opacity-30 transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                                            onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                                            disabled={currentPage === totalPages || isPageLoading}
+                                            className="p-2 sm:p-3 rounded-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-400 disabled:opacity-30 transition-all hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer"
                                         >
                                             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                                         </button>
