@@ -270,7 +270,29 @@ const uploadQrCode = asyncHandler(async (req, res) => {
         throw new Error('No QR code image uploaded');
     }
     const fileUrl = req.file.path?.startsWith('http') ? req.file.path : `/uploads/${req.file.filename}`;
-    res.json({ success: true, url: fileUrl });
+    const type = req.body.type || req.query.type || 'bank';
+
+    if (type === 'bank') {
+        const existing = await SiteSetting.findOne({ key: 'bank_payment' });
+        const currentValue = (existing && existing.value) || {};
+        currentValue.qr_code_url = fileUrl;
+        await SiteSetting.findOneAndUpdate(
+            { key: 'bank_payment' },
+            { key: 'bank_payment', value: currentValue },
+            { upsert: true, new: true }
+        );
+    } else if (type === 'crypto') {
+        const existing = await SiteSetting.findOne({ key: 'crypto_payment' });
+        const currentValue = (existing && existing.value) || {};
+        currentValue.qr_code_url = fileUrl;
+        await SiteSetting.findOneAndUpdate(
+            { key: 'crypto_payment' },
+            { key: 'crypto_payment', value: currentValue },
+            { upsert: true, new: true }
+        );
+    }
+
+    res.json({ success: true, url: fileUrl, message: 'QR Code uploaded and saved successfully' });
 });
 
 module.exports = {

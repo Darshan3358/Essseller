@@ -123,6 +123,7 @@ export default function AdminSettingsPage() {
         try {
             const formData = new FormData();
             formData.append('qr_image', file);
+            formData.append('type', formType);
             const res = await fetch(`${API_URL}/settings/upload-qr`, {
                 method: 'POST',
                 body: formData
@@ -130,9 +131,21 @@ export default function AdminSettingsPage() {
             const data = await res.json();
             if (data.success && data.url) {
                 if (formType === 'bank') {
-                    setBankForm((prev: any) => ({ ...prev, qr_code_url: data.url }));
+                    const updated = { ...bankForm, qr_code_url: data.url };
+                    setBankForm(updated);
+                    await fetch(`${API_URL}/settings/bank`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+                        body: JSON.stringify(updated)
+                    });
                 } else {
-                    setCryptoForm((prev: any) => ({ ...prev, qr_code_url: data.url }));
+                    const updated = { ...cryptoForm, qr_code_url: data.url };
+                    setCryptoForm(updated);
+                    await fetch(`${API_URL}/settings/crypto`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+                        body: JSON.stringify({ ...updated, min_deposit: Number(updated.min_deposit) })
+                    });
                 }
                 setSaved(true);
                 setTimeout(() => setSaved(false), 3000);
@@ -143,6 +156,35 @@ export default function AdminSettingsPage() {
             setError(err.message || 'Error uploading QR image');
         } finally {
             setUploadingQr(false);
+        }
+    };
+
+    const handleRemoveQr = async (formType: 'bank' | 'crypto') => {
+        setSaving(true);
+        try {
+            if (formType === 'bank') {
+                const updated = { ...bankForm, qr_code_url: '' };
+                setBankForm(updated);
+                await fetch(`${API_URL}/settings/bank`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+                    body: JSON.stringify(updated)
+                });
+            } else {
+                const updated = { ...cryptoForm, qr_code_url: '' };
+                setCryptoForm(updated);
+                await fetch(`${API_URL}/settings/crypto`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+                    body: JSON.stringify({ ...updated, min_deposit: Number(updated.min_deposit) })
+                });
+            }
+            setSaved(true);
+            setTimeout(() => setSaved(false), 3000);
+        } catch (e: any) {
+            setError(e.message || 'Failed to remove QR');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -278,7 +320,7 @@ export default function AdminSettingsPage() {
                                             <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '12px', wordBreak: 'break-all' }}>{bankForm.qr_code_url}</p>
                                             <button
                                                 type="button"
-                                                onClick={() => setBankForm({ ...bankForm, qr_code_url: '' })}
+                                                onClick={() => handleRemoveQr('bank')}
                                                 style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', padding: '6px 14px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}
                                             >
                                                 <Trash2 size={14} /> Remove QR
