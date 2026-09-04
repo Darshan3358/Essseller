@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckCircle, Save, RefreshCw } from 'lucide-react';
+import { CheckCircle, Save, RefreshCw, Upload, Trash2, QrCode } from 'lucide-react';
 
 const CRYPTO_NETWORKS = [
     { key: 'usdt_trc20', label: 'USDT TRC20 Address', placeholder: 'TRC20 address (starts with T...)' },
@@ -24,12 +24,13 @@ const emptyForm = (keys: string[]) => Object.fromEntries(keys.map(k => [k, '']))
 export default function AdminSettingsPage() {
     const [tab, setTab] = useState<'crypto' | 'bank' | 'security'>('crypto');
     const [cryptoForm, setCryptoForm] = useState<any>({
-        usdt_trc20: '', usdt_erc20: '', btc: '', bnb: '',
+        usdt_trc20: '', usdt_erc20: '', btc: '', bnb: '', qr_code_url: '',
         network_note: 'Please verify the network before sending. Wrong network = lost funds.',
         min_deposit: '10'
     });
     const [bankForm, setBankForm] = useState<any>({
         ...emptyForm(['bank_name', 'account_name', 'account_number', 'ifsc_code', 'branch', 'swift_code']),
+        qr_code_url: '',
         note: 'Please include your email as payment reference'
     });
     const [securityForm, setSecurityForm] = useState<any>({
@@ -37,6 +38,7 @@ export default function AdminSettingsPage() {
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [uploadingQr, setUploadingQr] = useState(false);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState('');
 
@@ -112,6 +114,35 @@ export default function AdminSettingsPage() {
             setError(e.message || 'Error saving');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleUploadQr = async (file: File, formType: 'bank' | 'crypto') => {
+        setUploadingQr(true);
+        setError('');
+        try {
+            const formData = new FormData();
+            formData.append('qr_image', file);
+            const res = await fetch(`${API_URL}/settings/upload-qr`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success && data.url) {
+                if (formType === 'bank') {
+                    setBankForm((prev: any) => ({ ...prev, qr_code_url: data.url }));
+                } else {
+                    setCryptoForm((prev: any) => ({ ...prev, qr_code_url: data.url }));
+                }
+                setSaved(true);
+                setTimeout(() => setSaved(false), 3000);
+            } else {
+                setError(data.message || 'Failed to upload QR image');
+            }
+        } catch (err: any) {
+            setError(err.message || 'Error uploading QR image');
+        } finally {
+            setUploadingQr(false);
         }
     };
 
@@ -226,6 +257,49 @@ export default function AdminSettingsPage() {
                                         </div>
                                     ))}
                                 </div>
+                            </div>
+
+                            <div style={S.card}>
+                                <h2 style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.6)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Bank / UPI QR Code</h2>
+                                <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '16px' }}>
+                                    Upload your UPI / Bank Payment QR code image (PhonePe, GPay, Paytm, or NetBanking QR). It will be displayed to sellers on the Deposit & Payment page.
+                                </p>
+                                {bankForm.qr_code_url ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                                        <div style={{ background: '#ffffff', padding: '8px', borderRadius: '10px', display: 'inline-block' }}>
+                                            <img
+                                                src={bankForm.qr_code_url.startsWith('http') ? bankForm.qr_code_url : `${API_URL.replace('/api', '')}${bankForm.qr_code_url}`}
+                                                alt="Bank QR Code"
+                                                style={{ width: '120px', height: '120px', objectFit: 'contain', display: 'block' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <div style={{ fontSize: '13px', fontWeight: '700', color: '#10b981', marginBottom: '6px' }}>✓ Bank / UPI QR Code Active</div>
+                                            <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '12px', wordBreak: 'break-all' }}>{bankForm.qr_code_url}</p>
+                                            <button
+                                                type="button"
+                                                onClick={() => setBankForm({ ...bankForm, qr_code_url: '' })}
+                                                style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', padding: '6px 14px', borderRadius: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}
+                                            >
+                                                <Trash2 size={14} /> Remove QR
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '14px 24px', background: 'rgba(59,130,246,0.15)', border: '1px dashed rgba(59,130,246,0.4)', borderRadius: '12px', color: '#bfdbfe', cursor: uploadingQr ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: '700' }}>
+                                        <Upload size={16} /> {uploadingQr ? 'Uploading QR Image...' : 'Click to Upload Bank / UPI QR Image'}
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            style={{ display: 'none' }}
+                                            disabled={uploadingQr}
+                                            onChange={e => {
+                                                const file = e.target.files?.[0];
+                                                if (file) handleUploadQr(file, 'bank');
+                                            }}
+                                        />
+                                    </label>
+                                )}
                             </div>
 
                             <div style={S.card}>

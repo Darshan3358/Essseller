@@ -261,6 +261,18 @@ const updatePlanDisplaySettings = asyncHandler(async (req, res) => {
     res.json({ success: true, message: 'Plan display settings updated', data: value });
 });
 
+// @desc    Upload Payment QR Code image
+// @route   POST /api/settings/upload-qr
+// @access  Private/Admin
+const uploadQrCode = asyncHandler(async (req, res) => {
+    if (!req.file) {
+        res.status(400);
+        throw new Error('No QR code image uploaded');
+    }
+    const fileUrl = req.file.path?.startsWith('http') ? req.file.path : `/uploads/${req.file.filename}`;
+    res.json({ success: true, url: fileUrl });
+});
+
 module.exports = {
     getInvitationCode,
     updateInvitationCode,
@@ -277,5 +289,6 @@ module.exports = {
     getCarouselSettings,
     updateCarouselSettings,
     getPlanDisplaySettings,
-    updatePlanDisplaySettings
+    updatePlanDisplaySettings,
+    uploadQrCode
 };

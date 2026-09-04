@@ -189,7 +189,7 @@ export default function DepositPage() {
 
     const selectedCryptoAddr = cryptoSettings?.[selectedNetwork] || '';
     const selectedNetworkInfo = CRYPTO_NETWORKS.find(n => n.key === selectedNetwork);
-    const hasBankDetails = bankSettings && (bankSettings.bank_name || bankSettings.account_number);
+    const hasBankDetails = bankSettings && (bankSettings.bank_name || bankSettings.account_number || bankSettings.qr_code_url);
 
     if (authLoading || !user) return null;
 
@@ -336,6 +336,17 @@ export default function DepositPage() {
                                                         <Building2 className="w-4 h-4 text-blue-600" />
                                                         <p className="text-xs font-black text-blue-700 uppercase tracking-widest">Transfer To This Bank Account</p>
                                                     </div>
+                                                    {bankSettings.qr_code_url && (
+                                                        <div className="flex flex-col items-center justify-center p-3 bg-white rounded-xl border border-blue-100 shadow-sm mb-3">
+                                                            <p className="text-[10px] font-black text-blue-800 uppercase tracking-wider mb-2">Scan & Pay (Bank / UPI QR)</p>
+                                                            <img
+                                                                src={bankSettings.qr_code_url.startsWith('http') ? bankSettings.qr_code_url : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api').replace('/api', '')}${bankSettings.qr_code_url}`}
+                                                                alt="Bank / UPI QR Code"
+                                                                className="w-44 h-44 object-contain rounded-lg border border-gray-100"
+                                                            />
+                                                            <p className="text-[10px] text-gray-400 mt-1">Scan using any UPI or Mobile Banking app</p>
+                                                        </div>
+                                                    )}
                                                     <div className="grid grid-cols-2 gap-3">
                                                         {[
                                                             { label: 'Bank Name', value: bankSettings.bank_name },

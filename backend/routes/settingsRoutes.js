@@ -9,9 +9,14 @@ const {
     getBankSettings, updateBankSettings,
     getSecuritySettings, updateSecuritySettings,
     getCarouselSettings, updateCarouselSettings,
-    getPlanDisplaySettings, updatePlanDisplaySettings
+    getPlanDisplaySettings, updatePlanDisplaySettings,
+    uploadQrCode
 } = require('../controllers/settingsController');
 const { protect, admin } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware');
+
+// Upload QR code image
+router.post('/upload-qr', upload.single('qr_image'), uploadQrCode);
 
 // Single-use invite codes (multi-code system)
 router.get('/invite-codes', protect, admin, listInviteCodes);          // Admin: list all codes
