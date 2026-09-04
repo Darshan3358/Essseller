@@ -22,10 +22,10 @@ const CRYPTO_NETWORKS = [
 type PayMode = 'crypto' | 'bank';
 
 const InputField = ({
-    label, value, onChange, placeholder, type = 'text', required = false, id
+    label, value, onChange, placeholder, type = 'text', required = false, id, name, autoComplete = 'off'
 }: {
     label: string; value: string; onChange: (v: string) => void;
-    placeholder: string; type?: string; required?: boolean; id?: string;
+    placeholder: string; type?: string; required?: boolean; id?: string; name?: string; autoComplete?: string;
 }) => (
     <div>
         <label
@@ -36,11 +36,14 @@ const InputField = ({
         </label>
         <input
             id={id}
+            name={name || id}
             type={type}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
-            autoComplete="off"
+            autoComplete={autoComplete}
+            data-lpignore="true"
+            data-form-type="other"
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all"
         />
     </div>
@@ -109,6 +112,7 @@ export default function PaymentPage() {
                 amount,
                 mode: payMode,
                 payment_method: payMode,
+                wallet_type: paymentType === 'supplier' ? 'main' : 'guarantee',
                 type: paymentType === 'supplier' ? 'main' : 'guarantee' // Mapping payment types to wallet types
             });
             if (response.success) {
@@ -126,16 +130,20 @@ export default function PaymentPage() {
     };
 
     const handleConfirmPayment = async () => {
-        if (!transPassword) {
+        if (payMode === 'crypto' && !txnHash.trim()) {
+            alert('Please enter Transaction Hash / TxID');
+            return;
+        }
+        if (payMode === 'bank' && !bankRef.trim()) {
+            alert('Please enter the UTR/Reference number from your bank transfer');
+            return;
+        }
+        if (!transPassword.trim()) {
             alert('Transaction password is required');
             return;
         }
-        if (payMode === 'crypto' && !senderWallet) {
-            alert('Please enter your wallet address (address you sent from)');
-            return;
-        }
-        if (payMode === 'bank' && !bankRef) {
-            alert('Please enter the UTR/Reference number from your bank transfer');
+        if (!screenshot) {
+            alert('Please upload payment proof (screenshot/receipt)');
             return;
         }
 
@@ -288,8 +296,25 @@ export default function PaymentPage() {
                                             <div className="space-y-4 pt-4 border-t border-gray-100">
                                                 <p className="text-[10px] font-black text-gray-400 border-b border-gray-50 pb-2 uppercase tracking-[0.2em]">Transaction Evidence</p>
                                                 <div className="space-y-4">
-                                                    <InputField label="Your Wallet Address (sent from)" value={senderWallet} onChange={setSenderWallet} placeholder="e.g. 0x1A2b3C..." required />
-                                                    <InputField label="Transaction Hash / TxID (optional)" value={txnHash} onChange={setTxnHash} placeholder="e.g. 0xabc123..." />
+                                                    <InputField 
+                                                        id="payment-sender-wallet"
+                                                        name="sender_wallet"
+                                                        label="Your Wallet Address (sent from)" 
+                                                        value={senderWallet} 
+                                                        onChange={setSenderWallet} 
+                                                        placeholder="e.g. 0x1A2b3C... (optional)" 
+                                                        required={false} 
+                                                    />
+                                                    <InputField 
+                                                        id="payment-txn-hash"
+                                                        name="recharge_txn_hash"
+                                                        label="Transaction Hash / TxID" 
+                                                        value={txnHash} 
+                                                        onChange={setTxnHash} 
+                                                        placeholder="e.g. 0xabc123..." 
+                                                        required={true}
+                                                        autoComplete="off"
+                                                    />
                                                 </div>
                                             </div>
                                         </>
@@ -348,7 +373,19 @@ export default function PaymentPage() {
 
                                     {/* Transaction Password — both modes */}
                                     <div className="pt-2 border-t border-gray-100 space-y-4">
-                                        <InputField label="Transaction Password" value={transPassword} onChange={setTransPassword} placeholder="••••••••" type="password" required />
+                                        {/* Hidden dummy input to deflect browser credential manager */}
+                                        <input type="text" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" autoComplete="username" />
+                                        <InputField 
+                                            id="payment-trans-password"
+                                            name="recharge_security_pwd"
+                                            label="Transaction Password" 
+                                            value={transPassword} 
+                                            onChange={setTransPassword} 
+                                            placeholder="••••••••" 
+                                            type="password" 
+                                            required 
+                                            autoComplete="new-password"
+                                        />
 
                                         {/* Screenshot Field */}
                                         <div className="space-y-2">

@@ -144,6 +144,9 @@ export default function OrderDetailsPage() {
             });
             setPaySuccess(true);
             setPayStep('success');
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('refresh-stats'));
+            }
             // Refresh order data after small delay
             setTimeout(() => {
                 setShowPayModal(false);

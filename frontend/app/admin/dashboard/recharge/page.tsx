@@ -134,8 +134,24 @@ export default function AdminRechargePage() {
                                                     {r.seller_id?.email || r.seller?.email || ''}
                                                 </div>
                                             </td>
-                                            <td style={{ padding: '14px 16px', fontWeight: '700', color: '#10b981', fontSize: '16px' }}>
-                                                ${parseFloat(r.amount || '0').toFixed(2)}
+                                            <td style={{ padding: '14px 16px' }}>
+                                                 <div style={{ fontWeight: '700', color: '#10b981', fontSize: '16px' }}>
+                                                     ${parseFloat(r.amount || '0').toFixed(2)}
+                                                 </div>
+                                                 <div style={{ marginTop: '4px' }}>
+                                                     <span style={{
+                                                         fontSize: '10px',
+                                                         fontWeight: '700',
+                                                         padding: '2px 7px',
+                                                         borderRadius: '12px',
+                                                         background: r.wallet_type === 'guarantee' ? 'rgba(245,158,11,0.15)' : 'rgba(59,130,246,0.15)',
+                                                         color: r.wallet_type === 'guarantee' ? '#f59e0b' : '#60a5fa',
+                                                         border: `1px solid ${r.wallet_type === 'guarantee' ? 'rgba(245,158,11,0.3)' : 'rgba(59,130,246,0.3)'}`,
+                                                         display: 'inline-block'
+                                                     }}>
+                                                         {r.wallet_type === 'guarantee' ? '🛡️ Guarantee' : '💼 Main Wallet'}
+                                                     </span>
+                                                 </div>
                                             </td>
                                             <td className="res-hide-mobile" style={{ padding: '14px 16px' }}>
                                                 <span style={{
@@ -215,6 +231,12 @@ export default function AdminRechargePage() {
                                                 <td colSpan={10} style={{ padding: '16px' }}>
                                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '12px' }}>
                                                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                                                            <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Target Wallet</span>
+                                                            <span style={{ fontSize: '12px', fontWeight: '700', color: r.wallet_type === 'guarantee' ? '#f59e0b' : '#60a5fa' }}>
+                                                                {r.wallet_type === 'guarantee' ? '🛡️ Guarantee Wallet' : '💼 Main Wallet'}
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
                                                             <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>Method</span>
                                                             <span style={{ fontSize: '13px', color: 'white' }}>{r.payment_method === 'bank' ? '🏦 Bank' : '₿ Crypto'}</span>
                                                         </div>
@@ -247,6 +269,7 @@ export default function AdminRechargePage() {
                                                     }}>
                                                         <div style={{ fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.4)', gridColumn: '1 / -1', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Payment Proof Details</div>
                                                         {[
+                                                            { label: 'Target Wallet', value: r.wallet_type === 'guarantee' ? '🛡️ Guarantee Wallet' : '💼 Main Wallet' },
                                                             { label: 'Sender Wallet / From', value: r.sender_wallet },
                                                             { label: 'Transaction Hash / TxID', value: r.txn_hash },
                                                             { label: 'Bank UTR / Reference', value: r.bank_reference },

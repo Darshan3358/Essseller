@@ -35,6 +35,11 @@ const rechargeSchema = mongoose.Schema({
         type: String,
         default: 'crypto', // 'crypto' or 'bank'
     },
+    wallet_type: {
+        type: String,
+        enum: ['main', 'guarantee'],
+        default: 'main',
+    },
     sender_wallet: {
         type: String,
         default: '',

@@ -55,15 +55,20 @@ export default function ReportsPage() {
 
             if (statsData.success) {
                 const s = statsData.stats;
-                // Total orders from actual order list
-                const allOrders: any[] = ordersData.success ? (ordersData.orders || []) : [];
+                // Total orders from actual order list - exclude unpicked orders from records/reports
+                const rawOrders: any[] = ordersData.success ? (ordersData.orders || []) : [];
+                const allOrders = rawOrders.filter((o: any) => 
+                    (o.pick_up_status?.toLowerCase().includes('picked') && !o.pick_up_status?.toLowerCase().includes('unpicked'))
+                );
                 setOrders(allOrders);
 
                 // Filter by date range if set
                 const filtered = filterByDate(allOrders, start, end);
 
-                const totalRevenue = filtered.reduce((acc: number, o: any) => acc + (parseFloat(o.order_total) || 0), 0);
-                const totalCost = filtered.reduce((acc: number, o: any) => acc + (parseFloat(o.cost_amount) || 0), 0);
+                // Sales should only count delivered orders
+                const deliveredFiltered = filtered.filter((o: any) => ['delivered', 'completed'].includes(o.status?.toLowerCase()));
+                const totalRevenue = deliveredFiltered.reduce((acc: number, o: any) => acc + (parseFloat(o.order_total) || 0), 0);
+                const totalCost = deliveredFiltered.reduce((acc: number, o: any) => acc + (parseFloat(o.cost_amount) || 0), 0);
                 const totalOrderCount = filtered.length;
                 const avgVal = totalOrderCount > 0 ? totalRevenue / totalOrderCount : 0;
 

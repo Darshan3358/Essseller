@@ -2,7 +2,7 @@ const Withdraw = require('../models/Withdraw');
 const Seller = require('../models/Seller');
 const GuaranteeMoney = require('../models/GuaranteeMoney');
 const asyncHandler = require('express-async-handler');
-const { getAvailableBalance } = require('../utils/wallet');
+const { getAvailableBalance, getGuaranteeBalance } = require('../utils/wallet');
 
 // @desc    Get all withdrawal requests (seller sees their own)
 // @route   GET /api/withdrawals
@@ -65,12 +65,7 @@ const createWithdrawal = asyncHandler(async (req, res) => {
     // 4. Check Available Balance
     let availableBalance = 0;
     if (wallet_type === 'guarantee') {
-        const guaranteeResult = await GuaranteeMoney.aggregate([
-            { $match: { seller_id: { $in: [seller.id, String(seller.id)] }, status: 1 } },
-            { $group: { _id: null, total: { $sum: { $toDouble: { $ifNull: ["$amount", 0] } } } } }
-        ]);
-        availableBalance = guaranteeResult.length > 0 ? (guaranteeResult[0].total || 0) : 0;
-        availableBalance = seller.guarantee_balance || availableBalance;
+        availableBalance = await getGuaranteeBalance(seller._id);
     } else {
         availableBalance = await getAvailableBalance(seller._id);
     }
@@ -206,6 +201,7 @@ const getWalletDetails = asyncHandler(async (req, res) => {
     startOfDay.setHours(0, 0, 0, 0);
     const todaysOrdersCount = await require('../models/Order').countDocuments({
         seller_id: seller._id,
+        pick_up_status: { $in: ['Picked-Up', 'Picked Up', 'Picked', 'picked-up', 'picked up', 'picked'] },
         createdAt: { $gte: startOfDay }
     });
 
@@ -213,7 +209,7 @@ const getWalletDetails = asyncHandler(async (req, res) => {
         success: true,
         data: {
             balance: walletBalance,
-            guaranteeMoney: seller.guarantee_balance || 0,
+            guaranteeMoney: await getGuaranteeBalance(seller._id),
             rechargeMoney,
             packageMoney,
             storehouseTotalPayment,
@@ -259,10 +255,16 @@ const updateWithdrawalStatus = asyncHandler(async (req, res) => {
     withdrawal.reason = reason || 'Cancelled by seller';
     const updatedWithdrawal = await withdrawal.save();
 
-    // Refund to wallet_balance on cancellation
-    await Seller.findByIdAndUpdate(req.user._id, {
-        $inc: { wallet_balance: Number(withdrawal.amount) }
-    });
+    // Refund to wallet_balance or guarantee_balance on cancellation
+    if (withdrawal.wallet_type === 'guarantee') {
+        await Seller.findByIdAndUpdate(req.user._id, {
+            $inc: { guarantee_balance: Number(withdrawal.amount) }
+        });
+    } else {
+        await Seller.findByIdAndUpdate(req.user._id, {
+            $inc: { wallet_balance: Number(withdrawal.amount) }
+        });
+    }
 
     res.json({ success: true, withdrawal: updatedWithdrawal });
 });

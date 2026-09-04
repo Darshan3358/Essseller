@@ -66,7 +66,7 @@ export function AmountReceivablesCard({ amount }: { amount: number }) {
         <MetricCard
             title="Receivables"
             value={`$${amount.toLocaleString('en-US', { minimumFractionDigits: 0 })}`}
-            subtitle="Pending clearance"
+            subtitle="Picked up, pending delivery"
             icon={<DollarSign className="w-6 h-6" />}
             color="warning"
         />

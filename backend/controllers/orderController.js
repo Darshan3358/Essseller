@@ -6,9 +6,9 @@ const Product = require('../models/Product');
 const StorehousePayment = require('../models/StorehousePayment');
 const Withdraw = require('../models/Withdraw');
 const Seller = require('../models/Seller');
-const Recharge = require('../models/Recharge');
 const SiteSetting = require('../models/SiteSetting');
 const createNotification = require('../utils/notifications');
+const Notification = require('../models/Notification');
 const Supplier = require('../models/Supplier');
 const { normalizeProduct } = require('./productController');
 
@@ -189,7 +189,7 @@ const payStorehouse = asyncHandler(async (req, res) => {
     }
 
 
-    if (order.pick_up_status === 'Picked Up') {
+    if (order.pick_up_status === 'Picked Up' || order.pick_up_status === 'Picked-Up') {
         res.status(400);
         throw new Error('Order already picked up');
     }
@@ -232,6 +232,26 @@ const payStorehouse = asyncHandler(async (req, res) => {
         order.supplier_name = activeSupplier ? activeSupplier.name : 'Global Direct Supplier';
     }
     const updatedOrder = await order.save();
+
+    // Invalidate order cache
+    try {
+        orderCache.clear();
+    } catch (e) {}
+
+    // Mark any related order notification as read
+    try {
+        await Notification.updateMany(
+            {
+                seller_id: { $in: [seller._id, seller.id, String(seller._id)] },
+                type: 'order',
+                read: false,
+                message: { $regex: order.order_code, $options: 'i' }
+            },
+            { $set: { read: true } }
+        );
+    } catch (notifErr) {
+        console.error('Error auto-marking notification as read:', notifErr);
+    }
 
     res.json(updatedOrder);
 });

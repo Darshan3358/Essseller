@@ -725,11 +725,28 @@ const updateRechargeStatus = asyncHandler(async (req, res) => {
     if (reason) recharge.reason = reason;
     await recharge.save();
 
-    // If approved, update seller's stored wallet_balance
+    // If approved, update seller's stored balance according to wallet_type
     if (recharge.status === 1) {
-        await Seller.findByIdAndUpdate(recharge.seller_id, {
-            $inc: { wallet_balance: Number(recharge.amount) }
-        });
+        if (recharge.wallet_type === 'guarantee') {
+            await Seller.findByIdAndUpdate(recharge.seller_id, {
+                $inc: { guarantee_balance: Number(recharge.amount) }
+            });
+            const lastG = await GuaranteeMoney.findOne().sort({ id: -1 });
+            const gId = lastG && lastG.id ? lastG.id + 1 : 1;
+            await GuaranteeMoney.create({
+                id: gId,
+                seller_id: recharge.seller_id,
+                amount: Number(recharge.amount),
+                receipt: recharge.receipt || 'Recharge Approved',
+                status: 1,
+                reason: 'Guarantee Recharge',
+                created_at: new Date().toISOString()
+            });
+        } else {
+            await Seller.findByIdAndUpdate(recharge.seller_id, {
+                $inc: { wallet_balance: Number(recharge.amount) }
+            });
+        }
     }
 
     // Notify user
@@ -831,11 +848,17 @@ const updateWithdrawalStatus = asyncHandler(async (req, res) => {
 
     await withdrawal.save();
 
-    // If REJECTED, refund to seller's wallet_balance
+    // If REJECTED, refund to seller's wallet_balance or guarantee_balance
     if (newStatus === 2) {
-        await Seller.findByIdAndUpdate(withdrawal.seller_id, {
-            $inc: { wallet_balance: Number(withdrawal.amount) }
-        });
+        if (withdrawal.wallet_type === 'guarantee') {
+            await Seller.findByIdAndUpdate(withdrawal.seller_id, {
+                $inc: { guarantee_balance: Number(withdrawal.amount) }
+            });
+        } else {
+            await Seller.findByIdAndUpdate(withdrawal.seller_id, {
+                $inc: { wallet_balance: Number(withdrawal.amount) }
+            });
+        }
     }
 
     // Notify user

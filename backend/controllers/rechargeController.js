@@ -1,5 +1,6 @@
 const Recharge = require('../models/Recharge');
 const Seller = require('../models/Seller');
+const GuaranteeMoney = require('../models/GuaranteeMoney');
 const asyncHandler = require('express-async-handler');
 
 // @desc    Get all recharge requests
@@ -28,6 +29,30 @@ const updateRechargeStatus = asyncHandler(async (req, res) => {
         recharge.status = Number(status);
         if (reason) recharge.reason = reason;
         const updatedRecharge = await recharge.save();
+
+        if (recharge.status === 1) {
+            if (recharge.wallet_type === 'guarantee') {
+                await Seller.findByIdAndUpdate(recharge.seller_id, {
+                    $inc: { guarantee_balance: Number(recharge.amount) }
+                });
+                const lastG = await GuaranteeMoney.findOne().sort({ id: -1 });
+                const gId = lastG && lastG.id ? lastG.id + 1 : 1;
+                await GuaranteeMoney.create({
+                    id: gId,
+                    seller_id: recharge.seller_id,
+                    amount: Number(recharge.amount),
+                    receipt: recharge.receipt || 'Recharge Approved',
+                    status: 1,
+                    reason: 'Guarantee Recharge',
+                    created_at: new Date().toISOString()
+                });
+            } else {
+                await Seller.findByIdAndUpdate(recharge.seller_id, {
+                    $inc: { wallet_balance: Number(recharge.amount) }
+                });
+            }
+        }
+
         res.json({ success: true, recharge: updatedRecharge });
     } else {
         res.status(404);
@@ -39,7 +64,7 @@ const updateRechargeStatus = asyncHandler(async (req, res) => {
 // @route   POST /api/recharges
 // @access  Private
 const createRecharge = asyncHandler(async (req, res) => {
-    const { amount, mode, payment_method } = req.body;
+    const { amount, mode, payment_method, wallet_type, type } = req.body;
 
     if (!amount) {
         res.status(400);
@@ -49,12 +74,15 @@ const createRecharge = asyncHandler(async (req, res) => {
     const lastRec = await Recharge.findOne().sort({ id: -1 });
     const newId = lastRec && lastRec.id ? lastRec.id + 1 : 1;
 
+    const finalWalletType = (wallet_type === 'guarantee' || type === 'guarantee') ? 'guarantee' : 'main';
+
     const recharge = await Recharge.create({
         id: newId,
         seller_id: req.user._id,
         amount: String(amount),
         mode: mode || 'online',
         payment_method: payment_method || 'crypto',
+        wallet_type: finalWalletType,
         status: 0,
         created_at: new Date().toISOString()
     });

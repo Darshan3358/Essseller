@@ -58,7 +58,7 @@ export default function DashboardPage() {
     const [showHealthModal, setShowHealthModal] = useState(false);
     
     
-
+ 
 const mapStats = (dbStats: any) => ({
     totalLifetimeSales: dbStats.totalSales || 0,
     amountReceivables: dbStats.receivables || 0,
@@ -225,19 +225,9 @@ const refetchChartData = async (range: DateRange) => {
                                 </div>
 
                                  {/* Views Metric Display inside First Card */}
-                                 <div className="relative z-10 pt-2 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-2 text-center w-full">
-                                     <div>
-                                         <p className="text-sm font-black text-slate-800 dark:text-slate-100">{stats.usedViews.toLocaleString()}</p>
-                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Used</p>
-                                     </div>
-                                     <div>
-                                         <p className="text-sm font-black text-slate-800 dark:text-slate-100">{stats.remainingViews.toLocaleString()}</p>
-                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Remaining</p>
-                                     </div>
-                                     <div>
-                                         <p className="text-sm font-black text-emerald-600 dark:text-emerald-400">{stats.views.toLocaleString()}</p>
-                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Views</p>
-                                     </div>
+                                 <div className="relative z-10 pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between px-1 w-full">
+                                     <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Total Views</span>
+                                     <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">{stats.views.toLocaleString()}</span>
                                  </div>
 
                                  {/* Bottom Info */}

@@ -9,10 +9,10 @@ const SellerProduct = require('../models/SellerProduct');
 const ShopProfile = require('../models/ShopProfile');
 const Package = require('../models/Package');
 const PackagePlan = require('../models/PackagePlan');
-const { getAvailableBalance } = require('../utils/wallet');
+const { getAvailableBalance, getGuaranteeBalance } = require('../utils/wallet');
 
 const statsCache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+const CACHE_DURATION = 15 * 1000; // 15 seconds
 
 // @desc    Get seller dashboard statistics
 // @route   GET /api/sellers/stats
@@ -59,13 +59,34 @@ exports.getDashboardStats = async (req, res) => {
             availableBalance
         ] = await Promise.all([
             SellerProduct.countDocuments({ seller_id: { $in: sellerIdFilter } }),
-            Order.countDocuments({ seller_id: { $in: sellerIdFilter } }),
-            Order.countDocuments({ seller_id: { $in: sellerIdFilter }, status: 'pending' }),
+            Order.countDocuments({
+                seller_id: { $in: sellerIdFilter },
+                pick_up_status: { $in: ['Picked-Up', 'Picked Up', 'Picked', 'picked-up', 'picked up', 'picked', 'PICKED-UP', 'PICKED UP', 'PICKED'] }
+            }),
+            Order.countDocuments({
+                seller_id: { $in: sellerIdFilter },
+                $and: [
+                    {
+                        $or: [
+                            { pick_up_status: { $regex: /unpicked/i } },
+                            { pick_up_status: null },
+                            { pick_up_status: '' },
+                            { pick_up_status: { $exists: false } }
+                        ]
+                    },
+                    {
+                        pick_up_status: { $nin: ['Picked-Up', 'Picked Up', 'Picked', 'picked-up', 'picked up', 'picked'] }
+                    },
+                    {
+                        status: { $nin: ['cancelled', 'Cancelled', 'refunded', 'Refunded'] }
+                    }
+                ]
+            }),
             Order.aggregate([
                 {
                     $match: {
                         seller_id: { $in: sellerIdFilter },
-                        status: { $in: ['pending', 'processing', 'delivered', 'shipped', 'completed', 'Pending', 'Processing', 'Delivered', 'Shipped', 'Completed'] }
+                        status: { $in: ['delivered', 'Delivered', 'completed', 'Completed'] }
                     }
                 },
                 {
@@ -93,12 +114,29 @@ exports.getDashboardStats = async (req, res) => {
             Promise.resolve(seller.wallet_balance || 0)
         ]);
 
-        // Aggregate receivables (orders in pending/processing/shipped status, pending clearance)
+        // Aggregate receivables: Orders that are picked up, but NOT yet delivered (paise aana baki hai)
         const receivablesResult = await Order.aggregate([
             {
                 $match: {
                     seller_id: { $in: sellerIdFilter },
-                    status: { $in: ['pending', 'processing', 'shipped', 'Pending', 'Processing', 'Shipped'] }
+                    $and: [
+                        {
+                            $or: [
+                                { pick_up_status: { $in: ['Picked-Up', 'Picked Up', 'Picked', 'picked-up', 'picked up', 'picked', 'PICKED-UP', 'PICKED UP', 'PICKED'] } },
+                                { pick_up_status: { $regex: /^picked/i } }
+                            ]
+                        },
+                        {
+                            status: {
+                                $nin: [
+                                    'delivered', 'Delivered', 'DELIVERED',
+                                    'completed', 'Completed', 'COMPLETED',
+                                    'cancelled', 'Cancelled', 'CANCELLED',
+                                    'refunded', 'Refunded', 'REFUNDED'
+                                ]
+                            }
+                        }
+                    ]
                 }
             },
             {
@@ -119,7 +157,7 @@ exports.getDashboardStats = async (req, res) => {
         const receivables = receivablesResult.length > 0 ? (receivablesResult[0].total || 0) : 0;
 
         const totalSales = salesResult.length > 0 ? salesResult[0].total : 0;
-        const guaranteeMoney = seller.guarantee_balance || (guaranteeResult.length > 0 ? (guaranteeResult[0].total || 0) : 0);
+        const guaranteeMoney = await getGuaranteeBalance(seller._id);
         const activePackage = activePackages[0] || null;
         
         // Find corresponding PackagePlan to get features
@@ -156,16 +194,41 @@ exports.getDashboardStats = async (req, res) => {
         const startOfLastMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
 
         const getSalesForPeriod = async (start, end) => {
+            const timeFilter = end ? { $gte: start, $lt: end } : { $gte: start };
             const query = {
                 seller_id: { $in: sellerIdFilter },
-                status: { $nin: ['cancelled', 'Cancelled'] },
-                createdAt: { $gte: start }
+                status: { $in: ['delivered', 'Delivered', 'completed', 'Completed'] },
+                $or: [
+                    { deliveredAt: timeFilter },
+                    { createdAt: timeFilter }
+                ]
             };
-            if (end) query.createdAt.$lt = end;
 
             const res = await Order.aggregate([
                 { $match: query },
-                { $group: { _id: null, sales: { $sum: "$order_total" }, cost: { $sum: "$cost_amount" } } }
+                {
+                    $group: {
+                        _id: null,
+                        sales: {
+                            $sum: {
+                                $cond: {
+                                    if: { $and: [{ $ne: ["$order_total", ""] }, { $ne: ["$order_total", null] }] },
+                                    then: { $toDouble: "$order_total" },
+                                    else: 0
+                                }
+                            }
+                        },
+                        cost: {
+                            $sum: {
+                                $cond: {
+                                    if: { $and: [{ $ne: ["$cost_amount", ""] }, { $ne: ["$cost_amount", null] }] },
+                                    then: { $toDouble: "$cost_amount" },
+                                    else: 0
+                                }
+                            }
+                        }
+                    }
+                }
             ]);
             return res.length > 0 ? res[0] : { sales: 0, cost: 0 };
         };
@@ -175,8 +238,30 @@ exports.getDashboardStats = async (req, res) => {
             getSalesForPeriod(startOfMonth),
             getSalesForPeriod(startOfLastMonth, startOfMonth),
             Order.aggregate([
-                { $match: { seller_id: { $in: sellerIdFilter }, status: { $nin: ['cancelled', 'Cancelled'] } } },
-                { $group: { _id: null, sales: { $sum: "$order_total" }, cost: { $sum: "$cost_amount" } } }
+                { $match: { seller_id: { $in: sellerIdFilter }, status: { $in: ['delivered', 'Delivered', 'completed', 'Completed'] } } },
+                {
+                    $group: {
+                        _id: null,
+                        sales: {
+                            $sum: {
+                                $cond: {
+                                    if: { $and: [{ $ne: ["$order_total", ""] }, { $ne: ["$order_total", null] }] },
+                                    then: { $toDouble: "$order_total" },
+                                    else: 0
+                                }
+                            }
+                        },
+                        cost: {
+                            $sum: {
+                                $cond: {
+                                    if: { $and: [{ $ne: ["$cost_amount", ""] }, { $ne: ["$cost_amount", null] }] },
+                                    then: { $toDouble: "$cost_amount" },
+                                    else: 0
+                                }
+                            }
+                        }
+                    }
+                }
             ]),
             ShopProfile.findOne({ seller_id: sellerId }).lean()
         ]);
@@ -197,7 +282,7 @@ exports.getDashboardStats = async (req, res) => {
                 {
                     $match: {
                         seller_id: { $in: sellerIdFilter },
-                        status: { $nin: ['cancelled', 'Cancelled'] },
+                        status: { $in: ['delivered', 'Delivered', 'completed', 'Completed'] },
                         createdAt: { $gte: startMonthDate }
                     }
                 },
@@ -237,7 +322,7 @@ exports.getDashboardStats = async (req, res) => {
                 {
                     $match: {
                         seller_id: { $in: sellerIdFilter },
-                        status: { $nin: ['cancelled', 'Cancelled'] },
+                        status: { $in: ['delivered', 'Delivered', 'completed', 'Completed'] },
                         createdAt: { $gte: startYearDate }
                     }
                 },
@@ -276,7 +361,7 @@ exports.getDashboardStats = async (req, res) => {
                 {
                     $match: {
                         seller_id: { $in: sellerIdFilter },
-                        status: { $nin: ['cancelled', 'Cancelled'] },
+                        status: { $in: ['delivered', 'Delivered', 'completed', 'Completed'] },
                         createdAt: { $gte: startDate }
                     }
                 },

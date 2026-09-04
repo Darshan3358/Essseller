@@ -11,6 +11,7 @@ import FrozenAccountModal from '../modals/FrozenAccountModal';
 export default function Shell({ children }: { children: React.ReactNode }) {
     const { user, logout } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [stats, setStats] = useState<any>(null);
     const [imageError, setImageError] = useState(false);
@@ -52,11 +53,19 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         if (user) {
             fetchData();
 
+            const handleRefresh = () => {
+                fetchData();
+            };
+            window.addEventListener('refresh-stats', handleRefresh);
+
             // Poll for notifications every 2 minutes
             const interval = setInterval(fetchData, 120000);
-            return () => clearInterval(interval);
+            return () => {
+                clearInterval(interval);
+                window.removeEventListener('refresh-stats', handleRefresh);
+            };
         }
-    }, [user]);
+    }, [user, pathname]);
 
     // Handle click outside notification dropdown
     useEffect(() => {

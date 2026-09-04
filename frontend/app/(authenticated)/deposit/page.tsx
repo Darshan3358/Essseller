@@ -16,10 +16,10 @@ import { useRouter } from 'next/navigation';
 // as a new component type on re-render (which would cause unmount/remount
 // and lose keyboard focus every time the parent state changes).
 const InputField = ({
-    label, value, onChange, placeholder, type = 'text', required = false, id
+    label, value, onChange, placeholder, type = 'text', required = false, id, name, autoComplete = 'off'
 }: {
     label: string; value: string; onChange: (v: string) => void;
-    placeholder: string; type?: string; required?: boolean; id?: string;
+    placeholder: string; type?: string; required?: boolean; id?: string; name?: string; autoComplete?: string;
 }) => (
     <div>
         <label
@@ -30,11 +30,14 @@ const InputField = ({
         </label>
         <input
             id={id}
+            name={name || id}
             type={type}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
-            autoComplete="off"
+            autoComplete={autoComplete}
+            data-lpignore="true"
+            data-form-type="other"
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all"
         />
     </div>
@@ -104,7 +107,13 @@ export default function DepositPage() {
         setIsSubmitting(true);
         setMessage({ text: '', type: '' });
         try {
-            const response = await api.post('/recharges', { amount, mode: payMode, payment_method: payMode });
+            const response = await api.post('/recharges', {
+                amount,
+                mode: payMode,
+                payment_method: payMode,
+                wallet_type: depositType,
+                type: depositType
+            });
             if (response.success) {
                 setCurrentRecharge(response.recharge);
                 // Reset proof fields
@@ -120,16 +129,20 @@ export default function DepositPage() {
     };
 
     const handleConfirmPayment = async () => {
-        if (!transPassword) {
+        if (payMode === 'crypto' && !txnHash.trim()) {
+            alert('Please enter Transaction Hash / TxID');
+            return;
+        }
+        if (payMode === 'bank' && !bankRef.trim()) {
+            alert('Please enter the UTR/Reference number from your bank transfer');
+            return;
+        }
+        if (!transPassword.trim()) {
             alert('Transaction password is required');
             return;
         }
-        if (payMode === 'crypto' && !senderWallet) {
-            alert('Please enter your wallet address (address you sent from)');
-            return;
-        }
-        if (payMode === 'bank' && !bankRef) {
-            alert('Please enter the UTR/Reference number from your bank transfer');
+        if (!screenshot) {
+            alert('Please upload payment proof (screenshot/receipt)');
             return;
         }
 
@@ -289,10 +302,25 @@ export default function DepositPage() {
                                                 <p className="text-[10px] font-black text-gray-400 border-b border-gray-50 pb-2 uppercase tracking-[0.2em]">Transaction Evidence</p>
 
                                                 <div className="space-y-4">
-                                                    <InputField id="sender-wallet" label="Your Wallet Address (sent from)" value={senderWallet} onChange={setSenderWallet} placeholder="e.g. 0x1A2b3C..." required />
-                                                    <InputField id="txn-hash" label="Transaction Hash / TxID (optional)" value={txnHash} onChange={setTxnHash} placeholder="e.g. 0xabc123..." />
-
-
+                                                    <InputField 
+                                                        id="sender-wallet" 
+                                                        name="sender_wallet"
+                                                        label="Your Wallet Address (sent from)" 
+                                                        value={senderWallet} 
+                                                        onChange={setSenderWallet} 
+                                                        placeholder="e.g. 0x1A2b3C... (optional)" 
+                                                        required={false} 
+                                                    />
+                                                    <InputField 
+                                                        id="txn-hash" 
+                                                        name="recharge_txn_hash"
+                                                        label="Transaction Hash / TxID" 
+                                                        value={txnHash} 
+                                                        onChange={setTxnHash} 
+                                                        placeholder="e.g. 0xabc123..." 
+                                                        required={true}
+                                                        autoComplete="off"
+                                                    />
                                                 </div>
                                             </div>
                                         </>
@@ -359,7 +387,19 @@ export default function DepositPage() {
 
                                     {/* Transaction Password — both modes */}
                                     <div className="pt-2 border-t border-gray-100 space-y-4">
-                                        <InputField id="trans-password" label="Transaction Password" value={transPassword} onChange={setTransPassword} placeholder="••••••••" type="password" required />
+                                        {/* Hidden dummy input to deflect browser credential manager */}
+                                        <input type="text" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" autoComplete="username" />
+                                        <InputField 
+                                            id="trans-password" 
+                                            name="recharge_security_pwd"
+                                            label="Transaction Password" 
+                                            value={transPassword} 
+                                            onChange={setTransPassword} 
+                                            placeholder="••••••••" 
+                                            type="password" 
+                                            required 
+                                            autoComplete="new-password"
+                                        />
 
                                         {/* Screenshot Field — Moved below password */}
                                         <div className="space-y-2">
